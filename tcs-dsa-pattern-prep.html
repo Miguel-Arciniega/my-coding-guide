@@ -1,0 +1,1081 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DSA Pattern Recognition — TCS Coding Round Prep</title>
+<style>
+  :root{
+    --bg:#f5f7f9; --surface:#ffffff; --surface-2:#fbfcfd;
+    --ink:#16202e; --ink-soft:#475569; --ink-faint:#8a99ab;
+    --line:#e3e8ee; --line-strong:#cfd8e3;
+    --accent:#0e7490; --accent-ink:#0b5566; --accent-wash:#e6f4f8;
+    --p1:#0e7490; --p1-wash:#e6f4f8;
+    --p2:#5b3fc4; --p2-wash:#efeaff;
+    --p3:#bd4b1b; --p3-wash:#fdeee4;
+    --easy:#15803d; --easy-wash:#e4f6ea;
+    --med:#b45309; --med-wash:#fdf0d9;
+    --hard:#be123c; --hard-wash:#fde7ec;
+    --code-bg:#0f172a; --code-ink:#e6ebf3; --code-dim:#7c8aa3;
+    --code-key:#7dd3fc; --code-str:#86efac; --code-num:#fca5a5; --code-com:#64748b; --code-fn:#fcd34d;
+    --accent-fill:#0e7490; --on-accent:#ffffff;
+    --nav-bg:rgba(245,247,249,.92); --sel-bg:#16202e; --sel-ink:#ffffff;
+    --code-inline-bg:#eef2f6; --info-border:#bfe3ec; --tag-border:#c9e6ee;
+    --warn-border:#f4dca8; --warn-ink:#8a4a07; --pitfall-ink:#7f1d2e;
+    color-scheme:light;
+    --radius:12px; --radius-sm:8px;
+    --mono:ui-monospace,"SF Mono","JetBrains Mono","Cascadia Code",Menlo,Consolas,monospace;
+    --sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+
+  :root[data-theme="dark"]{
+    color-scheme:dark;
+    --bg:#0d1219; --surface:#161d28; --surface-2:#1b2330;
+    --ink:#e6ebf2; --ink-soft:#9fb0c2; --ink-faint:#6b7a8d;
+    --line:#283344; --line-strong:#3a475c;
+    --accent:#39c2dd; --accent-ink:#7fd6ea; --accent-wash:#0d2c35; --accent-fill:#0e7490; --on-accent:#ffffff;
+    --easy:#5fd98a; --easy-wash:#0f2c1c;
+    --med:#e0a445; --med-wash:#2f2614;
+    --hard:#f06a86; --hard-wash:#34141c;
+    --nav-bg:rgba(13,18,25,.9); --sel-bg:#e6ebf2; --sel-ink:#0d1219;
+    --code-inline-bg:#1b2533; --info-border:#0f3a47; --tag-border:#10414f;
+    --warn-border:#4a3a12; --warn-ink:#e0a445; --pitfall-ink:#f06a86;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      color-scheme:dark;
+      --bg:#0d1219; --surface:#161d28; --surface-2:#1b2330;
+      --ink:#e6ebf2; --ink-soft:#9fb0c2; --ink-faint:#6b7a8d;
+      --line:#283344; --line-strong:#3a475c;
+      --accent:#39c2dd; --accent-ink:#7fd6ea; --accent-wash:#0d2c35; --accent-fill:#0e7490; --on-accent:#ffffff;
+      --easy:#5fd98a; --easy-wash:#0f2c1c;
+      --med:#e0a445; --med-wash:#2f2614;
+      --hard:#f06a86; --hard-wash:#34141c;
+      --nav-bg:rgba(13,18,25,.9); --sel-bg:#e6ebf2; --sel-ink:#0d1219;
+      --code-inline-bg:#1b2533; --info-border:#0f3a47; --tag-border:#10414f;
+      --warn-border:#4a3a12; --warn-ink:#e0a445; --pitfall-ink:#f06a86;
+    }
+  }
+
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:var(--sans); line-height:1.6; font-size:16px;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:980px; margin:0 auto; padding:0 20px}
+
+  /* Header */
+  header.top{
+    border-bottom:1px solid var(--line);
+    background:linear-gradient(180deg,var(--surface), var(--surface-2));
+  }
+  .top-inner{padding:34px 0 26px; position:relative}
+  .theme-toggle{
+    position:absolute; top:18px; right:0;
+    display:inline-flex; align-items:center; gap:7px;
+    font-family:var(--mono); font-size:12px; font-weight:600; letter-spacing:.03em;
+    color:var(--ink-soft); background:var(--surface); border:1px solid var(--line-strong);
+    padding:7px 12px; border-radius:100px; cursor:pointer; transition:.15s; line-height:1;
+  }
+  .theme-toggle:hover{color:var(--ink); border-color:var(--accent)}
+  .theme-toggle:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+  .theme-toggle .tt-ic{display:inline-flex}
+  .theme-toggle svg{display:block}
+  .eyebrow{
+    font-family:var(--mono); font-size:12px; letter-spacing:.16em;
+    text-transform:uppercase; color:var(--accent); font-weight:600; margin:0 0 10px;
+  }
+  h1.title{
+    font-size:clamp(28px,4.4vw,40px); line-height:1.08; margin:0 0 12px;
+    font-weight:800; letter-spacing:-.02em;
+  }
+  .subtitle{color:var(--ink-soft); max-width:62ch; margin:0; font-size:16px}
+  .meta-row{display:flex; flex-wrap:wrap; gap:8px; margin-top:18px}
+  .chip{
+    font-family:var(--mono); font-size:11.5px; letter-spacing:.04em;
+    background:var(--surface); border:1px solid var(--line-strong); color:var(--ink-soft);
+    padding:5px 10px; border-radius:100px;
+  }
+  .chip b{color:var(--ink); font-weight:600}
+
+  /* Nav tabs */
+  nav.tabs{position:sticky; top:0; z-index:30; background:var(--nav-bg); backdrop-filter:blur(8px); border-bottom:1px solid var(--line)}
+  .tabs-inner{display:flex; gap:4px; overflow-x:auto; padding:8px 20px; max-width:980px; margin:0 auto}
+  .tab-btn{
+    appearance:none; border:1px solid transparent; background:transparent; cursor:pointer;
+    font-family:var(--sans); font-size:14px; font-weight:600; color:var(--ink-soft);
+    padding:8px 14px; border-radius:100px; white-space:nowrap; transition:.15s;
+  }
+  .tab-btn:hover{color:var(--ink); background:var(--surface)}
+  .tab-btn[aria-selected="true"]{background:var(--sel-bg); color:var(--sel-ink)}
+  .tab-btn:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+
+  main{padding:32px 0 80px}
+  .panel{display:none; animation:fade .25s ease}
+  .panel.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){.panel{animation:none} html{scroll-behavior:auto}}
+
+  h2.sec{font-size:24px; letter-spacing:-.01em; margin:0 0 6px; font-weight:800}
+  .sec-sub{color:var(--ink-soft); margin:0 0 22px; max-width:68ch}
+  h3.block{font-size:16px; font-family:var(--mono); letter-spacing:.02em; color:var(--accent-ink); margin:30px 0 12px; text-transform:uppercase; font-weight:600; font-size:13px}
+
+  .card{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:22px 24px; margin:0 0 16px}
+  .card.tight{padding:16px 18px}
+
+  /* Diagnosis protocol steps */
+  ol.protocol{list-style:none; counter-reset:step; margin:0; padding:0}
+  ol.protocol > li{counter-increment:step; position:relative; padding:0 0 18px 52px; margin:0}
+  ol.protocol > li::before{
+    content:counter(step); position:absolute; left:0; top:0;
+    width:34px; height:34px; border-radius:9px; background:var(--accent-wash); color:var(--accent-ink);
+    font-family:var(--mono); font-weight:700; font-size:15px; display:grid; place-items:center; border:1px solid var(--info-border);
+  }
+  ol.protocol > li:not(:last-child)::after{content:""; position:absolute; left:16px; top:38px; bottom:6px; width:2px; background:var(--line)}
+  ol.protocol h4{margin:4px 0 4px; font-size:16px}
+  ol.protocol p{margin:0; color:var(--ink-soft); font-size:15px}
+
+  /* Tables */
+  .table-scroll{overflow-x:auto; border:1px solid var(--line); border-radius:var(--radius)}
+  table{border-collapse:collapse; width:100%; font-size:14.5px; min-width:540px}
+  th,td{text-align:left; padding:11px 14px; border-bottom:1px solid var(--line); vertical-align:top}
+  thead th{background:var(--surface-2); font-size:12px; text-transform:uppercase; letter-spacing:.04em; color:var(--ink-soft); font-weight:700}
+  tbody tr:last-child td{border-bottom:none}
+  td code, th code{font-family:var(--mono); font-size:13px; background:var(--code-inline-bg); padding:1px 6px; border-radius:5px; color:var(--accent-ink)}
+  .num{font-family:var(--mono); white-space:nowrap}
+
+  /* Signal -> pattern grid */
+  .signal-grid{display:grid; grid-template-columns:1fr; gap:0; border:1px solid var(--line); border-radius:var(--radius); overflow:hidden}
+  .signal-row{display:grid; grid-template-columns:1fr auto; gap:14px; align-items:center; padding:13px 16px; border-bottom:1px solid var(--line)}
+  .signal-row:last-child{border-bottom:none}
+  .signal-row:nth-child(even){background:var(--surface-2)}
+  .signal-text{font-size:14.5px; color:var(--ink)}
+  .pat-tag{font-family:var(--mono); font-size:12px; font-weight:600; background:var(--accent-wash); color:var(--accent-ink); padding:5px 11px; border-radius:100px; white-space:nowrap; border:1px solid var(--tag-border)}
+
+  /* Code */
+  pre{background:var(--code-bg); color:var(--code-ink); border-radius:var(--radius-sm); padding:16px 18px; overflow-x:auto; margin:12px 0; font-size:13.5px; line-height:1.62; border:1px solid #1e293b}
+  pre code{font-family:var(--mono)}
+  .k{color:var(--code-key)} .s{color:var(--code-str)} .n{color:var(--code-num)} .c{color:var(--code-com)} .f{color:var(--code-fn)}
+  p code, li code{font-family:var(--mono); font-size:13.5px; background:var(--code-inline-bg); padding:1px 6px; border-radius:5px; color:var(--accent-ink)}
+
+  /* Pattern cards (Phase 1) */
+  details.pat{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); margin:0 0 12px; overflow:hidden}
+  details.pat[open]{border-color:var(--line-strong); box-shadow:0 1px 3px rgba(16,32,46,.05)}
+  details.pat > summary{
+    list-style:none; cursor:pointer; padding:16px 20px; display:flex; align-items:center; gap:14px;
+    font-weight:700; font-size:17px; user-select:none;
+  }
+  details.pat > summary::-webkit-details-marker{display:none}
+  summary .idx{font-family:var(--mono); font-size:13px; color:var(--on-accent); background:var(--accent-fill); width:30px; height:30px; border-radius:8px; display:grid; place-items:center; flex:none; font-weight:700}
+  summary .tier{margin-left:auto; font-family:var(--mono); font-size:11px; letter-spacing:.05em; padding:4px 9px; border-radius:100px; text-transform:uppercase; font-weight:600}
+  .tier-1{background:var(--easy-wash); color:var(--easy)}
+  .tier-2{background:var(--med-wash); color:var(--med)}
+  .tier-3{background:var(--hard-wash); color:var(--hard)}
+  summary .caret{flex:none; color:var(--ink-faint); transition:transform .2s}
+  details.pat[open] summary .caret{transform:rotate(90deg)}
+  .pat-body{padding:2px 20px 20px; border-top:1px solid var(--line)}
+  .pat-body h5{margin:18px 0 6px; font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:var(--accent-ink); font-family:var(--mono); font-weight:600}
+  .pat-body h5:first-child{margin-top:14px}
+  .trigger-list{margin:0; padding-left:18px}
+  .trigger-list li{margin:4px 0; color:var(--ink)}
+  .bigo{display:inline-flex; gap:16px; flex-wrap:wrap; font-family:var(--mono); font-size:13px; background:var(--surface-2); border:1px solid var(--line); border-radius:8px; padding:9px 14px; margin-top:4px}
+  .bigo b{color:var(--accent-ink)}
+  .pitfall{background:var(--hard-wash); border-left:3px solid var(--hard); border-radius:6px; padding:10px 14px; font-size:14px; margin-top:8px; color:var(--pitfall-ink)}
+
+  /* Problem lists (Phase 2 / 3) */
+  .pgroup{margin:0 0 26px}
+  .pgroup-h{display:flex; align-items:center; gap:10px; margin:0 0 10px}
+  .pgroup-h .pat-tag{font-size:13px}
+  .pgroup-h .count{font-family:var(--mono); font-size:12px; color:var(--ink-faint)}
+  .prob{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-sm); padding:14px 16px; margin:0 0 8px}
+  .prob-top{display:flex; align-items:baseline; gap:10px; flex-wrap:wrap}
+  .prob-name{font-weight:700; font-size:15.5px}
+  .prob-name a{color:var(--ink); text-decoration:none; border-bottom:1.5px solid var(--accent-wash)}
+  .prob-name a:hover{border-bottom-color:var(--accent)}
+  .diff{font-family:var(--mono); font-size:10.5px; letter-spacing:.05em; padding:3px 8px; border-radius:100px; text-transform:uppercase; font-weight:700; flex:none}
+  .d-easy{background:var(--easy-wash); color:var(--easy)} .d-med{background:var(--med-wash); color:var(--med)} .d-hard{background:var(--hard-wash); color:var(--hard)}
+  .src{font-family:var(--mono); font-size:11px; color:var(--ink-faint); margin-left:auto}
+  .hint{color:var(--ink-soft); font-size:14px; margin:8px 0 0}
+  .hint b{color:var(--accent-ink); font-weight:600}
+  details.reveal{margin-top:8px}
+  details.reveal summary{cursor:pointer; font-family:var(--mono); font-size:12.5px; color:var(--accent); font-weight:600; list-style:none; display:inline-flex; align-items:center; gap:6px}
+  details.reveal summary::-webkit-details-marker{display:none}
+  details.reveal summary::before{content:"▸"; transition:.2s}
+  details.reveal[open] summary::before{transform:rotate(90deg)}
+  .reveal-body{margin-top:8px; padding:10px 14px; background:var(--surface-2); border:1px dashed var(--line-strong); border-radius:8px; font-size:14px; color:var(--ink-soft)}
+  .reveal-body b{color:var(--ink)}
+
+  .callout{border-radius:var(--radius); padding:16px 18px; margin:16px 0; font-size:14.5px; border:1px solid}
+  .callout.info{background:var(--accent-wash); border-color:var(--info-border); color:var(--accent-ink)}
+  .callout.warn{background:var(--med-wash); border-color:var(--warn-border); color:var(--warn-ink)}
+  .callout p{margin:0}
+  .callout p + p{margin-top:8px}
+
+  .schedule{display:grid; gap:10px}
+  .day{display:grid; grid-template-columns:auto 1fr; gap:16px; background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-sm); padding:14px 16px}
+  .day-tag{font-family:var(--mono); font-weight:700; font-size:13px; color:var(--on-accent); background:var(--accent-fill); padding:6px 10px; border-radius:8px; height:fit-content; white-space:nowrap}
+  .day-body{font-size:14.5px}
+  .day-body b{color:var(--ink)}
+  .day-body span{color:var(--ink-soft)}
+
+  footer{border-top:1px solid var(--line); padding:24px 0 40px; color:var(--ink-faint); font-size:13px}
+  a.link{color:var(--accent); font-weight:600; text-decoration:none; border-bottom:1.5px solid var(--accent-wash)}
+  a.link:hover{border-bottom-color:var(--accent)}
+  .lead-num{font-family:var(--mono); color:var(--accent); font-weight:700}
+
+  @media print{
+    nav.tabs{display:none} .panel{display:block!important} pre{white-space:pre-wrap}
+    body{background:#fff} .card,details.pat,.prob{break-inside:avoid}
+  }
+  @media (max-width:560px){
+    .day{grid-template-columns:1fr} ol.protocol > li{padding-left:46px}
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap top-inner">
+    <button id="themeToggle" class="theme-toggle" type="button" aria-label="Toggle dark mode" aria-pressed="false" onclick="toggleTheme()"><span class="tt-ic"></span><span class="tt-label">Dark</span></button>
+    <p class="eyebrow">TCS Coding Round · 7-Day Plan</p>
+    <h1 class="title">Pattern Recognition for Coding Challenges</h1>
+    <p class="subtitle">The skill being trained here is not "knowing patterns" — it is reading an unseen problem and mapping its signals to the right pattern under a clock. Phase&nbsp;1 builds the vocabulary. Phases&nbsp;2 and&nbsp;3 build the reflex.</p>
+    <div class="meta-row">
+      <span class="chip"><b>Target:</b> easy → medium + a few hard</span>
+      <span class="chip"><b>Language:</b> Java</span>
+      <span class="chip"><b>Format:</b> single problem, timed, exact output</span>
+      <span class="chip"><b>Patterns:</b> 14, tiered</span>
+    </div>
+  </div>
+</header>
+
+<nav class="tabs" aria-label="Sections">
+  <div class="tabs-inner" role="tablist">
+    <button class="tab-btn" role="tab" aria-selected="true" data-tab="start">Start Here</button>
+    <button class="tab-btn" role="tab" aria-selected="false" data-tab="p1">Phase 1 · Theory</button>
+    <button class="tab-btn" role="tab" aria-selected="false" data-tab="p2">Phase 2 · Guided</button>
+    <button class="tab-btn" role="tab" aria-selected="false" data-tab="p3">Phase 3 · Solo</button>
+  </div>
+</nav>
+
+<main>
+<div class="wrap">
+
+<!-- ============ START HERE ============ -->
+<section class="panel active" id="tab-start" role="tabpanel">
+
+  <h2 class="sec">How to use this</h2>
+  <p class="sec-sub">Read this tab once before anything else. The diagnosis protocol and the two lookup tables below are the actual product — the patterns in Phase 1 are downstream of them.</p>
+
+  <div class="callout info">
+    <p><b>What TCS's coding round actually tests.</b> For experienced Java hires it is typically one problem in a fixed window (often ~20–30 min), with limited compile attempts, where you write the whole program and print <i>exact</i> output. The bar is correct, working, edge-case-clean code on an easy/medium problem — not exotic algorithms. Optimize for: reading the constraints, picking the pattern fast, and not wasting compiles on I/O or formatting bugs.</p>
+  </div>
+
+  <h3 class="block">The diagnosis protocol — run this on every problem</h3>
+  <div class="card">
+    <ol class="protocol">
+      <li>
+        <h4>Characterize the input</h4>
+        <p>Array / string / tree / graph / intervals / linked list? Is it <b>sorted</b>? What is the size bound <code>n</code>? The size alone narrows the pattern before you read the prose (see the complexity table below).</p>
+      </li>
+      <li>
+        <h4>Characterize the ask</h4>
+        <p>Exist / find one? <b>Count</b> how many? <b>Optimize</b> (max / min / longest / shortest)? <b>Enumerate all</b> arrangements? <b>Shortest path</b>? Each verb maps to a small family of patterns.</p>
+      </li>
+      <li>
+        <h4>Write brute force, name its bottleneck</h4>
+        <p>State the obvious O(n²) or exponential solution in one line, then name what makes it slow. The pattern almost always exists to <i>kill that specific bottleneck</i>: nested loop searching for a complement → hashing; recomputing a range sum → prefix sum; linear scan on sorted data → binary search; recomputing the same subproblem → memoize.</p>
+      </li>
+      <li>
+        <h4>Map signal → pattern, then check the precondition</h4>
+        <p>Use the cheat sheet below to get a candidate. Then verify its precondition holds — two pointers needs sortedness or a monotonic property; binary-search-on-answer needs the feasibility function to be monotonic. If the precondition fails, the pattern is wrong.</p>
+      </li>
+    </ol>
+  </div>
+
+  <h3 class="block">Read the constraints first — size implies the pattern</h3>
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>Input size <code>n</code></th><th>Largest feasible complexity</th><th>What it implies</th></tr></thead>
+      <tbody>
+        <tr><td class="num">n ≤ 11</td><td class="num">O(n!)</td><td>Permutations / full backtracking</td></tr>
+        <tr><td class="num">n ≤ 20</td><td class="num">O(2ⁿ)</td><td>Subsets / bitmask DP</td></tr>
+        <tr><td class="num">n ≤ 500</td><td class="num">O(n³)</td><td>Triple loop / some 2D DP</td></tr>
+        <tr><td class="num">n ≤ 5,000</td><td class="num">O(n²)</td><td>Nested loop / 2D DP</td></tr>
+        <tr><td class="num">n ≤ 10⁶</td><td class="num">O(n log n)</td><td>Sort + scan / heap / binary search</td></tr>
+        <tr><td class="num">n ≤ 10⁸</td><td class="num">O(n)</td><td>Single pass / two pointers / sliding window / hashing</td></tr>
+        <tr><td class="num">n &gt; 10⁸</td><td class="num">O(log n) or O(1)</td><td>Binary search / math / closed form</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="hint" style="margin-top:10px">Worked example of the inference: "array of 10⁵ integers, find the longest subarray summing to ≤ K" — 10⁵ rules out O(n²), so you need O(n) or O(n log n). "Contiguous" + "longest under a constraint" → sliding window. You've narrowed it before reading a single example.</p>
+
+  <h3 class="block">Signal → pattern cheat sheet</h3>
+  <div class="signal-grid">
+    <div class="signal-row"><span class="signal-text">Unsorted; "find a pair / has it appeared / count occurrences / group by / dedup / anagram"</span><span class="pat-tag">Hashing</span></div>
+    <div class="signal-row"><span class="signal-text">Sorted array; pair/triplet to a target, in-place partition, palindrome check from both ends</span><span class="pat-tag">Two Pointers</span></div>
+    <div class="signal-row"><span class="signal-text">Contiguous subarray/substring; longest / shortest / max / min satisfying a condition</span><span class="pat-tag">Sliding Window</span></div>
+    <div class="signal-row"><span class="signal-text">Many range-sum queries; "subarray summing to K / divisible by K"; running totals</span><span class="pat-tag">Prefix Sum</span></div>
+    <div class="signal-row"><span class="signal-text">Sorted input + O(log n) demanded; OR "minimize the max / maximize the min / smallest X that works"</span><span class="pat-tag">Binary Search</span></div>
+    <div class="signal-row"><span class="signal-text">Sort unlocks an obvious local choice; "max non-overlapping / min removals / earliest deadline"</span><span class="pat-tag">Sort + Greedy</span></div>
+    <div class="signal-row"><span class="signal-text">Matching / nesting brackets; "nearest greater / smaller element"; evaluate expression; undo</span><span class="pat-tag">Stack</span></div>
+    <div class="signal-row"><span class="signal-text">Reverse / reorder / detect cycle / find middle / kth-from-end in a linked list</span><span class="pat-tag">LL Two-Pointer</span></div>
+    <div class="signal-row"><span class="signal-text">Tree "level by level / width / right-side view" → BFS; "path / depth / validate / LCA / sum" → DFS</span><span class="pat-tag">Tree DFS/BFS</span></div>
+    <div class="signal-row"><span class="signal-text">"Return ALL combinations / permutations / subsets / valid arrangements"; small n (≤ ~20)</span><span class="pat-tag">Backtracking</span></div>
+    <div class="signal-row"><span class="signal-text">Overlapping ranges; merge / insert; "minimum rooms / max concurrent / scheduling"</span><span class="pat-tag">Intervals</span></div>
+    <div class="signal-row"><span class="signal-text">"Top / smallest / closest K"; "merge K sorted"; streaming median; repeatedly pull min/max</span><span class="pat-tag">Heap</span></div>
+    <div class="signal-row"><span class="signal-text">"Count the ways / min cost / can you reach-or-partition"; choices + overlapping subproblems</span><span class="pat-tag">Dynamic Programming</span></div>
+    <div class="signal-row"><span class="signal-text">Grid or graph; "connected regions / components"; shortest steps in unweighted graph; dependency order</span><span class="pat-tag">Graph BFS/DFS</span></div>
+  </div>
+
+  <h3 class="block">Java I/O boilerplate — memorize this cold</h3>
+  <p class="sec-sub" style="margin-bottom:8px">The TCS compiler round penalizes formatting/I/O mistakes and limits your compiles. <code>Scanner</code> is fine for tiny inputs but slow; <code>BufferedReader</code> is the safe default. Print with a <code>StringBuilder</code> to avoid per-line flush cost and stray characters.</p>
+  <pre><code><span class="k">import</span> java.util.*;
+<span class="k">import</span> java.io.*;
+
+<span class="k">public class</span> <span class="f">Main</span> {
+    <span class="k">public static void</span> <span class="f">main</span>(String[] args) <span class="k">throws</span> IOException {
+        BufferedReader br = <span class="k">new</span> BufferedReader(<span class="k">new</span> InputStreamReader(System.in));
+        <span class="k">int</span> n = Integer.parseInt(br.readLine().trim());        <span class="c">// first line: count</span>
+        StringTokenizer st = <span class="k">new</span> StringTokenizer(br.readLine()); <span class="c">// second line: the values</span>
+        <span class="k">int</span>[] a = <span class="k">new</span> <span class="k">int</span>[n];
+        <span class="k">for</span> (<span class="k">int</span> i = <span class="n">0</span>; i &lt; n; i++) a[i] = Integer.parseInt(st.nextToken());
+
+        StringBuilder sb = <span class="k">new</span> StringBuilder();
+        <span class="c">// ... compute, then: sb.append(result).append('\n');</span>
+        System.out.print(sb);                                  <span class="c">// print() not println(): no extra trailing newline</span>
+    }
+}</code></pre>
+
+  <h3 class="block">7-day schedule (adjust to your hours)</h3>
+  <div class="schedule">
+    <div class="day"><span class="day-tag">Day 1</span><div class="day-body"><b>Tier 1 theory + reps.</b> <span>Read Phase 1 patterns 1–4 (Hashing, Two Pointers, Sliding Window, Prefix Sum). Type each template once from scratch. Then 3 Phase-2 problems across them.</span></div></div>
+    <div class="day"><span class="day-tag">Day 2</span><div class="day-body"><b>Tier 1 continued.</b> <span>Patterns 5–7 (Binary Search incl. on-answer, Sort+Greedy, Stack incl. monotonic). 3–4 Phase-2 problems.</span></div></div>
+    <div class="day"><span class="day-tag">Day 3</span><div class="day-body"><b>Tier 2.</b> <span>Patterns 8–10 (Linked List, Trees, Backtracking). 3–4 Phase-2 problems. These show up constantly; don't skip.</span></div></div>
+    <div class="day"><span class="day-tag">Day 4</span><div class="day-body"><b>Tier 2/3.</b> <span>Patterns 11–14 (Intervals, Heap, DP-1D, Graph BFS/DFS). 3–4 Phase-2 problems. DP/graphs = awareness depth, not mastery.</span></div></div>
+    <div class="day"><span class="day-tag">Day 5</span><div class="day-body"><b>Recognition drill.</b> <span>Phase-2 catch-up, then start Phase 3 with the pattern hidden. 25-min timer per problem; only open the reveal after you've committed to an approach.</span></div></div>
+    <div class="day"><span class="day-tag">Day 6</span><div class="day-body"><b>Full simulation.</b> <span>Phase 3 mediums + first hards under TCS conditions: one problem, timer, full program with stdin parsing and exact output, treat compiles as scarce.</span></div></div>
+    <div class="day"><span class="day-tag">Day 7</span><div class="day-body"><b>Consolidate + rest.</b> <span>Re-derive all 14 templates from memory (this is the recognition test). Redo 2–3 problems you missed. Stop early; arrive fresh.</span></div></div>
+  </div>
+
+  <div class="callout warn">
+    <p><b>If your week is shorter than 7 days,</b> cut from the bottom of the tier list, never the top. Tier-1 patterns (1–7) cover the majority of easy/medium problems and are the highest expected value. Drop DP and graphs to "can recognize + recall the template" before you drop anything in Tier 1.</p>
+  </div>
+
+  <p class="hint" style="margin-top:18px">More volume by pattern: HackerRank's <a class="link" href="https://www.hackerrank.com/interview/interview-preparation-kit" target="_blank" rel="noopener">Interview Preparation Kit</a> is organized into these same categories (Arrays, Dictionaries &amp; Hashmaps, Sorting, Search, Greedy, DP, Stacks/Queues, Trees, Graphs). Use it when you exhaust the lists here.</p>
+
+</section>
+
+<!-- ============ PHASE 1 ============ -->
+<section class="panel" id="tab-p1" role="tabpanel">
+  <h2 class="sec">Phase 1 — Theory &amp; templates</h2>
+  <p class="sec-sub">Do <b>not</b> solve these. Read each card, then type the template out once from a blank file so your hands know it. Each card gives the recognition triggers (what to look for), the template, one worked example, complexity, and the pitfall that costs people the problem. Tier badge = priority.</p>
+
+  <!-- 1 Hashing -->
+  <details class="pat" open>
+    <summary><span class="idx">1</span> Hashing — frequency &amp; lookup<span class="tier tier-1">Tier 1</span><span class="caret">▸</span></summary>
+    <div class="pat-body">
+      <h5>Recognize when</h5>
+      <ul class="trigger-list">
+        <li>You need "has this value/complement appeared before?" → trade memory for time, drop a nested loop to O(n).</li>
+        <li>Counting occurrences, deduping, grouping by a key, anagram checks (count letters).</li>
+      </ul>
+      <h5>Worked example — Two Sum (unsorted, return indices)</h5>
+      <pre><code><span class="k">int</span>[] <span class="f">twoSum</span>(<span class="k">int</span>[] nums, <span class="k">int</span> target) {
+    Map&lt;Integer,Integer&gt; seen = <span class="k">new</span> HashMap&lt;&gt;();      <span class="c">// value -&gt; index</span>
+    <span class="k">for</span> (<span class="k">int</span> i = <span class="n">0</span>; i &lt; nums.length; i++) {
+        <span class="k">int</span> need = target - nums[i];
+        <span class="k">if</span> (seen.containsKey(need)) <span class="k">return</span> <span class="k">new</span> <span class="k">int</span>[]{seen.get(need), i};
+        seen.put(nums[i], i);
+    }
+    <span class="k">return</span> <span class="k">new</span> <span class="k">int</span>[]{-<span class="n">1</span>,-<span class="n">1</span>};
+}</code></pre>
+      <h5>Why it works</h5>
+      <p style="color:var(--ink-soft);font-size:15px;margin:0">The brute force checks every pair (O(n²)). Instead of re-searching for the complement each time, you remember every value you've seen in a map; the lookup is O(1), so the whole scan is O(n).</p>
+      <h5>Complexity</h5>
+      <div class="bigo"><span>Time <b>O(n)</b></span><span>Space <b>O(n)</b></span></div>
+      <div class="pitfall"><b>Pitfall:</b> put the current value into the map <i>after</i> checking for its complement, or you'll match an element with itself.</div>
+    </div>
+  </details>
+
+  <!-- 2 Two pointers -->
+  <details class="pat">
+    <summary><span class="idx">2</span> Two Pointers<span class="tier tier-1">Tier 1</span><span class="caret">▸</span></summary>
+    <div class="pat-body">
+      <h5>Recognize when</h5>
+      <ul class="trigger-list">
+        <li>Input is <b>sorted</b> (or you can sort it) and you want a pair/triplet meeting a target.</li>
+        <li>Comparing from both ends (palindrome, container area), or partitioning in place.</li>
+        <li>Two sequences merged in order; or a slow/fast pair to drop duplicates.</li>
+      </ul>
+      <h5>Worked example — pair sum in a sorted array</h5>
+      <pre><code><span class="k">int</span>[] <span class="f">pairSum</span>(<span class="k">int</span>[] a, <span class="k">int</span> target) {   <span class="c">// a is sorted ascending</span>
+    <span class="k">int</span> lo = <span class="n">0</span>, hi = a.length - <span class="n">1</span>;
+    <span class="k">while</span> (lo &lt; hi) {
+        <span class="k">int</span> sum = a[lo] + a[hi];
+        <span class="k">if</span> (sum == target) <span class="k">return</span> <span class="k">new</span> <span class="k">int</span>[]{lo, hi};
+        <span class="k">if</span> (sum &lt; target) lo++;            <span class="c">// need bigger -&gt; move left bound up</span>
+        <span class="k">else</span> hi--;                          <span class="c">// need smaller -&gt; move right bound down</span>
+    }
+    <span class="k">return</span> <span class="k">new</span> <span class="k">int</span>[]{-<span class="n">1</span>,-<span class="n">1</span>};
+}</code></pre>
+      <h5>Why it works</h5>
+      <p style="color:var(--ink-soft);font-size:15px;margin:0">Sortedness gives a monotonic relationship: if the sum is too small, the only way to grow it is to raise the low pointer; too big, lower the high pointer. Each step eliminates one element, so it's a single O(n) pass instead of O(n²).</p>
+      <h5>Complexity</h5>
+      <div class="bigo"><span>Time <b>O(n)</b> (plus O(n log n) if you sort)</span><span>Space <b>O(1)</b></span></div>
+      <div class="pitfall"><b>Pitfall:</b> the monotonic argument only holds on sorted data. On unsorted input, use hashing instead.</div>
+    </div>
+  </details>
+
+  <!-- 3 Sliding window -->
+  <details class="pat">
+    <summary><span class="idx">3</span> Sliding Window<span class="tier tier-1">Tier 1</span><span class="caret">▸</span></summary>
+    <div class="pat-body">
+      <h5>Recognize when</h5>
+      <ul class="trigger-list">
+        <li>The answer is a <b>contiguous</b> subarray/substring, and you want longest/shortest/max/min/count under a constraint.</li>
+        <li>Fixed window: "of size k". Variable window: "longest/shortest such that &lt;condition&gt;".</li>
+      </ul>
+      <h5>Worked example — longest substring without repeating characters (variable window)</h5>
+      <pre><code><span class="k">int</span> <span class="f">longestUnique</span>(String s) {
+    Map&lt;Character,Integer&gt; last = <span class="k">new</span> HashMap&lt;&gt;();  <span class="c">// char -&gt; most recent index</span>
+    <span class="k">int</span> start = <span class="n">0</span>, best = <span class="n">0</span>;
+    <span class="k">for</span> (<span class="k">int</span> end = <span class="n">0</span>; end &lt; s.length(); end++) {
+        <span class="k">char</span> c = s.charAt(end);
+        <span class="k">if</span> (last.containsKey(c) &amp;&amp; last.get(c) &gt;= start)
+            start = last.get(c) + <span class="n">1</span>;          <span class="c">// shrink from the left past the duplicate</span>
+        last.put(c, end);
+        best = Math.max(best, end - start + <span class="n">1</span>);  <span class="c">// window length</span>
+    }
+    <span class="k">return</span> best;
+}</code></pre>
+      <h5>Why it works</h5>
+      <p style="color:var(--ink-soft);font-size:15px;margin:0">Both pointers only move forward, so each element enters and leaves the window once → O(n). The window holds the current valid candidate; you grow it on the right and shrink it on the left only when the constraint breaks.</p>
+      <h5>Complexity</h5>
+      <div class="bigo"><span>Time <b>O(n)</b></span><span>Space <b>O(k)</b> (alphabet / window contents)</span></div>
+      <div class="pitfall"><b>Pitfall:</b> when shrinking, only jump <code>start</code> forward — never backward — or you'll re-count characters and the window logic collapses.</div>
+    </div>
+  </details>
+
+  <!-- 4 Prefix sum -->
+  <details class="pat">
+    <summary><span class="idx">4</span> Prefix Sum<span class="tier tier-1">Tier 1</span><span class="caret">▸</span></summary>
+    <div class="pat-body">
+      <h5>Recognize when</h5>
+      <ul class="trigger-list">
+        <li>Repeated range-sum queries, or "subarray summing to K / divisible by K / with property P".</li>
+        <li>Any time you'd otherwise recompute overlapping sums in a loop.</li>
+      </ul>
+      <h5>Worked example — count subarrays summing to K (prefix + hashing)</h5>
+      <pre><code><span class="k">int</span> <span class="f">subarraySumK</span>(<span class="k">int</span>[] nums, <span class="k">int</span> k) {
+    Map&lt;Integer,Integer&gt; count = <span class="k">new</span> HashMap&lt;&gt;(); <span class="c">// prefixSum -&gt; how many times seen</span>
+    count.put(<span class="n">0</span>, <span class="n">1</span>);                              <span class="c">// empty prefix</span>
+    <span class="k">int</span> sum = <span class="n">0</span>, res = <span class="n">0</span>;
+    <span class="k">for</span> (<span class="k">int</span> n : nums) {
+        sum += n;
+        res += count.getOrDefault(sum - k, <span class="n">0</span>);    <span class="c">// a prior prefix that makes the gap = k</span>
+        count.merge(sum, <span class="n">1</span>, Integer::sum);
+    }
+    <span class="k">return</span> res;
+}</code></pre>
+      <h5>Why it works</h5>
+      <p style="color:var(--ink-soft);font-size:15px;margin:0">Sum of <code>nums[i..j]</code> = prefix[j] − prefix[i−1]. Asking "which subarrays sum to k" becomes "for each prefix, how many earlier prefixes equal <code>sum − k</code>" — an O(1) map lookup per element. This combines two Tier-1 patterns, which is common.</p>
+      <h5>Complexity</h5>
+      <div class="bigo"><span>Time <b>O(n)</b></span><span>Space <b>O(n)</b></span></div>
+      <div class="pitfall"><b>Pitfall:</b> forgetting the <code>count.put(0,1)</code> seed — you'll miss subarrays that start at index 0.</div>
+    </div>
+  </details>
+
+  <!-- 5 Binary search -->
+  <details class="pat">
+    <summary><span class="idx">5</span> Binary Search (array &amp; on answer)<span class="tier tier-1">Tier 1</span><span class="caret">▸</span></summary>
+    <div class="pat-body">
+      <h5>Recognize when</h5>
+      <ul class="trigger-list">
+        <li>Sorted input + find/insert position, or O(log n) is explicitly required.</li>
+        <li><b>On the answer:</b> "minimize the maximum / maximize the minimum / smallest capacity/speed/days such that it works." The feasibility of a candidate answer is monotonic.</li>
+      </ul>
+      <h5>Template A — classic search on a sorted array</h5>
+      <pre><code><span class="k">int</span> <span class="f">search</span>(<span class="k">int</span>[] a, <span class="k">int</span> target) {
+    <span class="k">int</span> lo = <span class="n">0</span>, hi = a.length - <span class="n">1</span>;
+    <span class="k">while</span> (lo &lt;= hi) {
+        <span class="k">int</span> mid = lo + (hi - lo) / <span class="n">2</span>;   <span class="c">// avoids overflow vs (lo+hi)/2</span>
+        <span class="k">if</span> (a[mid] == target) <span class="k">return</span> mid;
+        <span class="k">if</span> (a[mid] &lt; target) lo = mid + <span class="n">1</span>;
+        <span class="k">else</span> hi = mid - <span class="n">1</span>;
+    }
+    <span class="k">return</span> -<span class="n">1</span>;
+}</code></pre>
+      <h5>Template B — binary search on the answer space</h5>
+      <pre><code><span class="c">// smallest x in [lo, hi] for which feasible(x) is true; feasible must be monotonic</span>
+<span class="k">int</span> <span class="f">minFeasible</span>(<span class="k">int</span> lo, <span class="k">int</span> hi) {
+    <span class="k">while</span> (lo &lt; hi) {
+        <span class="k">int</span> mid = lo + (hi - lo) / <span class="n">2</span>;
+        <span class="k">if</span> (feasible(mid)) hi = mid;        <span class="c">// mid works -&gt; answer is mid or smaller</span>
+        <span class="k">else</span> lo = mid + <span class="n">1</span>;                 <span class="c">// mid fails -&gt; need bigger</span>
+    }
+    <span class="k">return</span> lo;
+}</code></pre>
+      <h5>Why it works</h5>
+      <p style="color:var(--ink-soft);font-size:15px;margin:0">Each step halves the search space. The leap most people miss: the "space" doesn't have to be an array index — it can be the range of possible answers (e.g. eating speeds from 1 to max pile). If "answer x works ⇒ every x′ &gt; x also works," the boolean is sorted and binary search applies.</p>
+      <h5>Complexity</h5>
+      <div class="bigo"><span>Time <b>O(log n)</b> · on-answer <b>O(n log(range))</b></span><span>Space <b>O(1)</b></span></div>
+      <div class="pitfall"><b>Pitfall:</b> off-by-one infinite loops. Pick one template and keep its invariant straight: <code>lo &lt;= hi</code> with <code>mid±1</code> for exact-match; <code>lo &lt; hi</code> with <code>hi = mid</code> for boundary-finding.</div>
+    </div>
+  </details>
+
+  <!-- 6 Sort + greedy -->
+  <details class="pat">
+    <summary><span class="idx">6</span> Sort + Greedy<span class="tier tier-1">Tier 1</span><span class="caret">▸</span></summary>
+    <div class="pat-body">
+      <h5>Recognize when</h5>
+      <ul class="trigger-list">
+        <li>Sorting first makes a locally-optimal choice obvious and safe.</li>
+        <li>"Maximum number of non-overlapping", "minimum to remove", "earliest deadline", "assign smallest that fits".</li>
+      </ul>
+      <h5>Worked example — max non-overlapping intervals (activity selection)</h5>
+      <pre><code><span class="k">int</span> <span class="f">maxNonOverlapping</span>(<span class="k">int</span>[][] intervals) {
+    Arrays.sort(intervals, (x, y) -&gt; x[<span class="n">1</span>] - y[<span class="n">1</span>]);   <span class="c">// by END time, ascending</span>
+    <span class="k">int</span> count = <span class="n">0</span>, lastEnd = Integer.MIN_VALUE;
+    <span class="k">for</span> (<span class="k">int</span>[] iv : intervals) {
+        <span class="k">if</span> (iv[<span class="n">0</span>] &gt;= lastEnd) {          <span class="c">// starts after the last one we kept ends</span>
+            count++;
+            lastEnd = iv[<span class="n">1</span>];
+        }
+    }
+    <span class="k">return</span> count;
+}</code></pre>
+      <h5>Why it works</h5>
+      <p style="color:var(--ink-soft);font-size:15px;margin:0">Picking the interval that <i>ends earliest</i> leaves the most room for the rest — a provably optimal greedy choice. The danger with greedy is that the local choice isn't always safe; the sort key is what makes it safe here.</p>
+      <h5>Complexity</h5>
+      <div class="bigo"><span>Time <b>O(n log n)</b></span><span>Space <b>O(1)</b></span></div>
+      <div class="pitfall"><b>Pitfall:</b> sorting by start time instead of end time. It feels natural and is wrong — it can pick a long early interval that blocks several short ones.</div>
+    </div>
+  </details>
+
+  <!-- 7 Stack -->
+  <details class="pat">
+    <summary><span class="idx">7</span> Stack (matching &amp; monotonic)<span class="tier tier-1">Tier 1</span><span class="caret">▸</span></summary>
+    <div class="pat-body">
+      <h5>Recognize when</h5>
+      <ul class="trigger-list">
+        <li>Brackets / nesting / "valid sequence"; evaluating expressions; an undo-style most-recent-first need.</li>
+        <li><b>Monotonic stack:</b> "next/previous greater or smaller element", "how far until a taller bar".</li>
+      </ul>
+      <h5>Worked example A — valid parentheses</h5>
+      <pre><code><span class="k">boolean</span> <span class="f">isValid</span>(String s) {
+    Deque&lt;Character&gt; st = <span class="k">new</span> ArrayDeque&lt;&gt;();
+    Map&lt;Character,Character&gt; pair = Map.of(<span class="s">')'</span>,<span class="s">'('</span>, <span class="s">']'</span>,<span class="s">'['</span>, <span class="s">'}'</span>,<span class="s">'{'</span>);
+    <span class="k">for</span> (<span class="k">char</span> c : s.toCharArray()) {
+        <span class="k">if</span> (pair.containsKey(c)) {           <span class="c">// a closing bracket</span>
+            <span class="k">if</span> (st.isEmpty() || st.pop() != pair.get(c)) <span class="k">return</span> <span class="k">false</span>;
+        } <span class="k">else</span> st.push(c);                  <span class="c">// an opening bracket</span>
+    }
+    <span class="k">return</span> st.isEmpty();
+}</code></pre>
+      <h5>Worked example B — next greater element (monotonic stack)</h5>
+      <pre><code><span class="k">int</span>[] <span class="f">nextGreater</span>(<span class="k">int</span>[] a) {
+    <span class="k">int</span>[] res = <span class="k">new</span> <span class="k">int</span>[a.length];
+    Arrays.fill(res, -<span class="n">1</span>);
+    Deque&lt;Integer&gt; st = <span class="k">new</span> ArrayDeque&lt;&gt;();   <span class="c">// holds INDICES, values decreasing</span>
+    <span class="k">for</span> (<span class="k">int</span> i = <span class="n">0</span>; i &lt; a.length; i++) {
+        <span class="k">while</span> (!st.isEmpty() &amp;&amp; a[st.peek()] &lt; a[i])
+            res[st.pop()] = a[i];            <span class="c">// a[i] is the answer for everything smaller below it</span>
+        st.push(i);
+    }
+    <span class="k">return</span> res;
+}</code></pre>
+      <h5>Why it works</h5>
+      <p style="color:var(--ink-soft);font-size:15px;margin:0">A stack captures "most recent unresolved thing". For brackets, the top is the only opener a closer can legally match. For the monotonic version, each index is pushed and popped once → O(n), and the stack invariant guarantees the first taller element you meet is the true "next greater".</p>
+      <h5>Complexity</h5>
+      <div class="bigo"><span>Time <b>O(n)</b></span><span>Space <b>O(n)</b></span></div>
+      <div class="pitfall"><b>Pitfall:</b> use <code>ArrayDeque</code>, not the legacy <code>java.util.Stack</code> (synchronized, slower). And in Java, <code>st.pop() != pair.get(c)</code> compares <code>Character</code> objects — fine for the small cached range, but prefer <code>!Objects.equals(...)</code> or unbox explicitly if values can exceed 127.</div>
+    </div>
+  </details>
+
+  <!-- 8 Linked list -->
+  <details class="pat">
+    <summary><span class="idx">8</span> Linked List Two-Pointer<span class="tier tier-2">Tier 2</span><span class="caret">▸</span></summary>
+    <div class="pat-body">
+      <h5>Recognize when</h5>
+      <ul class="trigger-list">
+        <li>Reverse / reorder a list; detect a cycle; find the middle; find the kth node from the end.</li>
+        <li>A <b>dummy head</b> node simplifies edge cases when the head itself may change.</li>
+      </ul>
+      <h5>Worked example A — reverse a linked list</h5>
+      <pre><code>ListNode <span class="f">reverse</span>(ListNode head) {
+    ListNode prev = <span class="k">null</span>, cur = head;
+    <span class="k">while</span> (cur != <span class="k">null</span>) {
+        ListNode next = cur.next;   <span class="c">// save before we overwrite</span>
+        cur.next = prev;            <span class="c">// flip the pointer</span>
+        prev = cur;                 <span class="c">// advance both</span>
+        cur = next;
+    }
+    <span class="k">return</span> prev;                    <span class="c">// new head</span>
+}</code></pre>
+      <h5>Worked example B — cycle detection (Floyd's tortoise &amp; hare)</h5>
+      <pre><code><span class="k">boolean</span> <span class="f">hasCycle</span>(ListNode head) {
+    ListNode slow = head, fast = head;
+    <span class="k">while</span> (fast != <span class="k">null</span> &amp;&amp; fast.next != <span class="k">null</span>) {
+        slow = slow.next;           <span class="c">// +1</span>
+        fast = fast.next.next;      <span class="c">// +2</span>
+        <span class="k">if</span> (slow == fast) <span class="k">return</span> <span class="k">true</span>;  <span class="c">// they meet iff there's a cycle</span>
+    }
+    <span class="k">return</span> <span class="k">false</span>;
+}</code></pre>
+      <h5>Why it works</h5>
+      <p style="color:var(--ink-soft);font-size:15px;margin:0">Reversal is pure pointer bookkeeping — the only trick is caching <code>next</code> before you clobber it. The fast/slow trick works because a 2× speed pointer laps a 1× pointer inside any loop; the same idea finds the middle (fast hits the end when slow is halfway).</p>
+      <h5>Complexity</h5>
+      <div class="bigo"><span>Time <b>O(n)</b></span><span>Space <b>O(1)</b></span></div>
+      <div class="pitfall"><b>Pitfall:</b> dereferencing <code>fast.next.next</code> without the <code>fast != null &amp;&amp; fast.next != null</code> guard → NullPointerException on even-length lists.</div>
+    </div>
+  </details>
+
+  <!-- 9 Trees -->
+  <details class="pat">
+    <summary><span class="idx">9</span> Tree Traversal (DFS &amp; BFS)<span class="tier tier-2">Tier 2</span><span class="caret">▸</span></summary>
+    <div class="pat-body">
+      <h5>Recognize when</h5>
+      <ul class="trigger-list">
+        <li>"Level by level / width / right-side view / zigzag" → BFS with a queue.</li>
+        <li>"Depth / path sum / validate / lowest common ancestor / mirror" → DFS recursion.</li>
+      </ul>
+      <h5>Worked example A — level-order traversal (BFS)</h5>
+      <pre><code>List&lt;List&lt;Integer&gt;&gt; <span class="f">levelOrder</span>(TreeNode root) {
+    List&lt;List&lt;Integer&gt;&gt; res = <span class="k">new</span> ArrayList&lt;&gt;();
+    <span class="k">if</span> (root == <span class="k">null</span>) <span class="k">return</span> res;
+    Queue&lt;TreeNode&gt; q = <span class="k">new</span> LinkedList&lt;&gt;();
+    q.add(root);
+    <span class="k">while</span> (!q.isEmpty()) {
+        <span class="k">int</span> size = q.size();             <span class="c">// freeze this level's count</span>
+        List&lt;Integer&gt; level = <span class="k">new</span> ArrayList&lt;&gt;();
+        <span class="k">for</span> (<span class="k">int</span> i = <span class="n">0</span>; i &lt; size; i++) {
+            TreeNode node = q.poll();
+            level.add(node.val);
+            <span class="k">if</span> (node.left != <span class="k">null</span>) q.add(node.left);
+            <span class="k">if</span> (node.right != <span class="k">null</span>) q.add(node.right);
+        }
+        res.add(level);
+    }
+    <span class="k">return</span> res;
+}</code></pre>
+      <h5>Worked example B — max depth (DFS recursion)</h5>
+      <pre><code><span class="k">int</span> <span class="f">maxDepth</span>(TreeNode root) {
+    <span class="k">if</span> (root == <span class="k">null</span>) <span class="k">return</span> <span class="n">0</span>;                 <span class="c">// base case</span>
+    <span class="k">return</span> <span class="n">1</span> + Math.max(maxDepth(root.left), maxDepth(root.right));
+}</code></pre>
+      <h5>Why it works</h5>
+      <p style="color:var(--ink-soft);font-size:15px;margin:0">The "freeze <code>q.size()</code> at the top of the loop" trick is what separates levels in BFS. DFS on trees is just recursion with a base case at <code>null</code>; most tree problems reduce to "combine the answers from the left and right subtrees".</p>
+      <h5>Complexity</h5>
+      <div class="bigo"><span>Time <b>O(n)</b></span><span>Space <b>O(width)</b> BFS · <b>O(height)</b> DFS</span></div>
+      <div class="pitfall"><b>Pitfall:</b> deep/skewed trees can blow the recursion stack in DFS; if depth can approach n, convert to an explicit stack.</div>
+    </div>
+  </details>
+
+  <!-- 10 Backtracking -->
+  <details class="pat">
+    <summary><span class="idx">10</span> Recursion &amp; Backtracking<span class="tier tier-2">Tier 2</span><span class="caret">▸</span></summary>
+    <div class="pat-body">
+      <h5>Recognize when</h5>
+      <ul class="trigger-list">
+        <li>"Return / count <b>all</b> combinations / permutations / subsets / valid arrangements / paths."</li>
+        <li>Constraint satisfaction (Sudoku, word search, N-Queens). Small n (the size table says ≤ ~20).</li>
+      </ul>
+      <h5>Worked example — all subsets</h5>
+      <pre><code>List&lt;List&lt;Integer&gt;&gt; <span class="f">subsets</span>(<span class="k">int</span>[] nums) {
+    List&lt;List&lt;Integer&gt;&gt; res = <span class="k">new</span> ArrayList&lt;&gt;();
+    backtrack(nums, <span class="n">0</span>, <span class="k">new</span> ArrayList&lt;&gt;(), res);
+    <span class="k">return</span> res;
+}
+<span class="k">void</span> <span class="f">backtrack</span>(<span class="k">int</span>[] nums, <span class="k">int</span> start, List&lt;Integer&gt; cur, List&lt;List&lt;Integer&gt;&gt; res) {
+    res.add(<span class="k">new</span> ArrayList&lt;&gt;(cur));            <span class="c">// every prefix is a valid subset; copy it</span>
+    <span class="k">for</span> (<span class="k">int</span> i = start; i &lt; nums.length; i++) {
+        cur.add(nums[i]);                     <span class="c">// choose</span>
+        backtrack(nums, i + <span class="n">1</span>, cur, res);     <span class="c">// explore</span>
+        cur.remove(cur.size() - <span class="n">1</span>);          <span class="c">// un-choose (the backtrack)</span>
+    }
+}</code></pre>
+      <h5>Why it works</h5>
+      <p style="color:var(--ink-soft);font-size:15px;margin:0">The shape is always <b>choose → explore → un-choose</b>. The <code>start</code> index prevents revisiting earlier elements (so you get combinations, not duplicates). For permutations you'd track a <code>used[]</code> boolean array instead of <code>start</code>.</p>
+      <h5>Complexity</h5>
+      <div class="bigo"><span>Subsets <b>O(2ⁿ · n)</b> · permutations <b>O(n! · n)</b></span><span>Space <b>O(n)</b> recursion</span></div>
+      <div class="pitfall"><b>Pitfall:</b> adding <code>cur</code> directly to <code>res</code> instead of a copy — every entry then points at the same list that keeps mutating. Always <code>new ArrayList&lt;&gt;(cur)</code>.</div>
+    </div>
+  </details>
+
+  <!-- 11 Intervals -->
+  <details class="pat">
+    <summary><span class="idx">11</span> Intervals (sort + sweep)<span class="tier tier-2">Tier 2</span><span class="caret">▸</span></summary>
+    <div class="pat-body">
+      <h5>Recognize when</h5>
+      <ul class="trigger-list">
+        <li>Ranges that may overlap; merge them, insert one, or count maximum simultaneous overlap.</li>
+        <li>"Minimum meeting rooms", "can attend all meetings", "free time".</li>
+      </ul>
+      <h5>Worked example — merge overlapping intervals</h5>
+      <pre><code><span class="k">int</span>[][] <span class="f">merge</span>(<span class="k">int</span>[][] intervals) {
+    Arrays.sort(intervals, (x, y) -&gt; x[<span class="n">0</span>] - y[<span class="n">0</span>]);    <span class="c">// by START</span>
+    List&lt;<span class="k">int</span>[]&gt; out = <span class="k">new</span> ArrayList&lt;&gt;();
+    <span class="k">for</span> (<span class="k">int</span>[] iv : intervals) {
+        <span class="k">if</span> (out.isEmpty() || out.get(out.size()-<span class="n">1</span>)[<span class="n">1</span>] &lt; iv[<span class="n">0</span>])
+            out.add(iv);                                  <span class="c">// no overlap -&gt; new block</span>
+        <span class="k">else</span>
+            out.get(out.size()-<span class="n">1</span>)[<span class="n">1</span>] =
+                Math.max(out.get(out.size()-<span class="n">1</span>)[<span class="n">1</span>], iv[<span class="n">1</span>]); <span class="c">// overlap -&gt; extend the end</span>
+    }
+    <span class="k">return</span> out.toArray(<span class="k">new</span> <span class="k">int</span>[<span class="n">0</span>][]);
+}</code></pre>
+      <h5>Why it works</h5>
+      <p style="color:var(--ink-soft);font-size:15px;margin:0">After sorting by start, any overlap must be with the <i>immediately preceding</i> kept interval, so one linear pass suffices. For "max concurrent" problems, a different sweep — sort start and end events separately and walk them — counts overlaps without building the merged set.</p>
+      <h5>Complexity</h5>
+      <div class="bigo"><span>Time <b>O(n log n)</b></span><span>Space <b>O(n)</b></span></div>
+      <div class="pitfall"><b>Pitfall:</b> deciding whether touching endpoints (<code>[1,2]</code> and <code>[2,3]</code>) count as overlapping — read the problem; it changes <code>&lt;</code> to <code>&lt;=</code>.</div>
+    </div>
+  </details>
+
+  <!-- 12 Heap -->
+  <details class="pat">
+    <summary><span class="idx">12</span> Heap / Priority Queue<span class="tier tier-2">Tier 2</span><span class="caret">▸</span></summary>
+    <div class="pat-body">
+      <h5>Recognize when</h5>
+      <ul class="trigger-list">
+        <li>"Top / smallest / K closest"; "merge K sorted lists"; streaming median; repeatedly extract the min/max.</li>
+        <li>You need <i>partial</i> ordering (the best k) but not a full sort.</li>
+      </ul>
+      <h5>Worked example — kth largest element (min-heap of size k)</h5>
+      <pre><code><span class="k">int</span> <span class="f">kthLargest</span>(<span class="k">int</span>[] nums, <span class="k">int</span> k) {
+    PriorityQueue&lt;Integer&gt; heap = <span class="k">new</span> PriorityQueue&lt;&gt;(); <span class="c">// min-heap by default</span>
+    <span class="k">for</span> (<span class="k">int</span> n : nums) {
+        heap.offer(n);
+        <span class="k">if</span> (heap.size() &gt; k) heap.poll();   <span class="c">// keep only the k largest; smallest falls out</span>
+    }
+    <span class="k">return</span> heap.peek();                     <span class="c">// the smallest of the top-k = kth largest</span>
+}</code></pre>
+      <h5>Why it works</h5>
+      <p style="color:var(--ink-soft);font-size:15px;margin:0">A size-k min-heap always holds the k biggest seen so far; the root is the kth largest. Sorting is O(n log n) and wasteful when k is small — this is O(n log k). For max-behavior use <code>new PriorityQueue&lt;&gt;(Collections.reverseOrder())</code> or a comparator.</p>
+      <h5>Complexity</h5>
+      <div class="bigo"><span>Time <b>O(n log k)</b></span><span>Space <b>O(k)</b></span></div>
+      <div class="pitfall"><b>Pitfall:</b> mixing up the heap direction. To keep the k <i>largest</i>, you evict with a <i>min</i>-heap. The intuition feels backwards the first few times — write the invariant down.</div>
+    </div>
+  </details>
+
+  <!-- 13 DP -->
+  <details class="pat">
+    <summary><span class="idx">13</span> Dynamic Programming<span class="tier tier-3">Tier 3</span><span class="caret">▸</span></summary>
+    <div class="pat-body">
+      <h5>Recognize when</h5>
+      <ul class="trigger-list">
+        <li>"Count the number of ways", "min/max cost or length", "can you reach / partition / make change".</li>
+        <li>A brute-force recursion exists but recomputes the same <code>(index, state)</code> repeatedly (overlapping subproblems + optimal substructure).</li>
+      </ul>
+      <h5>Worked example — house robber (1D DP, space-optimized)</h5>
+      <pre><code><span class="k">int</span> <span class="f">rob</span>(<span class="k">int</span>[] nums) {
+    <span class="k">int</span> prev2 = <span class="n">0</span>, prev1 = <span class="n">0</span>;            <span class="c">// best up to i-2 and i-1</span>
+    <span class="k">for</span> (<span class="k">int</span> n : nums) {
+        <span class="k">int</span> cur = Math.max(prev1, prev2 + n); <span class="c">// skip this house vs rob it</span>
+        prev2 = prev1;
+        prev1 = cur;
+    }
+    <span class="k">return</span> prev1;
+}</code></pre>
+      <h5>Recognition workflow (more useful than memorizing recurrences)</h5>
+      <p style="color:var(--ink-soft);font-size:15px;margin:0 0 6px">1) Write the recursive brute force and identify the <b>state</b> (what arguments change). 2) If the same state recurs, add a memo (<code>Integer[] dp</code>, fill with null). 3) Optionally flip to bottom-up tabulation. 4) Optionally drop the table to a few rolling variables, as above. For 2D problems (grids, two strings — edit distance, LCS) the state is a pair <code>(i, j)</code> and the table is a 2D array.</p>
+      <h5>Complexity</h5>
+      <div class="bigo"><span>1D <b>O(n)</b> · 2D <b>O(n·m)</b></span><span>Space <b>O(1)→O(n·m)</b></span></div>
+      <div class="pitfall"><b>Pitfall (and why this is Tier 3 for TCS):</b> DP recognition is the hardest to fake under time pressure. Target "I can identify the state and write the memoized recursion for classic 1D problems" — don't burn days on hard 2D DP you're unlikely to be gated on.</div>
+    </div>
+  </details>
+
+  <!-- 14 Graph -->
+  <details class="pat">
+    <summary><span class="idx">14</span> Graph BFS / DFS<span class="tier tier-3">Tier 3</span><span class="caret">▸</span></summary>
+    <div class="pat-body">
+      <h5>Recognize when</h5>
+      <ul class="trigger-list">
+        <li>A grid or explicit graph; "number of connected regions / components / islands".</li>
+        <li>"Shortest number of steps" in an <b>unweighted</b> graph → BFS. "Ordering with prerequisites" → topological sort.</li>
+      </ul>
+      <h5>Worked example — number of islands (grid DFS / flood fill)</h5>
+      <pre><code><span class="k">int</span> <span class="f">numIslands</span>(<span class="k">char</span>[][] grid) {
+    <span class="k">int</span> count = <span class="n">0</span>;
+    <span class="k">for</span> (<span class="k">int</span> r = <span class="n">0</span>; r &lt; grid.length; r++)
+        <span class="k">for</span> (<span class="k">int</span> c = <span class="n">0</span>; c &lt; grid[<span class="n">0</span>].length; c++)
+            <span class="k">if</span> (grid[r][c] == <span class="s">'1'</span>) { sink(grid, r, c); count++; }
+    <span class="k">return</span> count;
+}
+<span class="k">void</span> <span class="f">sink</span>(<span class="k">char</span>[][] g, <span class="k">int</span> r, <span class="k">int</span> c) {
+    <span class="k">if</span> (r &lt; <span class="n">0</span> || c &lt; <span class="n">0</span> || r &gt;= g.length || c &gt;= g[<span class="n">0</span>].length || g[r][c] != <span class="s">'1'</span>) <span class="k">return</span>;
+    g[r][c] = <span class="s">'0'</span>;                       <span class="c">// mark visited in place</span>
+    sink(g, r+<span class="n">1</span>, c); sink(g, r-<span class="n">1</span>, c);
+    sink(g, r, c+<span class="n">1</span>); sink(g, r, c-<span class="n">1</span>);  <span class="c">// 4-directional flood</span>
+}</code></pre>
+      <h5>Why it works</h5>
+      <p style="color:var(--ink-soft);font-size:15px;margin:0">Each new <code>'1'</code> you encounter starts a fresh region; the flood fill consumes the entire connected piece so you never double-count. For shortest-path-in-steps, swap DFS for a BFS queue and count levels — BFS reaches nodes in increasing distance order, which DFS does not.</p>
+      <h5>Complexity</h5>
+      <div class="bigo"><span>Time <b>O(rows · cols)</b> / <b>O(V + E)</b></span><span>Space <b>O(rows · cols)</b></span></div>
+      <div class="pitfall"><b>Pitfall:</b> forgetting to mark nodes visited (here: overwriting to <code>'0'</code>) → infinite recursion. On a graph with an adjacency list, keep a separate <code>visited</code> set.</div>
+    </div>
+  </details>
+
+  <div class="callout info" style="margin-top:24px">
+    <p><b>Awareness-only (don't drill for TCS, but recognize the name):</b> Union-Find / DSU (connectivity, merging groups, cycle detection in undirected graphs), Trie (prefix lookups, autocomplete), Bit manipulation (XOR for the "single number", masks for subsets), Dijkstra (shortest path with <i>weights</i> — a heap-driven BFS). If you see one of these in the round, you'll likely have time to look up the template; you just need to recognize which one it is.</p>
+  </div>
+
+</section>
+
+<!-- ============ PHASE 2 ============ -->
+<section class="panel" id="tab-p2" role="tabpanel">
+  <h2 class="sec">Phase 2 — Guided practice</h2>
+  <p class="sec-sub">The pattern is named for you; the solution is not. For each: confirm the recognition triggers fired, recall the template from Phase 1, adapt it, and solve it in your IDE / on the problem site. Links go to the problem statement — write the code yourself.</p>
+
+  <div class="callout warn"><p>Do these <b>after</b> reading the corresponding Phase-1 card, not before. The goal is template recall under a named pattern, which is the bridge to unprompted recognition in Phase 3.</p></div>
+
+  <!-- Hashing -->
+  <div class="pgroup">
+    <div class="pgroup-h"><span class="pat-tag">Hashing</span><span class="count">3 problems</span></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/contains-duplicate/" target="_blank" rel="noopener">Contains Duplicate</a></span><span class="diff d-easy">Easy</span><span class="src">LeetCode 217</span></div><p class="hint"><b>Approach:</b> one pass, add to a <code>HashSet</code>; if <code>add</code> returns false you've seen it.</p></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/valid-anagram/" target="_blank" rel="noopener">Valid Anagram</a></span><span class="diff d-easy">Easy</span><span class="src">LeetCode 242</span></div><p class="hint"><b>Approach:</b> count letters of both (an <code>int[26]</code> is faster than a map for lowercase). Equal counts ⇒ anagram.</p></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/group-anagrams/" target="_blank" rel="noopener">Group Anagrams</a></span><span class="diff d-med">Medium</span><span class="src">LeetCode 49</span></div><p class="hint"><b>Approach:</b> map a canonical key (sorted string, or the 26-count signature) → list of words.</p></div>
+  </div>
+
+  <!-- Two pointers -->
+  <div class="pgroup">
+    <div class="pgroup-h"><span class="pat-tag">Two Pointers</span><span class="count">3 problems</span></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/valid-palindrome/" target="_blank" rel="noopener">Valid Palindrome</a></span><span class="diff d-easy">Easy</span><span class="src">LeetCode 125</span></div><p class="hint"><b>Approach:</b> pointers from both ends, skip non-alphanumerics, compare lowercased.</p></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/" target="_blank" rel="noopener">Two Sum II — Input Array Is Sorted</a></span><span class="diff d-med">Medium</span><span class="src">LeetCode 167</span></div><p class="hint"><b>Approach:</b> the exact template from card 2. Sortedness is the precondition that makes it valid.</p></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/3sum/" target="_blank" rel="noopener">3Sum</a></span><span class="diff d-med">Medium</span><span class="src">LeetCode 15</span></div><p class="hint"><b>Approach:</b> sort, fix one element, two-pointer the rest for the complement. Skip duplicates to dedupe triplets.</p></div>
+  </div>
+
+  <!-- Sliding window -->
+  <div class="pgroup">
+    <div class="pgroup-h"><span class="pat-tag">Sliding Window</span><span class="count">3 problems</span></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/maximum-average-subarray-i/" target="_blank" rel="noopener">Maximum Average Subarray I</a></span><span class="diff d-easy">Easy</span><span class="src">LeetCode 643</span></div><p class="hint"><b>Approach:</b> fixed window of size k — add the entering element, subtract the leaving one, track the max sum.</p></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/longest-substring-without-repeating-characters/" target="_blank" rel="noopener">Longest Substring Without Repeating Characters</a></span><span class="diff d-med">Medium</span><span class="src">LeetCode 3</span></div><p class="hint"><b>Approach:</b> the variable-window template from card 3.</p></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/longest-repeating-character-replacement/" target="_blank" rel="noopener">Longest Repeating Character Replacement</a></span><span class="diff d-med">Medium</span><span class="src">LeetCode 424</span></div><p class="hint"><b>Approach:</b> window is valid while <code>(windowLen − countOfMostFrequentChar) ≤ k</code>; shrink when it isn't.</p></div>
+  </div>
+
+  <!-- Prefix sum -->
+  <div class="pgroup">
+    <div class="pgroup-h"><span class="pat-tag">Prefix Sum</span><span class="count">2 problems</span></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/find-pivot-index/" target="_blank" rel="noopener">Find Pivot Index</a></span><span class="diff d-easy">Easy</span><span class="src">LeetCode 724</span></div><p class="hint"><b>Approach:</b> total sum known; left sum running. Pivot where <code>left == total − left − a[i]</code>.</p></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/subarray-sum-equals-k/" target="_blank" rel="noopener">Subarray Sum Equals K</a></span><span class="diff d-med">Medium</span><span class="src">LeetCode 560</span></div><p class="hint"><b>Approach:</b> the prefix-count map from card 4. Note how prefix sum + hashing combine.</p></div>
+  </div>
+
+  <!-- Binary search -->
+  <div class="pgroup">
+    <div class="pgroup-h"><span class="pat-tag">Binary Search</span><span class="count">3 problems</span></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/binary-search/" target="_blank" rel="noopener">Binary Search</a></span><span class="diff d-easy">Easy</span><span class="src">LeetCode 704</span></div><p class="hint"><b>Approach:</b> template A. Get the boundary conditions automatic.</p></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/" target="_blank" rel="noopener">Find Minimum in Rotated Sorted Array</a></span><span class="diff d-med">Medium</span><span class="src">LeetCode 153</span></div><p class="hint"><b>Approach:</b> compare <code>mid</code> to <code>hi</code> to decide which half holds the rotation point.</p></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/koko-eating-bananas/" target="_blank" rel="noopener">Koko Eating Bananas</a></span><span class="diff d-med">Medium</span><span class="src">LeetCode 875</span></div><p class="hint"><b>Approach:</b> binary search <i>on the answer</i> (template B). Search eating speeds; <code>feasible(speed)</code> = "finishes within h hours".</p></div>
+  </div>
+
+  <!-- Sort + greedy -->
+  <div class="pgroup">
+    <div class="pgroup-h"><span class="pat-tag">Sort + Greedy</span><span class="count">2 problems</span></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/maximum-subarray/" target="_blank" rel="noopener">Maximum Subarray</a></span><span class="diff d-med">Medium</span><span class="src">LeetCode 53</span></div><p class="hint"><b>Approach:</b> Kadane's — greedy running sum; drop it to 0 (or the current element) when it goes negative. Sits between greedy and 1D DP.</p></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/non-overlapping-intervals/" target="_blank" rel="noopener">Non-overlapping Intervals</a></span><span class="diff d-med">Medium</span><span class="src">LeetCode 435</span></div><p class="hint"><b>Approach:</b> the earliest-end greedy from card 6; removals = total − kept.</p></div>
+  </div>
+
+  <!-- Stack -->
+  <div class="pgroup">
+    <div class="pgroup-h"><span class="pat-tag">Stack</span><span class="count">3 problems</span></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/valid-parentheses/" target="_blank" rel="noopener">Valid Parentheses</a></span><span class="diff d-easy">Easy</span><span class="src">LeetCode 20</span></div><p class="hint"><b>Approach:</b> card 7, example A, verbatim.</p></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/min-stack/" target="_blank" rel="noopener">Min Stack</a></span><span class="diff d-med">Medium</span><span class="src">LeetCode 155</span></div><p class="hint"><b>Approach:</b> a second stack (or pair on the main stack) tracking the running minimum so <code>getMin</code> is O(1).</p></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/daily-temperatures/" target="_blank" rel="noopener">Daily Temperatures</a></span><span class="diff d-med">Medium</span><span class="src">LeetCode 739</span></div><p class="hint"><b>Approach:</b> monotonic stack of indices (card 7, example B). Answer = distance to next warmer day.</p></div>
+  </div>
+
+  <!-- Linked list -->
+  <div class="pgroup">
+    <div class="pgroup-h"><span class="pat-tag">Linked List</span><span class="count">3 problems</span></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/reverse-linked-list/" target="_blank" rel="noopener">Reverse Linked List</a></span><span class="diff d-easy">Easy</span><span class="src">LeetCode 206</span></div><p class="hint"><b>Approach:</b> card 8, example A.</p></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/merge-two-sorted-lists/" target="_blank" rel="noopener">Merge Two Sorted Lists</a></span><span class="diff d-easy">Easy</span><span class="src">LeetCode 21</span></div><p class="hint"><b>Approach:</b> dummy head + two pointers; splice the smaller node each step. This is where the dummy-node trick pays off.</p></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/remove-nth-node-from-end-of-list/" target="_blank" rel="noopener">Remove Nth Node From End of List</a></span><span class="diff d-med">Medium</span><span class="src">LeetCode 19</span></div><p class="hint"><b>Approach:</b> advance a lead pointer n steps, then move both until lead hits the end; the trailing pointer lands before the target.</p></div>
+  </div>
+
+  <!-- Trees -->
+  <div class="pgroup">
+    <div class="pgroup-h"><span class="pat-tag">Tree DFS/BFS</span><span class="count">3 problems</span></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/maximum-depth-of-binary-tree/" target="_blank" rel="noopener">Maximum Depth of Binary Tree</a></span><span class="diff d-easy">Easy</span><span class="src">LeetCode 104</span></div><p class="hint"><b>Approach:</b> card 9, example B.</p></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/binary-tree-level-order-traversal/" target="_blank" rel="noopener">Binary Tree Level Order Traversal</a></span><span class="diff d-med">Medium</span><span class="src">LeetCode 102</span></div><p class="hint"><b>Approach:</b> BFS with the frozen <code>q.size()</code> trick (card 9, example A).</p></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/validate-binary-search-tree/" target="_blank" rel="noopener">Validate Binary Search Tree</a></span><span class="diff d-med">Medium</span><span class="src">LeetCode 98</span></div><p class="hint"><b>Approach:</b> DFS passing down a valid <code>(min, max)</code> range; each node must fall strictly inside.</p></div>
+  </div>
+
+  <!-- Backtracking -->
+  <div class="pgroup">
+    <div class="pgroup-h"><span class="pat-tag">Backtracking</span><span class="count">3 problems</span></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/subsets/" target="_blank" rel="noopener">Subsets</a></span><span class="diff d-med">Medium</span><span class="src">LeetCode 78</span></div><p class="hint"><b>Approach:</b> card 10, verbatim.</p></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/permutations/" target="_blank" rel="noopener">Permutations</a></span><span class="diff d-med">Medium</span><span class="src">LeetCode 46</span></div><p class="hint"><b>Approach:</b> same skeleton, but track <code>used[]</code> instead of a <code>start</code> index.</p></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/combination-sum/" target="_blank" rel="noopener">Combination Sum</a></span><span class="diff d-med">Medium</span><span class="src">LeetCode 39</span></div><p class="hint"><b>Approach:</b> backtrack with reuse allowed — recurse on the same index <code>i</code>, prune when the remaining target goes negative.</p></div>
+  </div>
+
+  <!-- Intervals -->
+  <div class="pgroup">
+    <div class="pgroup-h"><span class="pat-tag">Intervals</span><span class="count">2 problems</span></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/merge-intervals/" target="_blank" rel="noopener">Merge Intervals</a></span><span class="diff d-med">Medium</span><span class="src">LeetCode 56</span></div><p class="hint"><b>Approach:</b> card 11, verbatim.</p></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/insert-interval/" target="_blank" rel="noopener">Insert Interval</a></span><span class="diff d-med">Medium</span><span class="src">LeetCode 57</span></div><p class="hint"><b>Approach:</b> three phases — intervals entirely before, the overlapping run (merge it), intervals entirely after.</p></div>
+  </div>
+
+  <!-- Heap -->
+  <div class="pgroup">
+    <div class="pgroup-h"><span class="pat-tag">Heap</span><span class="count">2 problems</span></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/kth-largest-element-in-an-array/" target="_blank" rel="noopener">Kth Largest Element in an Array</a></span><span class="diff d-med">Medium</span><span class="src">LeetCode 215</span></div><p class="hint"><b>Approach:</b> card 12, verbatim (or Quickselect if asked for average O(n)).</p></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/top-k-frequent-elements/" target="_blank" rel="noopener">Top K Frequent Elements</a></span><span class="diff d-med">Medium</span><span class="src">LeetCode 347</span></div><p class="hint"><b>Approach:</b> count with a map, then a size-k heap by frequency (or bucket sort by count for O(n)).</p></div>
+  </div>
+
+  <!-- DP -->
+  <div class="pgroup">
+    <div class="pgroup-h"><span class="pat-tag">Dynamic Programming</span><span class="count">3 problems</span></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/climbing-stairs/" target="_blank" rel="noopener">Climbing Stairs</a></span><span class="diff d-easy">Easy</span><span class="src">LeetCode 70</span></div><p class="hint"><b>Approach:</b> <code>ways(n) = ways(n−1) + ways(n−2)</code> — Fibonacci in disguise. The gateway DP.</p></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/house-robber/" target="_blank" rel="noopener">House Robber</a></span><span class="diff d-med">Medium</span><span class="src">LeetCode 198</span></div><p class="hint"><b>Approach:</b> card 13, verbatim.</p></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/coin-change/" target="_blank" rel="noopener">Coin Change</a></span><span class="diff d-med">Medium</span><span class="src">LeetCode 322</span></div><p class="hint"><b>Approach:</b> <code>dp[amount]</code> = min coins; <code>dp[x] = 1 + min over coins of dp[x − coin]</code>. Classic unbounded DP.</p></div>
+  </div>
+
+  <!-- Graph -->
+  <div class="pgroup">
+    <div class="pgroup-h"><span class="pat-tag">Graph BFS/DFS</span><span class="count">3 problems</span></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/flood-fill/" target="_blank" rel="noopener">Flood Fill</a></span><span class="diff d-easy">Easy</span><span class="src">LeetCode 733</span></div><p class="hint"><b>Approach:</b> DFS/BFS from the start pixel, recolor connected same-color pixels. The minimal grid-traversal warm-up.</p></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/number-of-islands/" target="_blank" rel="noopener">Number of Islands</a></span><span class="diff d-med">Medium</span><span class="src">LeetCode 200</span></div><p class="hint"><b>Approach:</b> card 14, verbatim.</p></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/course-schedule/" target="_blank" rel="noopener">Course Schedule</a></span><span class="diff d-med">Medium</span><span class="src">LeetCode 207</span></div><p class="hint"><b>Approach:</b> detect a cycle in a directed graph — topological sort via Kahn's (in-degree + queue) or DFS coloring.</p></div>
+  </div>
+
+</section>
+
+<!-- ============ PHASE 3 ============ -->
+<section class="panel" id="tab-p3" role="tabpanel">
+  <h2 class="sec">Phase 3 — Solo (pattern hidden)</h2>
+  <p class="sec-sub">No pattern is given. Run the diagnosis protocol from the Start Here tab, commit to an approach, then code it. Only after you've attempted it should you open "What pattern was this?" to check your diagnosis. Mediums first, hards at the end — those are your "couple of hards".</p>
+
+  <div class="callout warn"><p>Use a <b>timer</b>: 25 min for mediums, 40 for hards. If you're stuck at the time limit, open the reveal, see the pattern (not the solution), and re-attempt. The miss-then-see-the-pattern loop is exactly what builds recognition — a clean solve teaches less than a corrected wrong guess.</p></div>
+
+  <h3 class="block">Mediums — diagnose then solve</h3>
+
+  <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/product-of-array-except-self/" target="_blank" rel="noopener">Product of Array Except Self</a></span><span class="diff d-med">Medium</span><span class="src">LeetCode 238</span></div>
+    <details class="reveal"><summary>What pattern was this?</summary><div class="reveal-body"><b>Prefix / suffix products.</b> The "no division, O(n)" constraint is the tell. Build running products from the left, then multiply by running products from the right in a second pass.</div></details>
+  </div>
+
+  <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/find-all-anagrams-in-a-string/" target="_blank" rel="noopener">Find All Anagrams in a String</a></span><span class="diff d-med">Medium</span><span class="src">LeetCode 438</span></div>
+    <details class="reveal"><summary>What pattern was this?</summary><div class="reveal-body"><b>Sliding window + hashing.</b> "All substrings of fixed length that are anagrams" → fixed-size window over a 26-count signature; slide and compare counts.</div></details>
+  </div>
+
+  <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/search-in-rotated-sorted-array/" target="_blank" rel="noopener">Search in Rotated Sorted Array</a></span><span class="diff d-med">Medium</span><span class="src">LeetCode 33</span></div>
+    <details class="reveal"><summary>What pattern was this?</summary><div class="reveal-body"><b>Binary search (modified).</b> Sorted-ish + O(log n) demanded. At each step one half is properly sorted — figure out which, and whether the target lies in it.</div></details>
+  </div>
+
+  <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/word-search/" target="_blank" rel="noopener">Word Search</a></span><span class="diff d-med">Medium</span><span class="src">LeetCode 79</span></div>
+    <details class="reveal"><summary>What pattern was this?</summary><div class="reveal-body"><b>Backtracking on a grid (DFS).</b> "Does a path exist spelling the word" → DFS from each cell, mark visited, recurse on neighbors, un-mark on the way out.</div></details>
+  </div>
+
+  <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/rotting-oranges/" target="_blank" rel="noopener">Rotting Oranges</a></span><span class="diff d-med">Medium</span><span class="src">LeetCode 994</span></div>
+    <details class="reveal"><summary>What pattern was this?</summary><div class="reveal-body"><b>Multi-source BFS.</b> "Minimum minutes for spread" = shortest time in an unweighted grid → BFS from <i>all</i> rotten cells at once, counting levels.</div></details>
+  </div>
+
+  <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/longest-palindromic-substring/" target="_blank" rel="noopener">Longest Palindromic Substring</a></span><span class="diff d-med">Medium</span><span class="src">LeetCode 5</span></div>
+    <details class="reveal"><summary>What pattern was this?</summary><div class="reveal-body"><b>Expand around center</b> (or 2D DP). For each of the 2n−1 centers, expand outward while characters match. The "contiguous substring with a property" framing hints at a window-like scan; here the center-expansion variant is cleanest.</div></details>
+  </div>
+
+  <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/longest-increasing-subsequence/" target="_blank" rel="noopener">Longest Increasing Subsequence</a></span><span class="diff d-med">Medium</span><span class="src">LeetCode 300</span></div>
+    <details class="reveal"><summary>What pattern was this?</summary><div class="reveal-body"><b>DP</b> (O(n²)) — <code>dp[i]</code> = LIS ending at i. The O(n log n) version uses binary search over a "tails" array; recognizing the binary-search upgrade is a strong signal.</div></details>
+  </div>
+
+  <h3 class="block">Hards — your stretch set</h3>
+
+  <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/trapping-rain-water/" target="_blank" rel="noopener">Trapping Rain Water</a></span><span class="diff d-hard">Hard</span><span class="src">LeetCode 42</span></div>
+    <details class="reveal"><summary>What pattern was this?</summary><div class="reveal-body"><b>Two pointers</b> (or monotonic stack, or prefix max arrays). Water above each bar = min(maxLeft, maxRight) − height. Two pointers converging from both ends does it in O(1) space.</div></details>
+  </div>
+
+  <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/minimum-window-substring/" target="_blank" rel="noopener">Minimum Window Substring</a></span><span class="diff d-hard">Hard</span><span class="src">LeetCode 76</span></div>
+    <details class="reveal"><summary>What pattern was this?</summary><div class="reveal-body"><b>Variable sliding window + hashing.</b> "Shortest substring containing all of T" → grow the right to become valid, then shrink the left as far as still-valid, recording the minimum. The hardest version of card 3.</div></details>
+  </div>
+
+  <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/word-ladder/" target="_blank" rel="noopener">Word Ladder</a></span><span class="diff d-hard">Hard</span><span class="src">LeetCode 127</span></div>
+    <details class="reveal"><summary>What pattern was this?</summary><div class="reveal-body"><b>BFS shortest path.</b> "Fewest transformations" where each one-letter change is an edge → BFS over the implicit word graph; the first time you reach <code>endWord</code> is the shortest ladder.</div></details>
+  </div>
+
+  <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/merge-k-sorted-lists/" target="_blank" rel="noopener">Merge k Sorted Lists</a></span><span class="diff d-hard">Hard</span><span class="src">LeetCode 23</span></div>
+    <details class="reveal"><summary>What pattern was this?</summary><div class="reveal-body"><b>Heap (k-way merge).</b> "Merge K sorted" is the canonical heap signal — a size-k min-heap of the current front of each list; poll the smallest, push its successor.</div></details>
+  </div>
+
+  <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/edit-distance/" target="_blank" rel="noopener">Edit Distance</a></span><span class="diff d-hard">Hard</span><span class="src">LeetCode 72</span></div>
+    <details class="reveal"><summary>What pattern was this?</summary><div class="reveal-body"><b>2D DP.</b> Two strings + "minimum operations" → state <code>(i, j)</code> over both prefixes; each cell is the best of insert/delete/replace. The archetypal 2D table. If you only learn one hard DP, learn this shape.</div></details>
+  </div>
+
+  <div class="callout info" style="margin-top:22px"><p><b>After Phase 3:</b> the real test of recognition is doing fresh problems you've never seen, cold, on a timer, and naming the pattern in the first two minutes. Pull random mediums from the <a class="link" href="https://www.hackerrank.com/interview/interview-preparation-kit" target="_blank" rel="noopener">HackerRank Interview Preparation Kit</a> or LeetCode's tag filters and run the diagnosis protocol against each before writing a line.</p></div>
+
+</section>
+
+<footer>
+  <div class="wrap">
+    Built for a 7-day TCS coding-round ramp. Pattern triggers and complexity bounds are the load-bearing content — the problems are practice scaffolding around them. Phase 1 cards are collapsible; everything prints to a clean reference sheet.
+  </div>
+</footer>
+
+</div>
+</main>
+
+<script>
+  (function(){
+    var btns = document.querySelectorAll('.tab-btn');
+    var panels = {
+      start: document.getElementById('tab-start'),
+      p1: document.getElementById('tab-p1'),
+      p2: document.getElementById('tab-p2'),
+      p3: document.getElementById('tab-p3')
+    };
+    function select(name){
+      btns.forEach(function(b){
+        var on = b.dataset.tab === name;
+        b.setAttribute('aria-selected', on ? 'true' : 'false');
+      });
+      Object.keys(panels).forEach(function(k){
+        panels[k].classList.toggle('active', k === name);
+      });
+      window.scrollTo({top:0, behavior:'auto'});
+    }
+    btns.forEach(function(b){
+      b.addEventListener('click', function(){ select(b.dataset.tab); });
+    });
+    // keyboard arrow navigation across tabs
+    document.querySelector('.tabs-inner').addEventListener('keydown', function(e){
+      if(e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+      var order = ['start','p1','p2','p3'];
+      var cur = order.findIndex(function(n){ return panels[n].classList.contains('active'); });
+      var next = e.key === 'ArrowRight' ? (cur+1)%order.length : (cur-1+order.length)%order.length;
+      select(order[next]);
+      btns[next].focus();
+    });
+  })();
+
+  // ---- Theme toggle (defaults to OS preference; per-session override) ----
+  (function(){
+    var MOON = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>';
+    var SUN = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>';
+    function mqDark(){ return window.matchMedia && window.matchMedia('(prefers-color-scheme:dark)').matches; }
+    function effectiveDark(){
+      var attr = document.documentElement.getAttribute('data-theme');
+      return attr ? attr === 'dark' : mqDark();
+    }
+    function sync(){
+      var btn = document.getElementById('themeToggle');
+      if(!btn) return;
+      var isDark = effectiveDark();
+      btn.querySelector('.tt-ic').innerHTML = isDark ? SUN : MOON;
+      btn.querySelector('.tt-label').textContent = isDark ? 'Light' : 'Dark';
+      btn.setAttribute('aria-pressed', isDark ? 'true' : 'false');
+    }
+    window.toggleTheme = function(){
+      document.documentElement.setAttribute('data-theme', effectiveDark() ? 'light' : 'dark');
+      sync();
+    };
+    if(window.matchMedia){
+      window.matchMedia('(prefers-color-scheme:dark)').addEventListener('change', function(){
+        if(!document.documentElement.getAttribute('data-theme')) sync();
+      });
+    }
+    sync();
+  })();
+</script>
+
+</body>
+</html>

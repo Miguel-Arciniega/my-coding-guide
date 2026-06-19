@@ -1,0 +1,1125 @@
+<!doctype html>
+<html lang="en" data-track="backend">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Backend — Spring Boot &amp; SQL · Interview Prep Suite</title>
+<script>(function(){try{var t=localStorage.getItem('prep:theme');if(t!=='dark'&&t!=='light')t=matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+<link rel="stylesheet" href="assets/app.css">
+<style>
+  /* legacy color aliases used by inline content styles, mapped to shared tokens */
+  body{--gold:var(--accent); --cyan:var(--accent); --red:var(--hard); --green:var(--easy);
+       --teal:#5fc6cf; --violet:#b3a7ff; --blue:#7fb0f2; --dim:var(--ink-soft); --faint:var(--ink-faint)}
+
+  .page-head-inner{padding:26px 0 0}
+  .subnav-wrap{display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin:18px 0 4px}
+
+  /* section intros */
+  .panel .eyebrow{color:var(--ink-faint); margin-bottom:6px}
+  h2.ph{font-family:var(--display); font-weight:700; font-size:1.5rem; margin:0 0 4px; letter-spacing:-.01em}
+  .lede{color:var(--ink-soft); margin:0 0 26px; max-width:74ch; font-size:.96rem}
+  .panel h3{font-family:var(--display); font-weight:600; font-size:1.04rem; color:var(--ink);
+     margin:34px 0 12px; padding-left:11px; border-left:3px solid var(--accent);
+     display:flex; align-items:center; gap:10px; flex-wrap:wrap}
+  .panel h3:first-of-type{margin-top:6px}
+  .panel p{margin:0 0 14px; max-width:80ch}
+  .mut{color:var(--ink-soft)}
+  .prob{color:var(--ink-soft); font-size:.94rem; margin:0 0 10px; max-width:80ch}
+  code.inl{font-family:var(--mono); font-size:.84em; background:var(--code-inline-bg);
+    border:1px solid var(--line); border-radius:5px; padding:1.5px 6px; color:var(--accent-ink)}
+
+  /* code blocks (caption + copy bar kept from source) */
+  .code{position:relative; margin:0 0 20px; border:1px solid var(--line-strong);
+    border-radius:var(--radius-sm); background:var(--code-bg); overflow:hidden}
+  .code.solo{margin-bottom:20px}
+  .code .cap{font-family:var(--mono); font-size:.7rem; letter-spacing:.04em; color:var(--code-dim);
+    padding:8px 14px; border-bottom:1px solid color-mix(in srgb,var(--code-bg) 78%,#fff);
+    display:flex; align-items:center; justify-content:space-between; gap:10px}
+  .code .cap .dot{display:inline-flex; gap:6px; align-items:center}
+  .code .cap .dot i{width:9px; height:9px; border-radius:50%;
+    background:color-mix(in srgb,var(--code-bg) 60%,#fff); display:block}
+  .copy{appearance:none; background:none; border:1px solid color-mix(in srgb,var(--code-bg) 65%,#fff);
+    color:var(--code-dim); font-family:var(--mono); font-size:.68rem; padding:3px 9px; border-radius:6px;
+    cursor:pointer; transition:.15s}
+  .copy:hover{color:var(--accent); border-color:var(--accent)}
+  .copy.ok{color:#84d99a; border-color:#84d99a}
+  .code pre{margin:0; padding:15px 16px; overflow-x:auto; background:transparent; border:0; border-radius:0}
+  .code pre code{font-family:var(--mono); font-size:.82rem; line-height:1.6; color:var(--code-ink)}
+  pre code.hljs{background:transparent; padding:0}
+  /* hljs token recolor to shared code palette */
+  .hljs-keyword,.hljs-built_in{color:var(--code-key)!important}
+  .hljs-string{color:var(--code-str)!important}
+  .hljs-number{color:var(--code-num)!important}
+  .hljs-title.function_{color:#7fb0f2!important}
+  .hljs-type,.hljs-title.class_{color:#5fc6cf!important}
+  .hljs-meta{color:var(--accent)!important}
+  .hljs-comment{color:var(--code-com)!important; font-style:italic}
+  .hljs-attr,.hljs-title{color:#5fc6cf!important}
+
+  /* reference tables */
+  .tbl-wrap{overflow-x:auto; margin:0 0 22px; border:1px solid var(--line); border-radius:var(--radius)}
+  .tbl-wrap table{min-width:560px}
+  .tbl-wrap thead th{color:var(--accent-ink); text-transform:uppercase; letter-spacing:.05em}
+  td.m,th.m{font-family:var(--mono); font-size:.82em; color:var(--accent-ink); white-space:nowrap}
+  td .ret{font-family:var(--mono); font-size:.82em; color:var(--code-key)}
+
+  /* result grid */
+  .result{margin:0 0 24px}
+  .result .rlabel{font-family:var(--mono); font-size:.66rem; letter-spacing:.1em; text-transform:uppercase;
+    color:var(--accent); margin:0 0 6px; display:flex; align-items:center; gap:7px}
+  .result .rlabel::before{content:"▸"; color:var(--accent)}
+  table.grid{border-collapse:collapse; font-family:var(--mono); font-size:.78rem; width:auto;
+    border:1px solid var(--line); border-radius:8px; overflow:hidden}
+  table.grid th{background:var(--surface-2); color:var(--accent-ink); font-weight:600; text-align:left;
+    padding:6px 13px; border-bottom:1px solid var(--accent-line); font-size:.72rem; letter-spacing:.03em; position:static}
+  table.grid td{padding:5px 13px; border-bottom:1px solid var(--line); color:var(--ink)}
+  table.grid tr:last-child td{border-bottom:none}
+  table.grid tr:nth-child(even) td{background:color-mix(in srgb,var(--accent) 5%, transparent)}
+  .nullv{color:var(--ink-faint); font-style:italic}
+
+  /* callouts (source .call) */
+  .call{display:flex; gap:12px; border:1px solid var(--accent-line); background:var(--accent-wash);
+    border-radius:var(--radius); padding:13px 15px; margin:6px 0 22px; font-size:.9rem; color:var(--ink)}
+  .call .ic{color:var(--accent); font-family:var(--mono); font-weight:600; flex:none}
+  .call.warn{border-color:color-mix(in srgb,var(--hard) 45%,var(--line)); background:var(--hard-wash)}
+  .call.warn .ic{color:var(--hard)}
+  .call b{color:var(--ink); font-weight:600}
+  .call code{font-family:var(--mono); font-size:.85em; color:var(--accent-ink)}
+
+  /* chips for exercise difficulty */
+  .chip{font-family:var(--mono); font-size:.62rem; letter-spacing:.08em; text-transform:uppercase;
+    padding:2px 8px; border-radius:20px; border:1px solid; font-weight:600}
+  .chip.basic{color:var(--easy); border-color:color-mix(in srgb,var(--easy) 40%,var(--line)); background:var(--easy-wash)}
+  .chip.med{color:var(--accent); border-color:var(--accent-line); background:var(--accent-wash)}
+
+  ul.tight{margin:0 0 18px; padding-left:20px}
+  ul.tight li{margin:0 0 7px; max-width:80ch}
+  ul.tight li::marker{color:var(--accent)}
+  .approach{font-family:var(--mono); font-size:.7rem; color:var(--ink-faint); letter-spacing:.06em; margin:14px 0 6px}
+
+  /* flow grid (spring) */
+  .flowgrid{display:grid; gap:10px; margin:6px 0 24px}
+  .flowrow{display:grid; grid-template-columns:130px 1fr; gap:14px; align-items:start;
+    border:1px solid var(--line); border-radius:var(--radius); padding:12px 14px; background:var(--surface)}
+  .flowrow .layer{font-family:var(--mono); font-size:.78rem; color:var(--accent); padding-top:2px}
+  .flowrow .layer small{display:block; color:var(--ink-faint); font-size:.64rem; letter-spacing:.1em; margin-bottom:3px}
+  .flowrow .what b{color:var(--ink)}
+  .arrow{font-family:var(--mono); color:var(--ink-faint); text-align:center; font-size:.8rem; margin:-4px 0}
+  @media (max-width:560px){.flowrow{grid-template-columns:1fr; gap:6px}}
+
+  main{padding-top:14px}
+</style>
+</head>
+<body>
+
+<div class="app-topbar">
+  <div class="app-topbar-inner">
+    <a class="app-brand" href="index.html"><span class="dot"></span>Interview Prep Suite</a>
+    <span class="app-crumb">Spring Boot / JPA</span>
+    <span class="app-spacer"></span>
+    <a class="app-back" href="index.html">← Hub</a>
+    <button class="theme-toggle" type="button" aria-label="Toggle dark mode"><span class="tt-ic"></span><span class="tt-label">Dark</span></button>
+  </div>
+</div>
+
+<header class="page-head">
+  <div class="wrap page-head-inner">
+    <p class="eyebrow">Backend track</p>
+    <h1 class="title">Backend Reference</h1>
+    <p class="subtitle">Fast syntax recall for the two backend rounds: a <b>Spring Boot CRUD / fundamentals</b> interview and a <b>TCS-tier SQL</b> round. Pick an area; each keeps its own focused tab set.</p>
+    <div class="subnav-wrap">
+      <div class="subnav" data-subnav role="tablist" aria-label="Backend area">
+        <button data-section="spring" aria-selected="true">Spring Boot / JPA</button>
+        <button data-section="sql">SQL</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ============================ SPRING ============================ -->
+<div data-section-panel="spring">
+<nav class="tabs" aria-label="Spring sections">
+  <div class="tabs-inner" role="tablist">
+    <button class="tab-btn" role="tab" data-tab="spring-flow" aria-selected="true">Flow</button>
+    <button class="tab-btn" role="tab" data-tab="spring-repo" aria-selected="false">Repository / JPA</button>
+    <button class="tab-btn" role="tab" data-tab="spring-ent" aria-selected="false">Entity &amp; Mapping</button>
+    <button class="tab-btn" role="tab" data-tab="spring-ctrl" aria-selected="false">Controller</button>
+    <button class="tab-btn" role="tab" data-tab="spring-svc" aria-selected="false">Service &amp; DTO</button>
+    <button class="tab-btn" role="tab" data-tab="spring-val" aria-selected="false">Validation &amp; Errors</button>
+    <button class="tab-btn" role="tab" data-tab="spring-got" aria-selected="false">Gotchas</button>
+  </div>
+</nav>
+<main><div class="wrap">
+
+  <section class="panel active" id="tab-spring-flow" data-tab="spring-flow" role="tabpanel">
+    <p class="eyebrow">Mental model</p>
+    <h2 class="ph">The request flow</h2>
+    <p class="lede">One HTTP request walks down four layers and back. Know which annotation lives at each layer and what it returns — most CRUD questions are just "show me this path for entity X."</p>
+
+    <div class="flowgrid">
+      <div class="flowrow"><div class="layer"><small>LAYER 01</small>@RestController</div>
+        <div class="what"><b>Controller</b> — maps HTTP to methods. Reads the request (<code class="inl">@PathVariable</code>, <code class="inl">@RequestParam</code>, <code class="inl">@RequestBody</code>), returns a DTO or <code class="inl">ResponseEntity</code>. No business logic here.</div></div>
+      <div class="arrow">↓ calls</div>
+      <div class="flowrow"><div class="layer"><small>LAYER 02</small>@Service</div>
+        <div class="what"><b>Service</b> — business logic + the <code class="inl">@Transactional</code> boundary. Orchestrates repositories, maps entity ↔ DTO, throws domain exceptions.</div></div>
+      <div class="arrow">↓ calls</div>
+      <div class="flowrow"><div class="layer"><small>LAYER 03</small>@Repository</div>
+        <div class="what"><b>Repository</b> — <code class="inl">interface … extends JpaRepository&lt;T, ID&gt;</code>. You declare method signatures; Spring Data generates the SQL. No implementation written by you.</div></div>
+      <div class="arrow">↓ persists</div>
+      <div class="flowrow"><div class="layer"><small>LAYER 03</small>@Entity</div>
+        <div class="what"><b>Entity</b> — a class mapped to a table. Hibernate manages it; inside a transaction, changes flush automatically (dirty checking).</div></div>
+    </div>
+
+    <h3>The full vertical slice (read this once, out loud)</h3>
+    <div class="code"><div class="cap"><span class="dot"><i></i>UserController.java + down</span><button class="copy">copy</button></div>
+      <pre><code class="language-java" data-snippet="slice"></code></pre></div>
+
+    <div class="call"><span class="ic">→</span><div>HTTP verb → method → status convention: <b>POST</b> 201 Created · <b>GET</b> 200 · <b>PUT/PATCH</b> 200 · <b>DELETE</b> 204 No Content · not found 404 · bad body 400. Returning the wrong status is a cheap, common miss.</div></div>
+  </section>
+
+  <section class="panel" id="tab-spring-repo" data-tab="spring-repo" role="tabpanel">
+    <p class="eyebrow">Layer 03 · Data — your priority</p>
+    <h2 class="ph">Repository &amp; JPA methods</h2>
+    <p class="lede">You declare an interface; Spring Data implements it at runtime. There are three ways to get a query: <b>inherited methods</b>, <b>derived method names</b>, and <b>@Query</b>. Below, in the order you'll reach for them.</p>
+
+    <h3>Declaring the repository</h3>
+    <div class="code"><div class="cap"><span class="dot"><i></i>UserRepository.java</span><button class="copy">copy</button></div>
+      <pre><code class="language-java" data-snippet="repodecl"></code></pre></div>
+    <p class="mut"><code class="inl">JpaRepository&lt;T, ID&gt;</code> extends <code class="inl">CrudRepository</code> + <code class="inl">PagingAndSortingRepository</code>, so you inherit everything below for free. T = entity type, ID = primary-key type.</p>
+
+    <h3>Inherited methods — memorize this table</h3>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th class="m">Method</th><th>Returns</th><th>Use it for</th></tr></thead>
+      <tbody>
+        <tr><td class="m">save(e)</td><td><span class="ret">T</span></td><td><b>Create AND update.</b> INSERT if the id is null/new, UPDATE (merge) if it exists. The one you'll use most.</td></tr>
+        <tr><td class="m">saveAll(it)</td><td><span class="ret">List&lt;T&gt;</span></td><td>Batch save a collection.</td></tr>
+        <tr><td class="m">findById(id)</td><td><span class="ret">Optional&lt;T&gt;</span></td><td>Read one by PK. Returns Optional — chain <code class="inl">.orElseThrow()</code>.</td></tr>
+        <tr><td class="m">existsById(id)</td><td><span class="ret">boolean</span></td><td>Existence check without loading the row.</td></tr>
+        <tr><td class="m">findAll()</td><td><span class="ret">List&lt;T&gt;</span></td><td>Every row. Avoid on real tables — use the Pageable overload.</td></tr>
+        <tr><td class="m">findAll(Pageable)</td><td><span class="ret">Page&lt;T&gt;</span></td><td>Paginated read + total count. The production "list" call.</td></tr>
+        <tr><td class="m">findAll(Sort)</td><td><span class="ret">List&lt;T&gt;</span></td><td>Sorted, unpaged.</td></tr>
+        <tr><td class="m">findAllById(ids)</td><td><span class="ret">List&lt;T&gt;</span></td><td>Batch read by PKs.</td></tr>
+        <tr><td class="m">count()</td><td><span class="ret">long</span></td><td>Total rows.</td></tr>
+        <tr><td class="m">deleteById(id)</td><td><span class="ret">void</span></td><td>Delete by PK.</td></tr>
+        <tr><td class="m">delete(e)</td><td><span class="ret">void</span></td><td>Delete a loaded entity.</td></tr>
+        <tr><td class="m">getReferenceById(id)</td><td><span class="ret">T proxy</span></td><td>Lazy proxy, no SELECT. Use to set a foreign key without loading the parent. Throws if accessed and missing. (Was <code class="inl">getOne</code>.)</td></tr>
+        <tr><td class="m">saveAndFlush(e)</td><td><span class="ret">T</span></td><td>Save + force an immediate flush to the DB (e.g. to read a generated id now).</td></tr>
+      </tbody>
+    </table></div>
+
+    <div class="call"><span class="ic">★</span><div><b>The save() answer interviewers want:</b> <code>save()</code> does <b>persist</b> for a new entity and <b>merge</b> for a detached one. Inside a <code>@Transactional</code> method, modifying a <b>managed</b> entity is flushed automatically by dirty checking — calling <code>save()</code> on it is redundant (harmless, but it signals you don't know the persistence context).</div></div>
+
+    <div class="code"><div class="cap"><span class="dot"><i></i>save semantics — create vs the two update styles</span><button class="copy">copy</button></div>
+      <pre><code class="language-java" data-snippet="save"></code></pre></div>
+
+    <h3>Derived query methods — the naming grammar</h3>
+    <p>Spring parses the method name into a query. Structure: <code class="inl">[verb]By[Property][Condition][And/Or…][OrderBy…]</code>.</p>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>Slot</th><th>Keywords</th></tr></thead>
+      <tbody>
+        <tr><td><b>Verb</b></td><td class="m">findBy · readBy · getBy · existsBy · countBy · deleteBy</td></tr>
+        <tr><td><b>Condition</b></td><td class="m">Is/Equals · Not · Between · LessThan · GreaterThan · After · Before · Like · Containing · StartingWith · EndingWith · In · IsNull · IsNotNull · True · False · IgnoreCase</td></tr>
+        <tr><td><b>Combine</b></td><td class="m">And · Or</td></tr>
+        <tr><td><b>Order / limit</b></td><td class="m">OrderByXAsc · OrderByXDesc · findFirst · findTop · findTop3By</td></tr>
+      </tbody>
+    </table></div>
+    <div class="code"><div class="cap"><span class="dot"><i></i>derived queries in the repository interface</span><button class="copy">copy</button></div>
+      <pre><code class="language-java" data-snippet="derived"></code></pre></div>
+
+    <h3>@Query — when names get awkward</h3>
+    <div class="code"><div class="cap"><span class="dot"><i></i>JPQL, native, and bulk @Modifying</span><button class="copy">copy</button></div>
+      <pre><code class="language-java" data-snippet="query"></code></pre></div>
+    <div class="call warn"><span class="ic">!</span><div>JPQL queries <b>entities</b> (<code>from User u</code>), native queries hit the <b>table</b> (<code>from users</code>). A <code>@Modifying</code> bulk update/delete <b>bypasses the persistence context</b> — stale managed entities won't reflect it unless you set <code>clearAutomatically = true</code>.</div></div>
+
+    <h3>Pagination, returned</h3>
+    <div class="code"><div class="cap"><span class="dot"><i></i>Pageable in, Page out</span><button class="copy">copy</button></div>
+      <pre><code class="language-java" data-snippet="page"></code></pre></div>
+    <p class="mut"><code class="inl">Page</code> runs a second COUNT query (knows total pages); <code class="inl">Slice</code> skips it (only knows "is there a next page") — cheaper when you don't need totals.</p>
+  </section>
+
+  <section class="panel" id="tab-spring-ent" data-tab="spring-ent" role="tabpanel">
+    <p class="eyebrow">Layer 03 · Mapping</p>
+    <h2 class="ph">Entity &amp; mapping</h2>
+    <p class="lede">A POJO annotated to mirror a table. Get the id strategy, the relationship annotations, and fetch types right — that's 90% of entity questions.</p>
+
+    <div class="code"><div class="cap"><span class="dot"><i></i>User.java</span><button class="copy">copy</button></div>
+      <pre><code class="language-java" data-snippet="entity"></code></pre></div>
+
+    <h3>@GeneratedValue strategies</h3>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th class="m">Strategy</th><th>How / when</th></tr></thead>
+      <tbody>
+        <tr><td class="m">IDENTITY</td><td>DB auto-increment column (MySQL, Postgres serial). Most common. <b>Disables JDBC batch inserts</b> — Hibernate must INSERT to learn the id.</td></tr>
+        <tr><td class="m">SEQUENCE</td><td>DB sequence (Postgres, Oracle). Allows insert batching; preferred for high write volume.</td></tr>
+        <tr><td class="m">AUTO</td><td>Provider chooses. <b>Hibernate 6 + Postgres now picks SEQUENCE</b>, not IDENTITY — a migration surprise worth naming.</td></tr>
+        <tr><td class="m">TABLE</td><td>Emulates a sequence with a table. Portable but slow. Avoid.</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>Relationships &amp; default fetch</h3>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th class="m">Annotation</th><th>Default fetch</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td class="m">@ManyToOne</td><td><b style="color:var(--red)">EAGER</b></td><td>The "many" side owns the FK. Set <code class="inl">fetch = LAZY</code> explicitly — eager is a silent perf trap.</td></tr>
+        <tr><td class="m">@OneToOne</td><td><b style="color:var(--red)">EAGER</b></td><td>Also eager by default; make it LAZY.</td></tr>
+        <tr><td class="m">@OneToMany</td><td><b style="color:var(--green)">LAZY</b></td><td>Use <code class="inl">mappedBy</code> on the inverse side. The owning side is the <code class="inl">@ManyToOne</code>.</td></tr>
+        <tr><td class="m">@ManyToMany</td><td><b style="color:var(--green)">LAZY</b></td><td>Join table via <code class="inl">@JoinTable</code>. Often better modeled as two OneToMany to a link entity.</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>Cascade &amp; orphan removal</h3>
+    <ul class="tight">
+      <li><code class="inl">cascade = CascadeType.ALL</code> — PERSIST, MERGE, REMOVE, REFRESH, DETACH propagate from parent to children.</li>
+      <li><code class="inl">orphanRemoval = true</code> — deletes a child when it's removed from the parent's collection. Stronger than REMOVE (which only fires on parent delete).</li>
+      <li><code class="inl">@Enumerated(EnumType.STRING)</code> — always use STRING. ORDINAL stores 0,1,2 and silently breaks if you reorder the enum.</li>
+    </ul>
+
+    <div class="call"><span class="ic">→</span><div>JPA requires a <b>no-arg constructor</b> (can be <code>protected</code>). Keep it, plus a real constructor for your code.</div></div>
+  </section>
+
+  <section class="panel" id="tab-spring-ctrl" data-tab="spring-ctrl" role="tabpanel">
+    <p class="eyebrow">Layer 01 · Web</p>
+    <h2 class="ph">Controller</h2>
+    <p class="lede">Maps HTTP to Java. Each verb gets a shortcut annotation; bind the parts of the request, delegate to the service, return a DTO.</p>
+
+    <div class="code"><div class="cap"><span class="dot"><i></i>UserController.java — full CRUD</span><button class="copy">copy</button></div>
+      <pre><code class="language-java" data-snippet="controller"></code></pre></div>
+
+    <h3>Binding the request</h3>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th class="m">Annotation</th><th>Binds</th><th>Example</th></tr></thead>
+      <tbody>
+        <tr><td class="m">@PathVariable</td><td>A URI template segment</td><td class="m">/users/<b>{id}</b></td></tr>
+        <tr><td class="m">@RequestParam</td><td>Query / form param. Has <code class="inl">required</code>, <code class="inl">defaultValue</code></td><td class="m">?status=ACTIVE</td></tr>
+        <tr><td class="m">@RequestBody</td><td>Deserializes the JSON body to an object</td><td class="m">POST body → DTO</td></tr>
+        <tr><td class="m">@RequestHeader</td><td>A header value</td><td class="m">Authorization</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>Setting the status</h3>
+    <ul class="tight">
+      <li><code class="inl">ResponseEntity&lt;T&gt;</code> — full control: status + headers + body. Use when the status varies (<code class="inl">ok()</code> vs <code class="inl">notFound()</code>).</li>
+      <li><code class="inl">@ResponseStatus(HttpStatus.CREATED)</code> — fixed status on the method. Cleaner when it never varies (201 on create, 204 on delete).</li>
+      <li><code class="inl">@RestController</code> = <code class="inl">@Controller</code> + <code class="inl">@ResponseBody</code> — return values are serialized to JSON, no view resolution.</li>
+    </ul>
+  </section>
+
+  <section class="panel" id="tab-spring-svc" data-tab="spring-svc" role="tabpanel">
+    <p class="eyebrow">Layer 02 · Logic</p>
+    <h2 class="ph">Service &amp; DTO</h2>
+    <p class="lede">Where business rules and the transaction boundary live. Map entities to DTOs here so they never leak to the web layer.</p>
+
+    <div class="code"><div class="cap"><span class="dot"><i></i>UserService.java</span><button class="copy">copy</button></div>
+      <pre><code class="language-java" data-snippet="service"></code></pre></div>
+
+    <h3>DTOs as records</h3>
+    <div class="code"><div class="cap"><span class="dot"><i></i>records — request + response shapes</span><button class="copy">copy</button></div>
+      <pre><code class="language-java" data-snippet="dto"></code></pre></div>
+
+    <h3>Two things to be able to defend</h3>
+    <ul class="tight">
+      <li><b>Constructor injection</b> over <code class="inl">@Autowired</code> fields: fields can be <code class="inl">final</code>, the bean is immutable, and you can construct it in a unit test with no Spring context. A single constructor doesn't even need <code class="inl">@Autowired</code>.</li>
+      <li><b><code class="inl">@Transactional</code> semantics:</b> default propagation <code class="inl">REQUIRED</code> (joins an existing tx or starts one); <code class="inl">readOnly = true</code> on pure reads; rollback fires on <b>unchecked</b> (RuntimeException) by default — checked exceptions need <code class="inl">rollbackFor</code>.</li>
+    </ul>
+
+    <div class="call warn"><span class="ic">⚑</span><div><b>Self-invocation trap:</b> calling one <code>@Transactional</code> method from another method <i>in the same class</i> goes through <code>this</code>, bypassing the Spring proxy — so the annotation does nothing. Call across beans, or it won't apply.</div></div>
+  </section>
+
+  <section class="panel" id="tab-spring-val" data-tab="spring-val" role="tabpanel">
+    <p class="eyebrow">Cross-cutting · Input + failure</p>
+    <h2 class="ph">Validation &amp; error handling</h2>
+    <p class="lede">Bean Validation rejects bad input at the edge; a single advice class turns exceptions into clean JSON. Both are near-guaranteed follow-ups after a CRUD build.</p>
+
+    <h3>Constraints</h3>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th class="m">Annotation</th><th>Checks</th></tr></thead>
+      <tbody>
+        <tr><td class="m">@NotNull</td><td>Not null (value may still be empty).</td></tr>
+        <tr><td class="m">@NotBlank</td><td><b>Strings</b> — not null and not whitespace-only.</td></tr>
+        <tr><td class="m">@NotEmpty</td><td><b>Collections / arrays</b> — size &gt; 0.</td></tr>
+        <tr><td class="m">@Size(min,max)</td><td>String length or collection size.</td></tr>
+        <tr><td class="m">@Min / @Max / @Positive</td><td>Numeric bounds.</td></tr>
+        <tr><td class="m">@Email / @Pattern</td><td>Format / regex.</td></tr>
+        <tr><td class="m">@Past / @Future</td><td>Temporal bounds.</td></tr>
+      </tbody>
+    </table></div>
+    <p class="mut"><code class="inl">@Valid</code> on a <code class="inl">@RequestBody</code> triggers validation; a failure throws <code class="inl">MethodArgumentNotValidException</code>. For nested objects, put <code class="inl">@Valid</code> on the field too.</p>
+
+    <h3>One advice class for the whole API</h3>
+    <div class="code"><div class="cap"><span class="dot"><i></i>GlobalExceptionHandler.java</span><button class="copy">copy</button></div>
+      <pre><code class="language-java" data-snippet="advice"></code></pre></div>
+    <p class="mut"><code class="inl">@RestControllerAdvice</code> = <code class="inl">@ControllerAdvice</code> + <code class="inl">@ResponseBody</code>: handlers apply across all controllers and their return values become the JSON error body.</p>
+  </section>
+
+  <section class="panel" id="tab-spring-got" data-tab="spring-got" role="tabpanel">
+    <p class="eyebrow">Senior signal</p>
+    <h2 class="ph">Gotchas that separate seniors</h2>
+    <p class="lede">A junior gets the CRUD working; the senior names these before being asked. If you only memorize one tab beyond Repository, make it this one.</p>
+
+    <h3>1 · N+1 queries</h3>
+    <p>Looping a lazy collection fires 1 query for the parents + N for each child set. The single most-asked JPA performance question.</p>
+    <div class="call warn"><span class="ic">⚑</span><div><b>Fix:</b> <code>@Query("select u from User u join fetch u.orders")</code>, or <code>@EntityGraph(attributePaths = "orders")</code> on the repo method, or <code>@BatchSize</code> on the collection.</div></div>
+
+    <h3>2 · LazyInitializationException</h3>
+    <p>Touching a LAZY field <i>after</i> the persistence context closed — e.g. in the controller, after the service method returned. The session is gone, so Hibernate can't load it.</p>
+    <ul class="tight">
+      <li><b>Right fix:</b> fetch it inside the transaction (JOIN FETCH / EntityGraph), or map to a DTO before returning.</li>
+      <li><b>Wrong "fix":</b> leaning on Open Session In View — name it as the anti-pattern, don't endorse it (see #6).</li>
+    </ul>
+
+    <h3>3 · save() is redundant inside a transaction</h3>
+    <p>A managed entity is flushed by dirty checking on commit. Calling <code class="inl">save()</code> on something you just loaded in the same tx works but reveals you don't understand the persistence context. (Cross-reference the Repository tab.)</p>
+
+    <h3>4 · getReferenceById vs findById</h3>
+    <p><code class="inl">findById</code> hits the DB now and returns the entity. <code class="inl">getReferenceById</code> returns a lazy proxy with no SELECT — ideal for setting a foreign key (<code class="inl">order.setUser(repo.getReferenceById(id))</code>) when you only need the id.</p>
+
+    <h3>5 · equals() / hashCode() on entities</h3>
+    <p>Using a DB-generated id in <code class="inl">hashCode()</code> breaks entities placed in a <code class="inl">Set</code> before they're persisted (id is null, then changes). Use a stable business key, or a Hibernate-safe id-based pattern.</p>
+
+    <h3>6 · Open Session In View (OSIV)</h3>
+    <p><b>On by default in Spring Boot.</b> Keeps the Hibernate session open through view/response rendering, which hides N+1 problems and holds DB connections longer. A classic "what would you disable and why?" — answer: <code class="inl">spring.jpa.open-in-view=false</code>, then fetch explicitly.</p>
+
+    <h3>7 · Always return DTOs, never entities</h3>
+    <p>Serializing entities to JSON triggers lazy loads, leaks columns, and causes recursion on bidirectional relationships. Map to a record/DTO (or interface projection) in the service.</p>
+
+    <h3>8 · jakarta vs javax</h3>
+    <p>Spring Boot 3 moved persistence to <code class="inl">jakarta.persistence.*</code>. Importing <code class="inl">javax.persistence.*</code> is the fastest way to date yourself in a 2025+ interview.</p>
+  </section>
+
+</div></main>
+</div>
+
+<!-- ============================ SQL ============================ -->
+<div data-section-panel="sql" style="display:none">
+<nav class="tabs" aria-label="SQL sections">
+  <div class="tabs-inner" role="tablist">
+    <button class="tab-btn" role="tab" data-tab="sql-cl" aria-selected="true">Clauses &amp; order</button>
+    <button class="tab-btn" role="tab" data-tab="sql-ex" aria-selected="false">Exercises</button>
+    <button class="tab-btn" role="tab" data-tab="sql-jn" aria-selected="false">Joins</button>
+    <button class="tab-btn" role="tab" data-tab="sql-ag" aria-selected="false">Aggregates</button>
+    <button class="tab-btn" role="tab" data-tab="sql-wn" aria-selected="false">Windows</button>
+    <button class="tab-btn" role="tab" data-tab="sql-sq" aria-selected="false">Subqueries &amp; CTEs</button>
+    <button class="tab-btn" role="tab" data-tab="sql-co" aria-selected="false">Concepts &amp; DDL</button>
+  </div>
+</nav>
+<main><div class="wrap">
+
+  <section class="panel active" id="tab-sql-cl" data-tab="sql-cl" role="tabpanel">
+    <p class="eyebrow">Mental model</p>
+    <h2 class="ph">Clauses &amp; execution order</h2>
+    <p class="lede">You write SELECT first, but the engine runs it almost last. Knowing the real order explains every "why can't I use that alias here" question.</p>
+
+    <h3>Logical execution order</h3>
+    <div class="code solo"><div class="cap"><span>order the engine evaluates</span><button class="copy">copy</button></div>
+      <pre><code class="language-sql" data-snippet="order"></code></pre></div>
+
+    <div class="call"><span class="ic">→</span><div><b>Consequence:</b> <code>SELECT</code> runs after <code>WHERE</code>/<code>GROUP BY</code>, so a column alias defined in SELECT <b>can't</b> be used in <code>WHERE</code> or <code>GROUP BY</code> — but it <b>can</b> in <code>ORDER BY</code> (which runs last). That alias question is a frequent gotcha.</div></div>
+
+    <h3>WHERE vs HAVING</h3>
+    <div class="tbl-wrap"><table class="ref">
+      <thead><tr><th class="m">Clause</th><th>Filters</th><th>Aggregates allowed?</th></tr></thead>
+      <tbody>
+        <tr><td class="m">WHERE</td><td>Individual rows, <b>before</b> grouping</td><td>No — runs before GROUP BY</td></tr>
+        <tr><td class="m">HAVING</td><td>Groups, <b>after</b> GROUP BY</td><td>Yes — <code class="inl">HAVING COUNT(*) &gt; 1</code></td></tr>
+      </tbody>
+    </table></div>
+    <p class="mut">Rule of thumb: filter on a raw column → WHERE. Filter on an aggregate → HAVING. Use both together freely.</p>
+
+    <h3>The clause skeleton</h3>
+    <div class="code solo"><div class="cap"><span>full SELECT shape</span><button class="copy">copy</button></div>
+      <pre><code class="language-sql" data-snippet="skeleton"></code></pre></div>
+  </section>
+
+  <section class="panel" id="tab-sql-ex" data-tab="sql-ex" role="tabpanel">
+    <p class="eyebrow">The set to drill</p>
+    <h2 class="ph">Classic exercises</h2>
+    <p class="lede">These recur across TCS-tier SQL rounds. Every solution runs against the schema below — the result grids are the actual output.</p>
+
+    <h3>Shared schema &amp; data</h3>
+    <div class="code"><div class="cap"><span>employees · departments</span><button class="copy">copy</button></div>
+      <pre><code class="language-sql" data-snippet="schema"></code></pre></div>
+    <div class="result"><div class="rlabel">employees</div>
+      <table class="grid">
+        <tr><th>id</th><th>name</th><th>salary</th><th>department_id</th><th>manager_id</th><th>hire_date</th></tr>
+        <tr><td>1</td><td>Ada</td><td>9000</td><td>10</td><td class="nullv">NULL</td><td>2019-03-01</td></tr>
+        <tr><td>2</td><td>Blake</td><td>6000</td><td>10</td><td>1</td><td>2020-06-15</td></tr>
+        <tr><td>3</td><td>Cho</td><td>7500</td><td>20</td><td>1</td><td>2021-01-20</td></tr>
+        <tr><td>4</td><td>Diego</td><td>6000</td><td>20</td><td>3</td><td>2022-09-10</td></tr>
+        <tr><td>5</td><td>Eve</td><td>5000</td><td>10</td><td>1</td><td>2023-04-05</td></tr>
+        <tr><td>6</td><td>Finn</td><td>8000</td><td>20</td><td>3</td><td>2023-08-01</td></tr>
+      </table></div>
+    <div class="result"><div class="rlabel">departments</div>
+      <table class="grid">
+        <tr><th>id</th><th>name</th></tr>
+        <tr><td>10</td><td>Engineering</td></tr>
+        <tr><td>20</td><td>Data</td></tr>
+        <tr><td>30</td><td>Finance</td></tr>
+      </table></div>
+
+    <h3>1 · Second-highest salary <span class="chip basic">basic</span></h3>
+    <p class="prob">Return the second-highest distinct salary.</p>
+    <p class="approach">// approach A — subquery (simple, but returns NULL if none)</p>
+    <div class="code"><div class="cap"><span>self-contained subquery</span><button class="copy">copy</button></div>
+      <pre><code class="language-sql" data-snippet="ex1a"></code></pre></div>
+    <p class="approach">// approach B — DENSE_RANK (portable, ties-aware, generalizes to Nth)</p>
+    <div class="code"><div class="cap"><span>change rnk = N for Nth-highest</span><button class="copy">copy</button></div>
+      <pre><code class="language-sql" data-snippet="ex1b"></code></pre></div>
+    <div class="result"><div class="rlabel">result</div>
+      <table class="grid"><tr><th>second_highest</th></tr><tr><td>8000</td></tr></table></div>
+
+    <h3>2 · Find duplicates <span class="chip basic">basic</span></h3>
+    <p class="prob">Find salary values held by more than one employee.</p>
+    <div class="code solo"><div class="cap"><span>GROUP BY + HAVING</span><button class="copy">copy</button></div>
+      <pre><code class="language-sql" data-snippet="ex2"></code></pre></div>
+    <div class="result"><div class="rlabel">result</div>
+      <table class="grid"><tr><th>salary</th><th>cnt</th></tr><tr><td>6000</td><td>2</td></tr></table></div>
+
+    <h3>3 · Delete duplicates, keep one <span class="chip med">medium</span></h3>
+    <p class="prob">Remove duplicate rows, keeping the one with the lowest id.</p>
+    <div class="code solo"><div class="cap"><span>window-function approach (clearest, modern)</span><button class="copy">copy</button></div>
+      <pre><code class="language-sql" data-snippet="ex3"></code></pre></div>
+    <div class="call warn"><span class="ic">!</span><div>MySQL forbids selecting from the same table you're deleting in a subquery — use the self-join form: <code>DELETE a FROM t a JOIN t b ON a.key=b.key AND a.id&gt;b.id;</code></div></div>
+
+    <h3>4 · Highest-paid per department <span class="chip med">medium</span></h3>
+    <p class="prob">For each department, the top earner (the canonical top-N-per-group).</p>
+    <div class="code solo"><div class="cap"><span>PARTITION BY department, RANK = 1</span><button class="copy">copy</button></div>
+      <pre><code class="language-sql" data-snippet="ex4"></code></pre></div>
+    <div class="result"><div class="rlabel">result</div>
+      <table class="grid"><tr><th>name</th><th>department_id</th><th>salary</th></tr>
+        <tr><td>Ada</td><td>10</td><td>9000</td></tr><tr><td>Finn</td><td>20</td><td>8000</td></tr></table></div>
+    <p class="mut"><code class="inl">RANK</code> keeps all ties at the top; swap for <code class="inl">ROW_NUMBER</code> if you need exactly one row per department.</p>
+
+    <h3>5 · Earning more than their manager <span class="chip med">medium</span></h3>
+    <p class="prob">Self-join: the table joined to itself, employee row to manager row.</p>
+    <div class="code solo"><div class="cap"><span>self-join on manager_id = id</span><button class="copy">copy</button></div>
+      <pre><code class="language-sql" data-snippet="ex5"></code></pre></div>
+    <div class="result"><div class="rlabel">result</div>
+      <table class="grid"><tr><th>employee</th><th>salary</th><th>manager</th><th>mgr_salary</th></tr>
+        <tr><td>Finn</td><td>8000</td><td>Cho</td><td>7500</td></tr></table></div>
+
+    <h3>6 · Above the department average <span class="chip med">medium</span></h3>
+    <p class="prob">Each employee paid above their own department's average. Correlated subquery.</p>
+    <div class="code solo"><div class="cap"><span>correlated subquery</span><button class="copy">copy</button></div>
+      <pre><code class="language-sql" data-snippet="ex6"></code></pre></div>
+    <div class="result"><div class="rlabel">result</div>
+      <table class="grid"><tr><th>name</th><th>salary</th><th>department_id</th></tr>
+        <tr><td>Ada</td><td>9000</td><td>10</td></tr><tr><td>Cho</td><td>7500</td><td>20</td></tr><tr><td>Finn</td><td>8000</td><td>20</td></tr></table></div>
+
+    <h3>7 · Departments with no employees <span class="chip basic">basic</span></h3>
+    <p class="prob">Anti-join: rows on the left with no match on the right.</p>
+    <div class="code solo"><div class="cap"><span>LEFT JOIN ... IS NULL</span><button class="copy">copy</button></div>
+      <pre><code class="language-sql" data-snippet="ex7"></code></pre></div>
+    <div class="result"><div class="rlabel">result</div>
+      <table class="grid"><tr><th>id</th><th>name</th></tr><tr><td>30</td><td>Finance</td></tr></table></div>
+
+    <h3>8 · Count per department, including zeros <span class="chip basic">basic</span></h3>
+    <p class="prob">Every department with its headcount — empty departments must show 0.</p>
+    <div class="code solo"><div class="cap"><span>LEFT JOIN + COUNT(column)</span><button class="copy">copy</button></div>
+      <pre><code class="language-sql" data-snippet="ex8"></code></pre></div>
+    <div class="result"><div class="rlabel">result</div>
+      <table class="grid"><tr><th>name</th><th>employee_count</th></tr>
+        <tr><td>Engineering</td><td>3</td></tr><tr><td>Data</td><td>3</td></tr><tr><td>Finance</td><td>0</td></tr></table></div>
+    <div class="call warn"><span class="ic">!</span><div><b>The trap:</b> use <code>COUNT(e.id)</code>, not <code>COUNT(*)</code>. With a LEFT JOIN, the empty department still produces one row of NULLs — <code>COUNT(*)</code> counts it as 1; <code>COUNT(e.id)</code> ignores NULLs and correctly reports 0.</div></div>
+
+    <h3>9 · Running total of salary <span class="chip med">medium</span></h3>
+    <p class="prob">Cumulative salary ordered by hire date. Window with a frame.</p>
+    <div class="code solo"><div class="cap"><span>SUM() OVER (ORDER BY ...)</span><button class="copy">copy</button></div>
+      <pre><code class="language-sql" data-snippet="ex9"></code></pre></div>
+    <div class="result"><div class="rlabel">result</div>
+      <table class="grid"><tr><th>name</th><th>salary</th><th>running_total</th></tr>
+        <tr><td>Ada</td><td>9000</td><td>9000</td></tr>
+        <tr><td>Blake</td><td>6000</td><td>15000</td></tr>
+        <tr><td>Cho</td><td>7500</td><td>22500</td></tr>
+        <tr><td>Diego</td><td>6000</td><td>28500</td></tr>
+        <tr><td>Eve</td><td>5000</td><td>33500</td></tr>
+        <tr><td>Finn</td><td>8000</td><td>41500</td></tr></table></div>
+
+    <h3>10 · Hired in the last 30 days <span class="chip basic">basic</span></h3>
+    <p class="prob">Date filtering — the least portable area across engines.</p>
+    <div class="code solo"><div class="cap"><span>ANSI form + dialect equivalents in comments</span><button class="copy">copy</button></div>
+      <pre><code class="language-sql" data-snippet="ex10"></code></pre></div>
+  </section>
+
+  <section class="panel" id="tab-sql-jn" data-tab="sql-jn" role="tabpanel">
+    <p class="eyebrow">Combining tables</p>
+    <h2 class="ph">Joins</h2>
+    <p class="lede">A join matches rows across tables on a condition. The type decides what happens to rows with no match.</p>
+
+    <div class="tbl-wrap"><table class="ref">
+      <thead><tr><th class="m">Join</th><th>Keeps</th></tr></thead>
+      <tbody>
+        <tr><td class="m">INNER JOIN</td><td>Only rows matching on both sides.</td></tr>
+        <tr><td class="m">LEFT JOIN</td><td>All left rows; right columns NULL when no match. (Most common after INNER.)</td></tr>
+        <tr><td class="m">RIGHT JOIN</td><td>All right rows; mirror of LEFT. Rarely needed — flip the tables and use LEFT.</td></tr>
+        <tr><td class="m">FULL OUTER JOIN</td><td>All rows from both; NULLs where either side is missing. (Not in MySQL — emulate with UNION.)</td></tr>
+        <tr><td class="m">CROSS JOIN</td><td>Cartesian product — every left row × every right row. No ON clause.</td></tr>
+        <tr><td class="m">SELF JOIN</td><td>A table joined to itself with aliases. Hierarchies: employee ↔ manager.</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>Inner vs left, side by side</h3>
+    <div class="code solo"><div class="cap"><span>same query, two join types</span><button class="copy">copy</button></div>
+      <pre><code class="language-sql" data-snippet="joins"></code></pre></div>
+    <div class="call"><span class="ic">→</span><div><b>Anti-join idiom:</b> <code>LEFT JOIN ... WHERE right.id IS NULL</code> returns left rows with no right match. Putting a right-table filter in <code>WHERE</code> (not <code>ON</code>) silently turns a LEFT JOIN back into an INNER JOIN — a common bug.</div></div>
+  </section>
+
+  <section class="panel" id="tab-sql-ag" data-tab="sql-ag" role="tabpanel">
+    <p class="eyebrow">Rolling up rows</p>
+    <h2 class="ph">Aggregates &amp; grouping</h2>
+    <p class="lede">Aggregate functions collapse many rows into one value; GROUP BY does it per group.</p>
+
+    <div class="tbl-wrap"><table class="ref">
+      <thead><tr><th class="m">Function</th><th>Note</th></tr></thead>
+      <tbody>
+        <tr><td class="m">COUNT(*)</td><td>All rows, including NULLs.</td></tr>
+        <tr><td class="m">COUNT(col)</td><td>Non-NULL values of col only.</td></tr>
+        <tr><td class="m">COUNT(DISTINCT col)</td><td>Distinct non-NULL values.</td></tr>
+        <tr><td class="m">SUM / AVG</td><td>Skip NULLs. AVG divides by non-NULL count, not row count.</td></tr>
+        <tr><td class="m">MIN / MAX</td><td>Work on numbers, dates, and strings.</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>GROUP BY rule</h3>
+    <p>Every column in <code class="inl">SELECT</code> must be either inside an aggregate or listed in <code class="inl">GROUP BY</code>. (MySQL historically let you break this; standard SQL and most engines reject it.)</p>
+    <div class="code solo"><div class="cap"><span>group, aggregate, filter the groups</span><button class="copy">copy</button></div>
+      <pre><code class="language-sql" data-snippet="groupby"></code></pre></div>
+    <div class="result"><div class="rlabel">result</div>
+      <table class="grid"><tr><th>department_id</th><th>headcount</th><th>avg_salary</th></tr>
+        <tr><td>10</td><td>3</td><td>6666.67</td></tr><tr><td>20</td><td>3</td><td>7166.67</td></tr></table></div>
+    <p class="mut">Department 30 is absent — it has no employee rows to group. To include it at 0, you need the LEFT JOIN from exercise 8.</p>
+  </section>
+
+  <section class="panel" id="tab-sql-wn" data-tab="sql-wn" role="tabpanel">
+    <p class="eyebrow">Per-row over a group</p>
+    <h2 class="ph">Window functions</h2>
+    <p class="lede">Like aggregates, but they keep every row instead of collapsing it. The engine of top-N-per-group, running totals, and ranking. Increasingly expected even at the medium tier.</p>
+
+    <h3>The three ranking functions — know the difference cold</h3>
+    <p class="prob">Salaries ranked high→low, with a tie at 6000 (Blake, Diego):</p>
+    <div class="code"><div class="cap"><span>all three, one query</span><button class="copy">copy</button></div>
+      <pre><code class="language-sql" data-snippet="ranks"></code></pre></div>
+    <div class="result"><div class="rlabel">result</div>
+      <table class="grid"><tr><th>name</th><th>salary</th><th>row_number</th><th>rank</th><th>dense_rank</th></tr>
+        <tr><td>Ada</td><td>9000</td><td>1</td><td>1</td><td>1</td></tr>
+        <tr><td>Finn</td><td>8000</td><td>2</td><td>2</td><td>2</td></tr>
+        <tr><td>Cho</td><td>7500</td><td>3</td><td>3</td><td>3</td></tr>
+        <tr><td>Blake</td><td>6000</td><td>4</td><td>4</td><td>4</td></tr>
+        <tr><td>Diego</td><td>6000</td><td>5</td><td>4</td><td>4</td></tr>
+        <tr><td>Eve</td><td>5000</td><td>6</td><td>6</td><td>5</td></tr></table></div>
+    <ul class="tight">
+      <li><code class="inl">ROW_NUMBER</code> — always unique; ties broken arbitrarily (1,2,3,4,5,6).</li>
+      <li><code class="inl">RANK</code> — ties share a rank, then it <b>skips</b> (1,2,3,4,4,<b>6</b>).</li>
+      <li><code class="inl">DENSE_RANK</code> — ties share a rank, <b>no gap</b> (1,2,3,4,4,<b>5</b>).</li>
+    </ul>
+
+    <h3>Anatomy &amp; LAG / LEAD</h3>
+    <div class="code solo"><div class="cap"><span>OVER(PARTITION BY ... ORDER BY ...) + neighbor access</span><button class="copy">copy</button></div>
+      <pre><code class="language-sql" data-snippet="lag"></code></pre></div>
+    <div class="call"><span class="ic">→</span><div><code>PARTITION BY</code> restarts the window per group (like GROUP BY but non-collapsing); <code>ORDER BY</code> inside <code>OVER</code> orders rows within each partition. <code>LAG</code>/<code>LEAD</code> reach the previous/next row — used for row-to-row deltas.</div></div>
+  </section>
+
+  <section class="panel" id="tab-sql-sq" data-tab="sql-sq" role="tabpanel">
+    <p class="eyebrow">Queries inside queries</p>
+    <h2 class="ph">Subqueries &amp; CTEs</h2>
+    <p class="lede">A subquery is a SELECT nested in another statement. A CTE is the same idea, named and readable.</p>
+
+    <div class="tbl-wrap"><table class="ref">
+      <thead><tr><th class="m">Kind</th><th>Shape</th></tr></thead>
+      <tbody>
+        <tr><td class="m">Scalar</td><td>Returns one value: <code class="inl">WHERE salary &gt; (SELECT AVG(salary) ...)</code></td></tr>
+        <tr><td class="m">IN / NOT IN</td><td>Returns a list to match against.</td></tr>
+        <tr><td class="m">EXISTS</td><td>Correlated; true if the inner query returns any row.</td></tr>
+        <tr><td class="m">Derived table</td><td>Subquery in FROM, aliased, queried like a table.</td></tr>
+        <tr><td class="m">Correlated</td><td>References the outer row; runs per outer row (exercise 6).</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>EXISTS vs IN — and the NOT IN null trap</h3>
+    <div class="code solo"><div class="cap"><span>NOT EXISTS is null-safe; NOT IN is not</span><button class="copy">copy</button></div>
+      <pre><code class="language-sql" data-snippet="exists"></code></pre></div>
+    <div class="call warn"><span class="ic">!</span><div><b>NOT IN with a NULL in the list returns no rows.</b> If the subquery yields any NULL, <code>x NOT IN (1, 2, NULL)</code> evaluates to unknown for every x. Prefer <code>NOT EXISTS</code> for anti-joins — it's null-safe and usually as fast or faster.</div></div>
+
+    <h3>CTEs — readability over nesting</h3>
+    <div class="code solo"><div class="cap"><span>WITH ... AS (...)</span><button class="copy">copy</button></div>
+      <pre><code class="language-sql" data-snippet="cte"></code></pre></div>
+    <p class="mut">A CTE doesn't change results vs a derived table — it makes multi-step logic legible and lets you reference the same intermediate set more than once.</p>
+  </section>
+
+  <section class="panel" id="tab-sql-co" data-tab="sql-co" role="tabpanel">
+    <p class="eyebrow">Spoken answers + DDL</p>
+    <h2 class="ph">Concepts &amp; DDL</h2>
+    <p class="lede">SQL rounds pair the coding with rapid-fire concept questions. Tight, correct answers below.</p>
+
+    <h3>DELETE vs TRUNCATE vs DROP</h3>
+    <div class="tbl-wrap"><table class="ref">
+      <thead><tr><th class="m"></th><th>DELETE</th><th>TRUNCATE</th><th>DROP</th></tr></thead>
+      <tbody>
+        <tr><td class="m">Type</td><td>DML</td><td>DDL</td><td>DDL</td></tr>
+        <tr><td class="m">WHERE</td><td>Yes</td><td>No</td><td>No</td></tr>
+        <tr><td class="m">Removes</td><td>Selected rows</td><td>All rows, keeps table</td><td>Rows + table structure</td></tr>
+        <tr><td class="m">Speed</td><td>Slow (row-by-row, logged)</td><td>Fast (deallocates pages)</td><td>Fast</td></tr>
+        <tr><td class="m">Rollback</td><td>Yes (in a tx)</td><td>Usually no / limited</td><td>No</td></tr>
+        <tr><td class="m">Identity</td><td>Not reset</td><td>Reset</td><td>n/a</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>Keys &amp; constraints</h3>
+    <ul class="tight">
+      <li><b>PRIMARY KEY</b> — unique + NOT NULL, one per table. Often the clustered index.</li>
+      <li><b>UNIQUE</b> — enforces uniqueness, allows (typically one) NULL, multiple per table.</li>
+      <li><b>FOREIGN KEY</b> — references another table's PK/unique column; enforces referential integrity.</li>
+    </ul>
+
+    <h3>Indexes</h3>
+    <ul class="tight">
+      <li>Speed up reads/filters/joins; <b>slow down writes</b> and cost storage — index selectively.</li>
+      <li><b>Clustered</b> — defines the physical row order; one per table (the PK by default in many engines).</li>
+      <li><b>Non-clustered</b> — separate structure pointing to rows; many per table.</li>
+      <li>Skip indexing low-cardinality columns (e.g. a boolean) and tiny or write-heavy tables.</li>
+    </ul>
+
+    <h3>UNION vs UNION ALL · Normal forms · NULLs</h3>
+    <ul class="tight">
+      <li><b>UNION</b> removes duplicates (extra sort/dedup cost); <b>UNION ALL</b> keeps everything and is faster. Both require matching column counts/types.</li>
+      <li><b>1NF</b> atomic values, no repeating groups · <b>2NF</b> 1NF + no partial dependency on part of a composite key · <b>3NF</b> 2NF + no transitive dependency (non-key depending on non-key). Denormalize deliberately for read speed.</li>
+      <li><b>NULL is unknown:</b> <code class="inl">NULL = NULL</code> is not true — use <code class="inl">IS NULL</code>. Default it with <code class="inl">COALESCE(x, 0)</code>.</li>
+    </ul>
+
+    <h3>DDL basics</h3>
+    <div class="code solo"><div class="cap"><span>CREATE / constraints / ALTER / INDEX</span><button class="copy">copy</button></div>
+      <pre><code class="language-sql" data-snippet="ddl"></code></pre></div>
+
+    <h3>Dialect cheat — the portability landmines</h3>
+    <div class="tbl-wrap"><table class="ref">
+      <thead><tr><th>Need</th><th class="m">MySQL</th><th class="m">PostgreSQL</th><th class="m">SQL Server</th><th class="m">Oracle</th></tr></thead>
+      <tbody>
+        <tr><td>Limit rows</td><td class="m">LIMIT n</td><td class="m">LIMIT n</td><td class="m">TOP n / OFFSET FETCH</td><td class="m">FETCH FIRST n ROWS</td></tr>
+        <tr><td>Null default</td><td class="m">IFNULL / COALESCE</td><td class="m">COALESCE</td><td class="m">ISNULL / COALESCE</td><td class="m">NVL / COALESCE</td></tr>
+        <tr><td>Concat</td><td class="m">CONCAT()</td><td class="m">||</td><td class="m">+ / CONCAT</td><td class="m">||</td></tr>
+        <tr><td>Auto id</td><td class="m">AUTO_INCREMENT</td><td class="m">SERIAL / IDENTITY</td><td class="m">IDENTITY</td><td class="m">SEQUENCE / IDENTITY</td></tr>
+        <tr><td>Current date</td><td class="m">CURDATE()</td><td class="m">CURRENT_DATE</td><td class="m">GETDATE()</td><td class="m">SYSDATE</td></tr>
+      </tbody>
+    </table></div>
+    <p class="mut"><code class="inl">COALESCE</code> is the ANSI-standard null-default and works everywhere — prefer it over the vendor-specific functions.</p>
+  </section>
+
+</div></main>
+</div>
+
+<footer class="app-foot">
+  <div class="wrap">
+    Spring Boot 3.x · Jakarta Persistence · Hibernate 6 · ANSI SQL with dialect notes — verify version- and engine-specific behavior against your target stack before quoting it as fact.
+  </div>
+</footer>
+
+<script>
+const CODE = {
+slice:
+`@RestController
+@RequestMapping("/api/users")
+class UserController {
+
+    private final UserService service;
+    UserController(UserService service) { this.service = service; }
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    UserDto create(@Valid @RequestBody CreateUserRequest req) {
+        return service.create(req);            // -> Service -> Repository.save() -> INSERT
+    }
+}`,
+repodecl:
+`public interface UserRepository extends JpaRepository<User, Long> {
+    // inherits save, findById, findAll, deleteById, count, ...
+    // add your own derived / @Query methods below
+}`,
+save:
+`// CREATE  (id is null -> INSERT)
+User saved = repo.save(new User("a@mail.com", "Ada"));
+
+// UPDATE, style A — explicit save (fine, common)
+User u = repo.findById(id).orElseThrow();
+u.setEmail("new@mail.com");
+repo.save(u);
+
+// UPDATE, style B — no save() needed: dirty checking flushes on commit
+@Transactional
+public void rename(Long id, String name) {
+    User u = repo.findById(id).orElseThrow();
+    u.setName(name);          // managed entity -> UPDATE issued at commit
+}`,
+derived:
+`Optional<User> findByEmail(String email);
+boolean        existsByEmail(String email);
+long           countByStatus(Status status);
+
+List<User> findByStatusAndActiveTrue(Status status);
+List<User> findByNameContainingIgnoreCase(String q);
+List<User> findByCreatedAtBetween(Instant from, Instant to);
+List<User> findByDepartmentId(Long deptId);          // traverses the relationship
+List<User> findTop5ByOrderByCreatedAtDesc();`,
+query:
+`@Query("select u from User u where u.email = :email")
+Optional<User> findByEmailJpql(@Param("email") String email);
+
+@Query(value = "select * from users where email = :email", nativeQuery = true)
+Optional<User> findByEmailNative(@Param("email") String email);
+
+@Modifying
+@Query("update User u set u.active = false where u.lastLogin < :cutoff")
+int deactivateStale(@Param("cutoff") Instant cutoff);   // returns rows affected`,
+page:
+`// repository
+Page<User> findByStatus(Status status, Pageable pageable);
+
+// service
+@Transactional(readOnly = true)
+public Page<UserDto> list(Pageable pageable) {
+    return repo.findAll(pageable).map(UserMapper::toDto);
+}
+
+// request:  GET /api/users?page=0&size=20&sort=createdAt,desc`,
+entity:
+`import jakarta.persistence.*;
+
+@Entity
+@Table(name = "users")
+public class User {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false, unique = true, length = 120)
+    private String email;
+
+    @Enumerated(EnumType.STRING)
+    private Status status;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "department_id")
+    private Department department;
+
+    @OneToMany(mappedBy = "user",
+               cascade = CascadeType.ALL,
+               orphanRemoval = true)
+    private List<Order> orders = new ArrayList<>();
+
+    protected User() {}                       // JPA needs a no-arg ctor
+    public User(String email, String name) { this.email = email; /* ... */ }
+    // getters / setters
+}`,
+controller:
+`@RestController
+@RequestMapping("/api/users")
+public class UserController {
+
+    private final UserService service;
+    public UserController(UserService service) { this.service = service; }
+
+    @GetMapping                                   // GET /api/users?page=&size=
+    public Page<UserDto> list(Pageable pageable) {
+        return service.list(pageable);
+    }
+
+    @GetMapping("/{id}")                          // GET /api/users/42
+    public ResponseEntity<UserDto> get(@PathVariable Long id) {
+        return ResponseEntity.ok(service.get(id));
+    }
+
+    @PostMapping                                  // POST /api/users
+    @ResponseStatus(HttpStatus.CREATED)
+    public UserDto create(@Valid @RequestBody CreateUserRequest req) {
+        return service.create(req);
+    }
+
+    @PutMapping("/{id}")                          // PUT /api/users/42
+    public UserDto update(@PathVariable Long id,
+                          @Valid @RequestBody UpdateUserRequest req) {
+        return service.update(id, req);
+    }
+
+    @DeleteMapping("/{id}")                       // DELETE /api/users/42
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Long id) {
+        service.delete(id);
+    }
+}`,
+service:
+`@Service
+public class UserService {
+
+    private final UserRepository repo;
+    public UserService(UserRepository repo) { this.repo = repo; }
+
+    @Transactional(readOnly = true)
+    public Page<UserDto> list(Pageable p) {
+        return repo.findAll(p).map(UserMapper::toDto);
+    }
+
+    @Transactional(readOnly = true)
+    public UserDto get(Long id) {
+        return UserMapper.toDto(find(id));
+    }
+
+    @Transactional
+    public UserDto create(CreateUserRequest req) {
+        if (repo.existsByEmail(req.email()))
+            throw new DuplicateEmailException(req.email());
+        return UserMapper.toDto(repo.save(new User(req.email(), req.name())));
+    }
+
+    @Transactional
+    public UserDto update(Long id, UpdateUserRequest req) {
+        User u = find(id);
+        u.setName(req.name());          // dirty checking -> UPDATE on commit
+        return UserMapper.toDto(u);
+    }
+
+    @Transactional
+    public void delete(Long id) { repo.delete(find(id)); }
+
+    private User find(Long id) {
+        return repo.findById(id)
+                   .orElseThrow(() -> new UserNotFoundException(id));
+    }
+}`,
+dto:
+`public record UserDto(Long id, String email, String name, Status status) {}
+
+public record CreateUserRequest(
+        @NotBlank @Email String email,
+        @NotBlank @Size(max = 80) String name) {}
+
+public record UpdateUserRequest(
+        @NotBlank @Size(max = 80) String name) {}`,
+advice:
+`@RestControllerAdvice
+public class GlobalExceptionHandler {
+
+    @ExceptionHandler(UserNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ApiError notFound(UserNotFoundException ex) {
+        return new ApiError("USER_NOT_FOUND", ex.getMessage());
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiError invalid(MethodArgumentNotValidException ex) {
+        Map<String, String> fields = ex.getBindingResult().getFieldErrors().stream()
+            .collect(Collectors.toMap(FieldError::getField,
+                                      FieldError::getDefaultMessage,
+                                      (a, b) -> a));
+        return new ApiError("VALIDATION_FAILED", fields.toString());
+    }
+}
+
+public record ApiError(String code, String message) {}`,
+
+order:
+`FROM / JOIN        -- assemble the row set
+WHERE              -- filter individual rows
+GROUP BY           -- collapse into groups
+HAVING             -- filter the groups
+SELECT             -- pick / compute columns (aliases born here)
+DISTINCT           -- de-duplicate
+ORDER BY           -- sort (can use SELECT aliases)
+LIMIT / OFFSET     -- trim the result`,
+skeleton:
+`SELECT   department_id, COUNT(*) AS headcount
+FROM     employees
+WHERE    salary > 4000
+GROUP BY department_id
+HAVING   COUNT(*) > 1
+ORDER BY headcount DESC
+LIMIT    10;`,
+schema:
+`CREATE TABLE departments (
+    id   BIGINT PRIMARY KEY,
+    name VARCHAR(60) NOT NULL
+);
+
+CREATE TABLE employees (
+    id            BIGINT PRIMARY KEY,
+    name          VARCHAR(80) NOT NULL,
+    salary        DECIMAL(10,2),
+    department_id BIGINT REFERENCES departments(id),
+    manager_id    BIGINT REFERENCES employees(id),
+    hire_date     DATE
+);`,
+ex1a:
+`SELECT MAX(salary) AS second_highest
+FROM   employees
+WHERE  salary < (SELECT MAX(salary) FROM employees);`,
+ex1b:
+`SELECT salary AS second_highest
+FROM (
+    SELECT salary,
+           DENSE_RANK() OVER (ORDER BY salary DESC) AS rnk
+    FROM employees
+) ranked
+WHERE rnk = 2;`,
+ex2:
+`SELECT salary, COUNT(*) AS cnt
+FROM     employees
+GROUP BY salary
+HAVING   COUNT(*) > 1;`,
+ex3:
+`WITH ranked AS (
+    SELECT id,
+           ROW_NUMBER() OVER (PARTITION BY salary ORDER BY id) AS rn
+    FROM employees
+)
+DELETE FROM employees
+WHERE id IN (SELECT id FROM ranked WHERE rn > 1);`,
+ex4:
+`SELECT name, department_id, salary
+FROM (
+    SELECT name, department_id, salary,
+           RANK() OVER (PARTITION BY department_id
+                        ORDER BY salary DESC) AS rnk
+    FROM employees
+) t
+WHERE rnk = 1;`,
+ex5:
+`SELECT e.name AS employee, e.salary,
+       m.name AS manager,  m.salary AS mgr_salary
+FROM employees e
+JOIN employees m ON e.manager_id = m.id
+WHERE e.salary > m.salary;`,
+ex6:
+`SELECT e.name, e.salary, e.department_id
+FROM employees e
+WHERE e.salary > (
+    SELECT AVG(salary)
+    FROM employees
+    WHERE department_id = e.department_id
+);`,
+ex7:
+`SELECT d.id, d.name
+FROM departments d
+LEFT JOIN employees e ON e.department_id = d.id
+WHERE e.id IS NULL;`,
+ex8:
+`SELECT d.name, COUNT(e.id) AS employee_count
+FROM departments d
+LEFT JOIN employees e ON e.department_id = d.id
+GROUP BY d.name
+ORDER BY employee_count DESC;`,
+ex9:
+`SELECT name, salary,
+       SUM(salary) OVER (ORDER BY hire_date
+            ROWS BETWEEN UNBOUNDED PRECEDING
+                     AND CURRENT ROW) AS running_total
+FROM employees;`,
+ex10:
+`-- ANSI / PostgreSQL
+SELECT name, hire_date
+FROM employees
+WHERE hire_date >= CURRENT_DATE - INTERVAL '30' DAY;
+
+-- MySQL      : hire_date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
+-- SQL Server : hire_date >= DATEADD(DAY, -30, GETDATE())
+-- Oracle     : hire_date >= SYSDATE - 30`,
+joins:
+`-- INNER: only employees that have a matching department
+SELECT e.name, d.name AS dept
+FROM employees e
+JOIN departments d ON e.department_id = d.id;
+
+-- LEFT: every department, even those with no employees
+SELECT d.name AS dept, e.name
+FROM departments d
+LEFT JOIN employees e ON e.department_id = d.id;`,
+groupby:
+`SELECT   department_id,
+         COUNT(*)              AS headcount,
+         ROUND(AVG(salary), 2) AS avg_salary
+FROM     employees
+GROUP BY department_id
+HAVING   COUNT(*) >= 2;`,
+ranks:
+`SELECT name, salary,
+       ROW_NUMBER() OVER (ORDER BY salary DESC) AS row_number,
+       RANK()       OVER (ORDER BY salary DESC) AS rank,
+       DENSE_RANK() OVER (ORDER BY salary DESC) AS dense_rank
+FROM employees;`,
+lag:
+`SELECT name, department_id, salary,
+       LAG(salary)  OVER (PARTITION BY department_id
+                          ORDER BY salary) AS prev_in_dept,
+       salary - LAG(salary) OVER (PARTITION BY department_id
+                                  ORDER BY salary) AS gap
+FROM employees;`,
+exists:
+`-- departments that HAVE at least one employee
+SELECT d.name
+FROM departments d
+WHERE EXISTS (
+    SELECT 1 FROM employees e WHERE e.department_id = d.id
+);
+
+-- anti-join, null-safe (prefer over NOT IN)
+SELECT d.name
+FROM departments d
+WHERE NOT EXISTS (
+    SELECT 1 FROM employees e WHERE e.department_id = d.id
+);`,
+cte:
+`WITH dept_avg AS (
+    SELECT department_id, AVG(salary) AS avg_salary
+    FROM employees
+    GROUP BY department_id
+)
+SELECT e.name, e.salary, a.avg_salary
+FROM employees e
+JOIN dept_avg a ON a.department_id = e.department_id
+WHERE e.salary > a.avg_salary;`,
+ddl:
+`CREATE TABLE employees (
+    id            BIGINT PRIMARY KEY,
+    name          VARCHAR(80) NOT NULL,
+    salary        DECIMAL(10,2) DEFAULT 0,
+    department_id BIGINT,
+    CONSTRAINT fk_dept FOREIGN KEY (department_id)
+        REFERENCES departments(id)
+);
+
+ALTER TABLE employees ADD COLUMN email VARCHAR(120) UNIQUE;
+CREATE INDEX idx_emp_dept ON employees(department_id);`
+};
+</script>
+<script src="assets/app.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script>
+(function(){
+  // inject raw snippets before highlight (shared boot highlights on DOMContentLoaded)
+  PrepUI.injectCode(CODE);
+
+  // section switcher: flip accent + crumb between backend (gold) and data/SQL (cyan)
+  PrepUI.initSubnav(document.querySelector('[data-subnav]'), {
+    onChange:function(name){
+      document.documentElement.setAttribute('data-track', name==='sql' ? 'data' : 'backend');
+      var crumb = document.querySelector('.app-crumb');
+      if (crumb) crumb.textContent = name==='sql' ? 'SQL' : 'Spring Boot / JPA';
+    }
+  });
+
+  // legacy caption-bar copy buttons
+  document.querySelectorAll('.code .copy').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var code = btn.closest('.code').querySelector('code');
+      navigator.clipboard.writeText(code.textContent).then(function(){
+        var o=btn.textContent; btn.textContent='copied'; btn.classList.add('ok');
+        setTimeout(function(){ btn.textContent=o; btn.classList.remove('ok'); },1400);
+      }).catch(function(){});
+    });
+  });
+})();
+</script>
+</body>
+</html>

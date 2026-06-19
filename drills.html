@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="en" data-track="drills">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Drills — Active Recall · Interview Prep Suite</title>
+<script>(function(){try{var t=localStorage.getItem('prep:theme');if(t!=='dark'&&t!=='light')t=matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/app.css">
+<style>
+  body{ --deep-bg:#eeedfe; --deep-fg:#3c3489; }
+  :root[data-theme="dark"] body{ --deep-bg:#26215c; --deep-fg:#cecbf6; }
+
+  .page-head-inner{padding:26px 0 0}
+  .subnav-wrap{display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin:18px 0 4px}
+  main{padding-top:18px}
+  .drill-wrap{max-width:780px}
+
+  .quick-banner{display:flex; align-items:center; gap:12px; flex-wrap:wrap; background:var(--accent-wash);
+    border:1px solid var(--accent-line); border-radius:var(--radius); padding:12px 16px; margin-bottom:18px; font-size:14px; color:var(--accent-ink)}
+  .quick-banner b{color:var(--ink)}
+  .quick-banner a{margin-left:auto}
+
+  .deck-aside{margin-bottom:18px}
+  details.deck-aside-d{background:var(--surface-2); border:1px solid var(--line); border-radius:var(--radius); padding:0 16px}
+  details.deck-aside-d summary{cursor:pointer; padding:12px 0; font-weight:600; font-family:var(--display); list-style:none; display:flex; align-items:center; gap:8px}
+  details.deck-aside-d summary::-webkit-details-marker{display:none}
+  details.deck-aside-d summary::before{content:"▸"; color:var(--accent); transition:.2s}
+  details.deck-aside-d[open] summary::before{transform:rotate(90deg)}
+  .deck-aside-body{padding:0 0 16px; font-size:13.5px; color:var(--ink-soft)}
+  .cheat-rows{display:flex; flex-wrap:wrap; gap:6px 18px; margin:6px 0}
+  .cheat-rows span b{color:var(--ink)}
+  .cheat-warn{margin-top:8px; font-size:12.5px; color:var(--warn-ink)}
+  .deck-aside-body ol{padding-left:1.2rem; margin:8px 0}
+  .deck-aside-body li{margin-bottom:5px}
+
+  .chips{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px}
+  .chip{appearance:none; cursor:pointer; border-radius:999px; padding:5px 13px; font-size:13px; font-family:var(--mono);
+    color:var(--ink-soft); background:var(--surface); border:1px solid var(--line-strong)}
+  .chip[aria-pressed="true"]{background:var(--ink); color:var(--bg); border-color:var(--ink)}
+
+  .meta{display:flex; justify-content:space-between; align-items:center; font-size:13px; color:var(--ink-faint); margin-bottom:10px; gap:10px; flex-wrap:wrap}
+
+  .card{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:26px 26px 22px; min-height:300px; display:flex; flex-direction:column}
+  .eyebrow2{display:inline-block; font-size:11.5px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; padding:3px 10px; border-radius:999px; margin-bottom:14px; align-self:flex-start; font-family:var(--mono)}
+  .eyebrow2.autoconfig,.eyebrow2.lead{background:var(--accent-wash); color:var(--accent-ink)}
+  .eyebrow2.caching{background:var(--med-wash); color:var(--warn-ink)}
+  .eyebrow2.patterns,.eyebrow2.deep{background:var(--deep-bg); color:var(--deep-fg)}
+  .eyebrow2.technique{background:var(--good-wash); color:var(--good)}
+  .eyebrow2.spine{background:var(--surface-2); color:var(--ink-soft)}
+  .front{font-size:19px; font-weight:600; line-height:1.45; letter-spacing:-.005em; font-family:var(--display)}
+  .front .hook{display:block; margin-top:8px; font-family:var(--sans); font-weight:400; font-size:16px; color:var(--ink-soft); line-height:1.6}
+  .back{margin-top:18px; padding-top:16px; border-top:1px dashed var(--line); font-size:15.5px; color:var(--ink)}
+  .back p{margin:0 0 10px} .back ul{margin:0 0 10px; padding-left:20px} .back li{margin-bottom:5px}
+  .back .alt{margin-top:12px; font-size:13px; color:var(--ink-faint)}
+  .back code{font-family:var(--mono); font-size:.86em; background:var(--code-inline-bg); padding:1px 5px; border-radius:4px; color:var(--accent-ink)}
+  .back .lbl{font-size:11px; font-weight:600; letter-spacing:.04em; text-transform:uppercase; color:var(--ink-soft); margin-bottom:6px}
+  .back ol.beats{margin:0 0 14px; padding-left:1.1rem; font-size:14px; line-height:1.55}
+  .nums{background:var(--surface-2); border-radius:var(--radius-sm); padding:8px 12px; margin-bottom:12px}
+  .nums .val{font-size:14px; font-weight:600}
+  .seam{background:var(--good-wash); border-radius:var(--radius-sm); padding:9px 13px; margin-bottom:12px}
+  .seam .lbl{color:var(--good)} .seam .val{font-size:13.5px; line-height:1.55}
+  .fu{background:var(--med-wash); border-radius:var(--radius-sm); padding:9px 13px}
+  .fu .lbl{color:var(--warn-ink)} .fu .q{font-size:14px; font-weight:600; line-height:1.5; margin-bottom:6px} .fu .a{font-size:13.5px; line-height:1.55; color:var(--ink-soft)}
+  .hidden{display:none}
+  .spacer{flex:1}
+  .actions{display:flex; gap:10px; margin-top:20px; flex-wrap:wrap; align-items:center}
+  .btn-reveal{appearance:none; cursor:pointer; background:var(--ink); color:var(--bg); border:1px solid var(--ink); border-radius:var(--radius-sm); padding:9px 20px; font-weight:600; font-family:var(--display); font-size:14px}
+  .btn-again{appearance:none; cursor:pointer; background:var(--again-wash); color:var(--again); border:1px solid transparent; border-radius:var(--radius-sm); padding:9px 16px; font-weight:600; font-family:var(--display); font-size:14px}
+  .btn-good{appearance:none; cursor:pointer; background:var(--good-wash); color:var(--good); border:1px solid transparent; border-radius:var(--radius-sm); padding:9px 16px; font-weight:600; font-family:var(--display); font-size:14px}
+  .statusbadge{font-size:12.5px; border-radius:999px; padding:2px 10px; font-family:var(--mono); align-self:center}
+  .statusbadge.again{background:var(--again-wash); color:var(--again)}
+  .statusbadge.good{background:var(--good-wash); color:var(--good)}
+
+  .nav{display:flex; justify-content:space-between; align-items:center; margin-top:14px}
+  .nav button{appearance:none; cursor:pointer; font-family:var(--mono); font-size:13px; background:var(--surface); border:1px solid var(--line-strong); color:var(--ink-soft); border-radius:var(--radius-sm); padding:7px 13px}
+  .nav button:hover{border-color:var(--accent); color:var(--accent)}
+  .pos{font-size:13px; color:var(--ink-faint); font-family:var(--mono)}
+  .keyhint{margin-top:22px; font-size:12.5px; color:var(--ink-faint)}
+  .keyhint kbd{font-family:var(--mono); font-size:11px; background:var(--surface-2); border:1px solid var(--line); border-radius:4px; padding:1px 5px}
+  .empty{padding:40px 10px; text-align:center; color:var(--ink-faint)}
+</style>
+</head>
+<body>
+
+<div class="app-topbar">
+  <div class="app-topbar-inner">
+    <a class="app-brand" href="index.html"><span class="dot"></span>Interview Prep Suite</a>
+    <span class="app-crumb">Drills</span>
+    <span class="app-spacer"></span>
+    <a class="app-back" href="index.html">← Hub</a>
+    <button class="theme-toggle" type="button" aria-label="Toggle dark mode"><span class="tt-ic"></span><span class="tt-label">Dark</span></button>
+  </div>
+</div>
+
+<header class="page-head">
+  <div class="wrap drill-wrap page-head-inner">
+    <p class="eyebrow">Active recall</p>
+    <h1 class="title">Drills</h1>
+    <p class="subtitle" id="deck-blurb">Answer out loud before revealing. Grade yourself honestly — progress feeds the hub dashboard.</p>
+    <div class="subnav-wrap" id="deck-switch-wrap">
+      <div class="subnav" data-subnav role="tablist" aria-label="Deck">
+        <button data-section="sysdesign" aria-selected="true">System Design</button>
+        <button data-section="behavioral">Behavioral</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main><div class="wrap drill-wrap">
+  <div id="quick-banner" class="quick-banner" style="display:none"></div>
+  <div id="deck-aside" class="deck-aside"></div>
+  <div class="chips" id="chips" role="group" aria-label="Filter"></div>
+  <div class="meta">
+    <span id="progress"></span>
+    <button class="chip" id="shuffleBtn">↻ Shuffle</button>
+  </div>
+  <div class="card" id="card"></div>
+  <div class="nav">
+    <button id="prevBtn" aria-label="Previous">← prev</button>
+    <span class="pos" id="pos"></span>
+    <button id="nextBtn" aria-label="Next">next →</button>
+  </div>
+  <p class="keyhint">Keys: <kbd>space</kbd> reveal · <kbd>1</kbd> again · <kbd>2</kbd> got it · <kbd>←/→</kbd> navigate · <kbd>s</kbd> shuffle. Progress saves locally.</p>
+</div></main>
+
+<footer class="app-foot">
+  <div class="wrap drill-wrap">Active recall · System Design concepts + Behavioral stories · grade honestly, the hub tracks it.</div>
+</footer>
+
+<script src="assets/app.js"></script>
+<script src="assets/decks.js"></script>
+<script>
+(function(){
+  var P = PrepUI.Progress;
+  var params = new URLSearchParams(location.search);
+  var quick = params.get('mode') === 'quick';
+  var quickN = Math.max(1, parseInt(params.get('n') || '10', 10) || 10);
+  var deckId = (params.get('deck') === 'behavioral') ? 'behavioral' : 'sysdesign';
+
+  var filter = 'all';
+  var order = [];          // array of {deckId, card}
+  var idx = 0, revealed = false;
+
+  var cardEl = document.getElementById('card');
+  var chipsEl = document.getElementById('chips');
+  var posEl = document.getElementById('pos');
+  var progressEl = document.getElementById('progress');
+  var asideEl = document.getElementById('deck-aside');
+  var blurbEl = document.getElementById('deck-blurb');
+
+  function deck(){ return DECKS[deckId]; }
+
+  function statusOf(dId, id){
+    var dk = P.get().decks[dId] || {};
+    if (dId === 'behavioral') return (dk.done||[]).indexOf(id) > -1 ? 'good' : null;
+    if ((dk.good||[]).indexOf(id) > -1) return 'good';
+    if ((dk.again||[]).indexOf(id) > -1) return 'again';
+    return null;
+  }
+  function setGrade(dId, id, got){
+    if (dId === 'behavioral') P.setCard('behavioral', id, got ? 'done' : 'none');
+    else P.setCard('sysdesign', id, got ? 'good' : 'again');
+  }
+
+  /* ---- build the working queue ---- */
+  function buildQuick(){
+    var pool = [];
+    Object.keys(DECKS).forEach(function(dId){
+      DECKS[dId].cards.forEach(function(c){ pool.push({deckId:dId, card:c, st:statusOf(dId, c.id)}); });
+    });
+    var again = pool.filter(function(x){ return x.st === 'again'; });
+    var unseen = shuffle(pool.filter(function(x){ return x.st === null; }));
+    var known = shuffle(pool.filter(function(x){ return x.st === 'good'; }));
+    return again.concat(unseen, known).slice(0, quickN);
+  }
+  function buildNormal(){
+    var d = deck();
+    var list = d.cards.filter(function(c){
+      if (filter === 'all') return true;
+      if (filter === 'missed'){
+        if (d.schema === 'concept') return statusOf(deckId, c.id) === 'again';
+        return statusOf(deckId, c.id) !== 'good';   // behavioral: not yet ready
+      }
+      if (filter === 'priority') return c.topic === 'lead' || c.topic === 'deep';
+      return c.topic === filter;
+    });
+    return list.map(function(c){ return {deckId:deckId, card:c}; });
+  }
+  function rebuild(keepIdx){
+    order = quick ? buildQuick() : buildNormal();
+    if (!keepIdx) idx = 0;
+    if (idx >= order.length) idx = 0;
+    revealed = false;
+  }
+  function shuffle(a){ a = a.slice(); for (var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
+
+  /* ---- topic chips ---- */
+  function renderChips(){
+    if (quick){ chipsEl.style.display='none'; return; }
+    chipsEl.style.display='';
+    var d = deck();
+    chipsEl.innerHTML = '';
+    d.topics.forEach(function(t){
+      var n = countFor(t.key);
+      var b = document.createElement('button');
+      b.className = 'chip';
+      b.textContent = t.label + (n != null ? ' ' + n : '');
+      b.setAttribute('aria-pressed', String(filter === t.key));
+      b.onclick = function(){ filter = t.key; rebuild(false); render(); };
+      chipsEl.appendChild(b);
+    });
+  }
+  function countFor(key){
+    var d = deck();
+    if (key === 'all') return d.cards.length;
+    if (key === 'priority') return d.cards.filter(function(c){ return c.topic==='lead'||c.topic==='deep'; }).length;
+    if (key === 'missed'){
+      if (d.schema === 'concept') return d.cards.filter(function(c){ return statusOf(deckId,c.id)==='again'; }).length;
+      return d.cards.filter(function(c){ return statusOf(deckId,c.id)!=='good'; }).length;
+    }
+    return d.cards.filter(function(c){ return c.topic === key; }).length;
+  }
+
+  /* ---- deck aside (behavioral cheat sheet + protocol) ---- */
+  function renderAside(){
+    if (quick || deck().schema !== 'story' || !deck().cheat){ asideEl.innerHTML=''; return; }
+    var d = deck();
+    var rows = d.cheat.rows.map(function(r){ return '<span>'+escapeHtml(r)+'</span>'; }).join('');
+    var steps = d.protocol.steps.map(function(s){ return '<li>'+escapeHtml(s)+'</li>'; }).join('');
+    asideEl.innerHTML =
+      '<details class="deck-aside-d"><summary>Cheat sheet &amp; how to drill</summary>'+
+      '<div class="deck-aside-body">'+
+        '<div class="lbl" style="font-weight:600;color:var(--ink)">'+escapeHtml(d.cheat.title)+'</div>'+
+        '<div class="cheat-rows">'+rows+'</div>'+
+        '<div class="cheat-warn">'+escapeHtml(d.cheat.warn)+'</div>'+
+        '<p style="margin:14px 0 4px;font-weight:600;color:var(--ink)">'+escapeHtml(d.protocol.title)+'</p>'+
+        '<ol>'+steps+'</ol>'+
+        '<p style="font-size:12.5px">'+escapeHtml(d.protocol.fails)+'</p>'+
+      '</div></details>';
+  }
+
+  /* ---- card render ---- */
+  function renderBackConcept(card){ return card.back; }
+  function renderBackStory(card){
+    var beats = card.beats.map(function(b){ return '<li>'+escapeHtml(b)+'</li>'; }).join('');
+    return '<div class="lbl">Beats</div><ol class="beats">'+beats+'</ol>'+
+      '<div class="nums"><div class="lbl">Numbers</div><div class="val">'+escapeHtml(card.numbers)+'</div></div>'+
+      '<div class="seam"><div class="lbl">✓ Seam line (volunteer this)</div><div class="val">'+escapeHtml(card.seam)+'</div></div>'+
+      '<div class="fu"><div class="lbl">⚠ Hardest follow-up</div><div class="q">'+escapeHtml(card.q)+'</div><div class="a">'+escapeHtml(card.a)+'</div></div>';
+  }
+
+  function render(){
+    renderChips();
+    renderAside();
+    var d = deck();
+
+    // progress line
+    if (quick){
+      progressEl.textContent = order.length + ' cards in this session';
+    } else if (d.schema === 'concept'){
+      var good = P.deckStats('sysdesign', d.cards.length).good;
+      progressEl.textContent = good + ' of ' + d.cards.length + ' marked got-it';
+    } else {
+      var done = P.deckStats('behavioral', d.cards.length).done;
+      progressEl.textContent = done + ' of ' + d.cards.length + ' stories ready';
+    }
+
+    if (!order.length){
+      cardEl.innerHTML = "<div class='empty'>Nothing here — switch filter back to All.</div>";
+      posEl.textContent = '0 / 0';
+      return;
+    }
+    if (idx >= order.length) idx = 0;
+    var entry = order[idx];
+    var dId = entry.deckId, card = entry.card, dObj = DECKS[dId];
+    var st = statusOf(dId, card.id);
+    var eyebrowClass = card.topic;
+    var eyebrowLabel = dObj.schema === 'concept'
+      ? dObj.topicLabels[card.topic]
+      : dObj.tagLabels[card.topic];
+
+    var frontHtml = dObj.schema === 'concept'
+      ? escapeHtml(card.front)
+      : escapeHtml(card.n + '. ' + card.title) + '<span class="hook">' + escapeHtml(card.hook) + '</span>';
+    var backHtml = dObj.schema === 'concept' ? renderBackConcept(card) : renderBackStory(card);
+
+    var quickTag = quick ? ' <span style="opacity:.6;font-weight:400;text-transform:none;letter-spacing:0">· '+dObj.label+'</span>' : '';
+
+    cardEl.innerHTML =
+      "<span class='eyebrow2 " + eyebrowClass + "'>" + eyebrowLabel + quickTag + "</span>" +
+      "<div class='front'>" + frontHtml + "</div>" +
+      "<div class='back" + (revealed ? "" : " hidden") + "'>" + backHtml + "</div>" +
+      "<div class='spacer'></div>" +
+      "<div class='actions'>" +
+        (revealed
+          ? "<button class='btn-again' id='againBtn'>Again (1)</button><button class='btn-good' id='goodBtn'>Got it (2)</button>"
+          : "<button class='btn-reveal' id='revealBtn'>Reveal (space)</button>") +
+        (st ? "<span class='statusbadge " + st + "'>" + (st === 'good' ? (dObj.schema==='story'?'ready':'got it') : 'again') + "</span>" : "") +
+      "</div>";
+
+    posEl.textContent = (idx + 1) + ' / ' + order.length;
+    var r = document.getElementById('revealBtn'); if (r) r.onclick = reveal;
+    var a = document.getElementById('againBtn'); if (a) a.onclick = function(){ grade(false); };
+    var g = document.getElementById('goodBtn'); if (g) g.onclick = function(){ grade(true); };
+  }
+
+  function reveal(){ revealed = true; render(); }
+  function grade(got){
+    if (!order.length) return;
+    var entry = order[idx];
+    setGrade(entry.deckId, entry.card.id, got);
+    next();
+  }
+  function next(){ if (!order.length) return; idx = (idx + 1) % order.length; revealed = false; render(); }
+  function prev(){ if (!order.length) return; idx = (idx - 1 + order.length) % order.length; revealed = false; render(); }
+  function doShuffle(){ order = shuffle(order); idx = 0; revealed = false; render(); }
+
+  document.getElementById('nextBtn').onclick = next;
+  document.getElementById('prevBtn').onclick = prev;
+  document.getElementById('shuffleBtn').onclick = doShuffle;
+
+  document.addEventListener('keydown', function(e){
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    if (e.key === ' ' || e.key === 'Enter'){ e.preventDefault(); if (!revealed) reveal(); else next(); }
+    else if (e.key === 'ArrowRight') next();
+    else if (e.key === 'ArrowLeft') prev();
+    else if (e.key === '1' && revealed) grade(false);
+    else if (e.key === '2' && revealed) grade(true);
+    else if (e.key.toLowerCase() === 's') doShuffle();
+  });
+
+  function escapeHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  /* ---- quick mode vs normal ---- */
+  if (quick){
+    document.getElementById('deck-switch-wrap').style.display = 'none';
+    var qb = document.getElementById('quick-banner');
+    qb.style.display = '';
+    blurbEl.textContent = 'A short mixed session across both decks — flagged-for-review and unseen cards first.';
+    rebuild(false);
+    qb.innerHTML = '<b>⚡ Quick refresh</b> · ' + order.length + ' cards across System Design + Behavioral. <a class="link" href="drills.html?deck=sysdesign">Study a full deck →</a>';
+    render();
+  } else {
+    var subBtns = [].slice.call(document.querySelectorAll('[data-subnav] button'));
+    function selectDeck(name){
+      deckId = name; filter = 'all';
+      subBtns.forEach(function(b){ b.setAttribute('aria-selected', String(b.getAttribute('data-section') === name)); });
+      blurbEl.textContent = deck().blurb;
+      var crumb = document.querySelector('.app-crumb');
+      if (crumb) crumb.textContent = deck().label + ' drill';
+      P.setLastVisited('drills.html?deck=' + deckId);
+      try { history.replaceState(null, '', '?deck=' + deckId); } catch (e) {}
+      rebuild(false); render();
+    }
+    subBtns.forEach(function(b){ b.addEventListener('click', function(){ selectDeck(b.getAttribute('data-section')); }); });
+    selectDeck(deckId);   // honors the ?deck= query param
+  }
+})();
+</script>
+</body>
+</html>

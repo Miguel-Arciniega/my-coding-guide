@@ -1,0 +1,1760 @@
+<!doctype html>
+<html lang="en" data-track="coding">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Coding — Patterns &amp; Visualizer · Interview Prep Suite</title>
+<script>(function(){try{var t=localStorage.getItem('prep:theme');if(t!=='dark'&&t!=='light')t=matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/app.css">
+<style>
+  .page-head-inner{padding:26px 0 0}
+  .subnav-wrap{display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin:18px 0 4px}
+  main{padding-top:14px}
+
+  /* ===== Patterns components ===== */
+  ol.protocol{list-style:none; counter-reset:step; margin:0; padding:0}
+  ol.protocol > li{counter-increment:step; position:relative; padding:0 0 18px 52px; margin:0}
+  ol.protocol > li::before{content:counter(step); position:absolute; left:0; top:0; width:34px; height:34px; border-radius:9px; background:var(--accent-wash); color:var(--accent-ink); font-family:var(--mono); font-weight:700; font-size:15px; display:grid; place-items:center; border:1px solid var(--accent-line)}
+  ol.protocol > li:not(:last-child)::after{content:""; position:absolute; left:16px; top:38px; bottom:6px; width:2px; background:var(--line)}
+  ol.protocol h4{margin:4px 0 4px; font-size:16px; font-family:var(--display)}
+  ol.protocol p{margin:0; color:var(--ink-soft); font-size:15px}
+
+  .signal-grid{display:grid; grid-template-columns:1fr; gap:0; border:1px solid var(--line); border-radius:var(--radius); overflow:hidden}
+  .signal-row{display:grid; grid-template-columns:1fr auto; gap:14px; align-items:center; padding:13px 16px; border-bottom:1px solid var(--line)}
+  .signal-row:last-child{border-bottom:none}
+  .signal-row:nth-child(even){background:var(--surface-2)}
+  .signal-text{font-size:14.5px; color:var(--ink)}
+  .pat-tag{font-family:var(--mono); font-size:12px; font-weight:600; background:var(--accent-wash); color:var(--accent-ink); padding:5px 11px; border-radius:100px; white-space:nowrap; border:1px solid var(--accent-line)}
+
+  details.pat{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); margin:0 0 12px; overflow:hidden}
+  details.pat[open]{border-color:var(--line-strong); box-shadow:var(--shadow)}
+  details.pat > summary{list-style:none; cursor:pointer; padding:16px 20px; display:flex; align-items:center; gap:14px; font-weight:700; font-size:17px; user-select:none; font-family:var(--display)}
+  details.pat > summary::-webkit-details-marker{display:none}
+  summary .idx{font-family:var(--mono); font-size:13px; color:var(--on-accent); background:var(--accent-fill); width:30px; height:30px; border-radius:8px; display:grid; place-items:center; flex:none; font-weight:700}
+  summary .tier{margin-left:auto; font-family:var(--mono); font-size:11px; letter-spacing:.05em; padding:4px 9px; border-radius:100px; text-transform:uppercase; font-weight:600}
+  .tier-1{background:var(--easy-wash); color:var(--easy)}
+  .tier-2{background:var(--med-wash); color:var(--med)}
+  .tier-3{background:var(--hard-wash); color:var(--hard)}
+  summary .caret{flex:none; color:var(--ink-faint); transition:transform .2s}
+  details.pat[open] summary .caret{transform:rotate(90deg)}
+  .pat-body{padding:2px 20px 20px; border-top:1px solid var(--line)}
+  .pat-body h5{margin:18px 0 6px; font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:var(--accent-ink); font-family:var(--mono); font-weight:600}
+  .pat-body h5:first-child{margin-top:14px}
+  .trigger-list{margin:0; padding-left:18px}
+  .trigger-list li{margin:4px 0; color:var(--ink)}
+  .bigo{display:inline-flex; gap:16px; flex-wrap:wrap; font-family:var(--mono); font-size:13px; background:var(--surface-2); border:1px solid var(--line); border-radius:8px; padding:9px 14px; margin-top:4px}
+  .bigo b{color:var(--accent-ink)}
+  .pitfall{background:var(--hard-wash); border-left:3px solid var(--hard); border-radius:6px; padding:10px 14px; font-size:14px; margin-top:8px; color:var(--hard)}
+
+  .pgroup{margin:0 0 26px}
+  .pgroup-h{display:flex; align-items:center; gap:10px; margin:0 0 10px}
+  .pgroup-h .pat-tag{font-size:13px}
+  .pgroup-h .count{font-family:var(--mono); font-size:12px; color:var(--ink-faint)}
+  .prob{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-sm); padding:14px 16px; margin:0 0 8px}
+  .prob-top{display:flex; align-items:baseline; gap:10px; flex-wrap:wrap}
+  .prob-name{font-weight:700; font-size:15.5px}
+  .prob-name a{color:var(--ink); text-decoration:none; border-bottom:1.5px solid var(--accent-wash)}
+  .prob-name a:hover{border-bottom-color:var(--accent)}
+  .src{font-family:var(--mono); font-size:11px; color:var(--ink-faint); margin-left:auto}
+  .hint{color:var(--ink-soft); font-size:14px; margin:8px 0 0}
+  .hint b{color:var(--accent-ink); font-weight:600}
+  details.reveal{margin-top:8px}
+  details.reveal summary{cursor:pointer; font-family:var(--mono); font-size:12.5px; color:var(--accent); font-weight:600; list-style:none; display:inline-flex; align-items:center; gap:6px}
+  details.reveal summary::-webkit-details-marker{display:none}
+  details.reveal summary::before{content:"▸"; transition:.2s}
+  details.reveal[open] summary::before{transform:rotate(90deg)}
+  .reveal-body{margin-top:8px; padding:10px 14px; background:var(--surface-2); border:1px dashed var(--line-strong); border-radius:8px; font-size:14px; color:var(--ink-soft)}
+  .reveal-body b{color:var(--ink)}
+
+  .schedule{display:grid; gap:10px}
+  .day{display:grid; grid-template-columns:auto 1fr; gap:16px; background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-sm); padding:14px 16px}
+  .day-tag{font-family:var(--mono); font-weight:700; font-size:13px; color:var(--on-accent); background:var(--accent-fill); padding:6px 10px; border-radius:8px; height:fit-content; white-space:nowrap}
+  .day-body{font-size:14.5px}
+  .day-body b{color:var(--ink)} .day-body span{color:var(--ink-soft)}
+  .lead-num{font-family:var(--mono); color:var(--accent); font-weight:700}
+  .pat-foot{color:var(--ink-faint); font-size:13px; margin-top:30px; padding-top:18px; border-top:1px solid var(--line)}
+  @media(max-width:560px){.day{grid-template-columns:1fr} ol.protocol > li{padding-left:46px}}
+
+  /* ===== Visualizer (scoped) ===== */
+  .viz{
+    --panel:var(--surface); --panel2:var(--surface-2); --muted:var(--ink-soft); --border:var(--line);
+    --accent-soft:var(--accent-wash);
+    --win-bg:#fbe8cf; --win-bd:#e0a23a; --win-ink:#7a5210;
+    --enter-bg:#cdebd6; --enter-bd:#3fa463; --enter-ink:#1c5a32;
+    --leave-bg:#f3d2cf; --leave-bd:#d9594f; --leave-ink:#7d241d;
+    --fix-bg:#d6e4fb; --fix-bd:#3a7bd5; --fix-ink:#123a6b;
+    --lp-bg:#cfeae3; --lp-bd:#2aa088; --lp-ink:#0d5040;
+    --rp-bg:#f6d7e3; --rp-bd:#cc5a86; --rp-ink:#6f2440;
+    --span:#eef1f4; --code-active:#fff6da; --code-active-bd:#e0a23a;
+  }
+  :root[data-theme="dark"] .viz{
+    --win-bg:#3d3017; --win-bd:#c08a2e; --win-ink:#f0c878;
+    --enter-bg:#173a26; --enter-bd:#3fa463; --enter-ink:#8fe0a8;
+    --leave-bg:#3d1d1a; --leave-bd:#d9594f; --leave-ink:#f0a59c;
+    --fix-bg:#16294a; --fix-bd:#3a7bd5; --fix-ink:#9bc2f5;
+    --lp-bg:#103730; --lp-bd:#2aa088; --lp-ink:#7fdcc7;
+    --rp-bg:#3a1a28; --rp-bd:#cc5a86; --rp-ink:#f0a5c4;
+    --span:#22272f; --code-active:#33301c; --code-active-bd:#c08a2e;
+  }
+  .viz .vtabs{display:flex; gap:6px; margin-bottom:18px; flex-wrap:wrap}
+  .viz .vtab-btn{background:var(--panel2); border:1px solid var(--border); color:var(--muted); border-radius:9px; padding:9px 16px; font-size:14px; font-weight:500; cursor:pointer; font-family:var(--sans)}
+  .viz .vtab-btn[aria-selected="true"]{background:var(--accent); border-color:var(--accent); color:#fff}
+  .viz .vtab{display:none}
+  .viz .vtab.active{display:block}
+  .viz .vpanel{background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:16px}
+  .viz .params{display:flex; flex-wrap:wrap; align-items:flex-end; gap:14px; margin-bottom:14px}
+  .viz .field{display:flex; flex-direction:column; gap:5px}
+  .viz .field label{font-size:12px; color:var(--muted); font-weight:500}
+  .viz .field input{font-family:var(--mono); font-size:14px; padding:8px 10px; border:1px solid var(--border); border-radius:8px; background:var(--panel2); color:var(--ink)}
+  .viz .field input:focus{outline:2px solid var(--accent); outline-offset:1px; border-color:var(--accent)}
+  .viz #slide-arr,.viz #three-arr{width:340px}
+  .viz #slide-k{width:70px}
+  .viz .apply{background:var(--accent); color:#fff; border:none; border-radius:8px; padding:9px 16px; font-size:14px; font-weight:500; cursor:pointer; font-family:var(--sans)}
+  .viz .apply:hover{filter:brightness(1.06)}
+  .viz .err{color:var(--leave-ink); background:var(--leave-bg); border:1px solid var(--leave-bd); border-radius:8px; padding:7px 11px; font-size:13px; margin-bottom:12px; display:none}
+  .viz .err.show{display:block}
+  .viz .legend{display:flex; flex-wrap:wrap; gap:14px; margin-bottom:16px; font-size:12px; color:var(--muted)}
+  .viz .legend span{display:inline-flex; align-items:center; gap:6px}
+  .viz .swatch{width:13px; height:13px; border-radius:3px; border:1.5px solid}
+  .viz .stage{padding:22px 8px 30px; background:var(--panel2); border:1px solid var(--border); border-radius:10px; margin-bottom:14px; overflow-x:auto}
+  .viz .array{display:flex; gap:7px; justify-content:center; min-width:max-content; margin:0 auto}
+  .viz .cell{position:relative; width:54px; min-width:54px; height:60px; border-radius:9px; border:2px solid var(--border); background:var(--panel); display:flex; align-items:center; justify-content:center; font-family:var(--mono); font-size:17px; font-weight:600; transition:background-color .18s,border-color .18s}
+  @media (prefers-reduced-motion: reduce){.viz .cell{transition:none}}
+  .viz .cell .idx{position:absolute; top:-19px; left:0; right:0; text-align:center; font-size:11px; color:var(--muted); font-weight:500}
+  .viz .cell .badge{position:absolute; bottom:-21px; left:0; right:0; text-align:center; font-size:12px; font-weight:700; font-family:var(--mono)}
+  .viz .cell.span{background:var(--span)}
+  .viz .cell.win{background:var(--win-bg); border-color:var(--win-bd); color:var(--win-ink)}
+  .viz .cell.enter{background:var(--enter-bg); border-color:var(--enter-bd); color:var(--enter-ink)}
+  .viz .cell.leave{background:var(--leave-bg); border-color:var(--leave-bd); color:var(--leave-ink)}
+  .viz .cell.best{box-shadow:inset 0 -5px 0 var(--accent)}
+  .viz .cell.fixed{background:var(--fix-bg); border-color:var(--fix-bd); color:var(--fix-ink)}
+  .viz .cell.lp{background:var(--lp-bg); border-color:var(--lp-bd); color:var(--lp-ink)}
+  .viz .cell.rp{background:var(--rp-bg); border-color:var(--rp-bd); color:var(--rp-ink)}
+  .viz .cell.fixed .badge{color:var(--fix-bd)} .viz .cell.lp .badge{color:var(--lp-bd)} .viz .cell.rp .badge{color:var(--rp-bd)}
+  .viz .cell.enter .badge{color:var(--enter-bd)} .viz .cell.leave .badge{color:var(--leave-bd)}
+  .viz .explain{font-size:14px; padding:11px 14px; background:var(--accent-soft); border-radius:8px; margin-bottom:14px; min-height:42px; display:flex; align-items:center; font-family:var(--mono)}
+  .viz .controls{display:flex; align-items:center; gap:9px; flex-wrap:wrap; margin-bottom:16px}
+  .viz .controls button{background:var(--panel2); border:1px solid var(--border); color:var(--ink); border-radius:8px; padding:8px 13px; font-size:14px; cursor:pointer; font-family:var(--sans); min-width:42px}
+  .viz .controls button:hover{border-color:var(--accent)}
+  .viz .controls button:disabled{opacity:.4; cursor:default}
+  .viz .controls .play{background:var(--accent); border-color:var(--accent); color:#fff; font-weight:500; min-width:92px}
+  .viz .scrub{flex:1; min-width:160px; accent-color:var(--accent)}
+  .viz .counter{font-family:var(--mono); font-size:13px; color:var(--muted); min-width:74px; text-align:right}
+  .viz .speed{display:flex; align-items:center; gap:7px; font-size:12px; color:var(--muted)}
+  .viz .speed input{accent-color:var(--accent); width:90px}
+  .viz .grid2{display:grid; grid-template-columns:1.25fr 1fr; gap:14px}
+  @media (max-width:820px){.viz .grid2{grid-template-columns:1fr}.viz #slide-arr,.viz #three-arr{width:240px}}
+  .viz .code{background:var(--panel2); border:1px solid var(--border); border-radius:10px; padding:12px 4px; overflow-x:auto; font-family:var(--mono); font-size:13px}
+  .viz .line{display:flex; align-items:baseline; gap:12px; padding:2px 12px; white-space:pre; border-left:3px solid transparent}
+  .viz .line .ln{color:var(--muted); opacity:.6; width:18px; text-align:right; flex:none; font-size:12px; user-select:none}
+  .viz .line .src{flex:1}
+  .viz .line.active{background:var(--code-active); border-left-color:var(--code-active-bd)}
+  .viz .state{background:var(--panel2); border:1px solid var(--border); border-radius:10px; padding:14px 16px}
+  .viz .state h3{margin:0 0 10px; font-size:12px; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); font-weight:600}
+  .viz .kv{display:flex; justify-content:space-between; gap:12px; padding:5px 0; border-bottom:1px solid var(--border); font-family:var(--mono); font-size:13px}
+  .viz .kv:last-child{border-bottom:none}
+  .viz .kv .k{color:var(--muted)} .viz .kv .v{font-weight:600}
+  .viz .found{margin-top:12px}
+  .viz .found .chip{display:inline-block; font-family:var(--mono); font-size:12px; background:var(--enter-bg); color:var(--enter-ink); border:1px solid var(--enter-bd); border-radius:7px; padding:3px 8px; margin:0 5px 5px 0}
+  .viz .none{color:var(--muted); font-size:12px; font-style:italic}
+  .viz footer{color:var(--muted); font-size:12px; text-align:center; margin-top:26px; line-height:1.7}
+  .viz kbd{font-family:var(--mono); font-size:11px; background:var(--panel2); border:1px solid var(--border); border-radius:4px; padding:1px 5px}
+  .viz #subk-arr{width:340px} .viz #subk-k{width:70px}
+  @media (max-width:820px){.viz #subk-arr{width:240px}}
+  .viz .cell.mstart{box-shadow:inset 5px 0 0 var(--enter-bd)}
+  .viz .mapchip{display:inline-block; font-family:var(--mono); font-size:12px; background:var(--panel); color:var(--ink); border:1px solid var(--border); border-radius:7px; padding:3px 8px; margin:0 5px 5px 0}
+  .viz .mapchip.q{background:var(--rp-bg); border-color:var(--rp-bd); color:var(--rp-ink)}
+  .viz .mapchip.u{background:var(--accent-soft); border-color:var(--accent); color:var(--accent)}
+  .viz #bs-arr{width:340px} .viz #bs-target{width:90px}
+  .viz .cell.dead{opacity:.34}
+  .viz #paren-str{width:360px} .viz #lsub-str{width:360px}
+  @media (max-width:820px){.viz #bs-arr,.viz #paren-str,.viz #lsub-str{width:240px}}
+</style>
+</head>
+<body>
+
+<div class="app-topbar">
+  <div class="app-topbar-inner">
+    <a class="app-brand" href="index.html"><span class="dot"></span>Interview Prep Suite</a>
+    <span class="app-crumb">Pattern Recognition</span>
+    <span class="app-spacer"></span>
+    <a class="app-back" href="index.html">← Hub</a>
+    <button class="theme-toggle" type="button" aria-label="Toggle dark mode"><span class="tt-ic"></span><span class="tt-label">Dark</span></button>
+  </div>
+</div>
+
+<header class="page-head">
+  <div class="wrap wide page-head-inner">
+    <p class="eyebrow">Coding track · TCS round</p>
+    <h1 class="title">Coding</h1>
+    <p class="subtitle">Two complementary tools: <b>Pattern Recognition</b> trains the reflex of mapping an unseen problem to the right approach; the <b>Visualizer</b> steps the optimal solution through real Java, frame by frame.</p>
+    <div class="subnav-wrap">
+      <div class="subnav" data-subnav role="tablist" aria-label="Coding tool">
+        <button data-section="patterns" aria-selected="true">Pattern Recognition</button>
+        <button data-section="visualizer">Algorithm Visualizer</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ============================ PATTERNS ============================ -->
+<div data-section-panel="patterns">
+<nav class="tabs" aria-label="Pattern sections">
+  <div class="tabs-inner" role="tablist">
+    <button class="tab-btn" role="tab" aria-selected="true" data-tab="start">Start Here</button>
+    <button class="tab-btn" role="tab" aria-selected="false" data-tab="p1">Phase 1 · Theory</button>
+    <button class="tab-btn" role="tab" aria-selected="false" data-tab="p2">Phase 2 · Guided</button>
+    <button class="tab-btn" role="tab" aria-selected="false" data-tab="p3">Phase 3 · Solo</button>
+  </div>
+</nav>
+<main><div class="wrap">
+
+<section class="panel active" id="tab-start" data-tab="start" role="tabpanel">
+  <h2 class="sec">How to use this</h2>
+  <p class="sec-sub">Read this tab once before anything else. The diagnosis protocol and the two lookup tables below are the actual product — the patterns in Phase 1 are downstream of them.</p>
+
+  <div class="callout info">
+    <p><b>What TCS's coding round actually tests.</b> For experienced Java hires it is typically one problem in a fixed window (often ~20–30 min), with limited compile attempts, where you write the whole program and print <i>exact</i> output. The bar is correct, working, edge-case-clean code on an easy/medium problem — not exotic algorithms. Optimize for: reading the constraints, picking the pattern fast, and not wasting compiles on I/O or formatting bugs.</p>
+  </div>
+
+  <h3 class="block">The diagnosis protocol — run this on every problem</h3>
+  <div class="card">
+    <ol class="protocol">
+      <li><h4>Characterize the input</h4><p>Array / string / tree / graph / intervals / linked list? Is it <b>sorted</b>? What is the size bound <code>n</code>? The size alone narrows the pattern before you read the prose (see the complexity table below).</p></li>
+      <li><h4>Characterize the ask</h4><p>Exist / find one? <b>Count</b> how many? <b>Optimize</b> (max / min / longest / shortest)? <b>Enumerate all</b> arrangements? <b>Shortest path</b>? Each verb maps to a small family of patterns.</p></li>
+      <li><h4>Write brute force, name its bottleneck</h4><p>State the obvious O(n²) or exponential solution in one line, then name what makes it slow. The pattern almost always exists to <i>kill that specific bottleneck</i>: nested loop searching for a complement → hashing; recomputing a range sum → prefix sum; linear scan on sorted data → binary search; recomputing the same subproblem → memoize.</p></li>
+      <li><h4>Map signal → pattern, then check the precondition</h4><p>Use the cheat sheet below to get a candidate. Then verify its precondition holds — two pointers needs sortedness or a monotonic property; binary-search-on-answer needs the feasibility function to be monotonic. If the precondition fails, the pattern is wrong.</p></li>
+    </ol>
+  </div>
+
+  <h3 class="block">Read the constraints first — size implies the pattern</h3>
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>Input size <code>n</code></th><th>Largest feasible complexity</th><th>What it implies</th></tr></thead>
+      <tbody>
+        <tr><td class="num">n ≤ 11</td><td class="num">O(n!)</td><td>Permutations / full backtracking</td></tr>
+        <tr><td class="num">n ≤ 20</td><td class="num">O(2ⁿ)</td><td>Subsets / bitmask DP</td></tr>
+        <tr><td class="num">n ≤ 500</td><td class="num">O(n³)</td><td>Triple loop / some 2D DP</td></tr>
+        <tr><td class="num">n ≤ 5,000</td><td class="num">O(n²)</td><td>Nested loop / 2D DP</td></tr>
+        <tr><td class="num">n ≤ 10⁶</td><td class="num">O(n log n)</td><td>Sort + scan / heap / binary search</td></tr>
+        <tr><td class="num">n ≤ 10⁸</td><td class="num">O(n)</td><td>Single pass / two pointers / sliding window / hashing</td></tr>
+        <tr><td class="num">n &gt; 10⁸</td><td class="num">O(log n) or O(1)</td><td>Binary search / math / closed form</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="hint" style="margin-top:10px">Worked example of the inference: "array of 10⁵ integers, find the longest subarray summing to ≤ K" — 10⁵ rules out O(n²), so you need O(n) or O(n log n). "Contiguous" + "longest under a constraint" → sliding window. You've narrowed it before reading a single example.</p>
+
+  <h3 class="block">Signal → pattern cheat sheet</h3>
+  <div class="signal-grid">
+    <div class="signal-row"><span class="signal-text">Unsorted; "find a pair / has it appeared / count occurrences / group by / dedup / anagram"</span><span class="pat-tag">Hashing</span></div>
+    <div class="signal-row"><span class="signal-text">Sorted array; pair/triplet to a target, in-place partition, palindrome check from both ends</span><span class="pat-tag">Two Pointers</span></div>
+    <div class="signal-row"><span class="signal-text">Contiguous subarray/substring; longest / shortest / max / min satisfying a condition</span><span class="pat-tag">Sliding Window</span></div>
+    <div class="signal-row"><span class="signal-text">Many range-sum queries; "subarray summing to K / divisible by K"; running totals</span><span class="pat-tag">Prefix Sum</span></div>
+    <div class="signal-row"><span class="signal-text">Sorted input + O(log n) demanded; OR "minimize the max / maximize the min / smallest X that works"</span><span class="pat-tag">Binary Search</span></div>
+    <div class="signal-row"><span class="signal-text">Sort unlocks an obvious local choice; "max non-overlapping / min removals / earliest deadline"</span><span class="pat-tag">Sort + Greedy</span></div>
+    <div class="signal-row"><span class="signal-text">Matching / nesting brackets; "nearest greater / smaller element"; evaluate expression; undo</span><span class="pat-tag">Stack</span></div>
+    <div class="signal-row"><span class="signal-text">Reverse / reorder / detect cycle / find middle / kth-from-end in a linked list</span><span class="pat-tag">LL Two-Pointer</span></div>
+    <div class="signal-row"><span class="signal-text">Tree "level by level / width / right-side view" → BFS; "path / depth / validate / LCA / sum" → DFS</span><span class="pat-tag">Tree DFS/BFS</span></div>
+    <div class="signal-row"><span class="signal-text">"Return ALL combinations / permutations / subsets / valid arrangements"; small n (≤ ~20)</span><span class="pat-tag">Backtracking</span></div>
+    <div class="signal-row"><span class="signal-text">Overlapping ranges; merge / insert; "minimum rooms / max concurrent / scheduling"</span><span class="pat-tag">Intervals</span></div>
+    <div class="signal-row"><span class="signal-text">"Top / smallest / closest K"; "merge K sorted"; streaming median; repeatedly pull min/max</span><span class="pat-tag">Heap</span></div>
+    <div class="signal-row"><span class="signal-text">"Count the ways / min cost / can you reach-or-partition"; choices + overlapping subproblems</span><span class="pat-tag">Dynamic Programming</span></div>
+    <div class="signal-row"><span class="signal-text">Grid or graph; "connected regions / components"; shortest steps in unweighted graph; dependency order</span><span class="pat-tag">Graph BFS/DFS</span></div>
+  </div>
+
+  <h3 class="block">Java I/O boilerplate — memorize this cold</h3>
+  <p class="sec-sub" style="margin-bottom:8px">The TCS compiler round penalizes formatting/I/O mistakes and limits your compiles. <code>Scanner</code> is fine for tiny inputs but slow; <code>BufferedReader</code> is the safe default. Print with a <code>StringBuilder</code> to avoid per-line flush cost and stray characters.</p>
+  <pre><code><span class="k">import</span> java.util.*;
+<span class="k">import</span> java.io.*;
+
+<span class="k">public class</span> <span class="f">Main</span> {
+    <span class="k">public static void</span> <span class="f">main</span>(String[] args) <span class="k">throws</span> IOException {
+        BufferedReader br = <span class="k">new</span> BufferedReader(<span class="k">new</span> InputStreamReader(System.in));
+        <span class="k">int</span> n = Integer.parseInt(br.readLine().trim());        <span class="c">// first line: count</span>
+        StringTokenizer st = <span class="k">new</span> StringTokenizer(br.readLine()); <span class="c">// second line: the values</span>
+        <span class="k">int</span>[] a = <span class="k">new</span> <span class="k">int</span>[n];
+        <span class="k">for</span> (<span class="k">int</span> i = <span class="n">0</span>; i &lt; n; i++) a[i] = Integer.parseInt(st.nextToken());
+
+        StringBuilder sb = <span class="k">new</span> StringBuilder();
+        <span class="c">// ... compute, then: sb.append(result).append('\n');</span>
+        System.out.print(sb);                                  <span class="c">// print() not println(): no extra trailing newline</span>
+    }
+}</code></pre>
+
+  <h3 class="block">7-day schedule (adjust to your hours)</h3>
+  <div class="schedule">
+    <div class="day"><span class="day-tag">Day 1</span><div class="day-body"><b>Tier 1 theory + reps.</b> <span>Read Phase 1 patterns 1–4 (Hashing, Two Pointers, Sliding Window, Prefix Sum). Type each template once from scratch. Then 3 Phase-2 problems across them.</span></div></div>
+    <div class="day"><span class="day-tag">Day 2</span><div class="day-body"><b>Tier 1 continued.</b> <span>Patterns 5–7 (Binary Search incl. on-answer, Sort+Greedy, Stack incl. monotonic). 3–4 Phase-2 problems.</span></div></div>
+    <div class="day"><span class="day-tag">Day 3</span><div class="day-body"><b>Tier 2.</b> <span>Patterns 8–10 (Linked List, Trees, Backtracking). 3–4 Phase-2 problems. These show up constantly; don't skip.</span></div></div>
+    <div class="day"><span class="day-tag">Day 4</span><div class="day-body"><b>Tier 2/3.</b> <span>Patterns 11–14 (Intervals, Heap, DP-1D, Graph BFS/DFS). 3–4 Phase-2 problems. DP/graphs = awareness depth, not mastery.</span></div></div>
+    <div class="day"><span class="day-tag">Day 5</span><div class="day-body"><b>Recognition drill.</b> <span>Phase-2 catch-up, then start Phase 3 with the pattern hidden. 25-min timer per problem; only open the reveal after you've committed to an approach.</span></div></div>
+    <div class="day"><span class="day-tag">Day 6</span><div class="day-body"><b>Full simulation.</b> <span>Phase-3 mediums + first hards under TCS conditions: one problem, timer, full program with stdin parsing and exact output, treat compiles as scarce.</span></div></div>
+    <div class="day"><span class="day-tag">Day 7</span><div class="day-body"><b>Consolidate + rest.</b> <span>Re-derive all 14 templates from memory (this is the recognition test). Redo 2–3 problems you missed. Stop early; arrive fresh.</span></div></div>
+  </div>
+
+  <div class="callout warn">
+    <p><b>If your week is shorter than 7 days,</b> cut from the bottom of the tier list, never the top. Tier-1 patterns (1–7) cover the majority of easy/medium problems and are the highest expected value. Drop DP and graphs to "can recognize + recall the template" before you drop anything in Tier 1.</p>
+  </div>
+
+  <p class="hint" style="margin-top:18px">More volume by pattern: HackerRank's <a class="link" href="https://www.hackerrank.com/interview/interview-preparation-kit" target="_blank" rel="noopener">Interview Preparation Kit</a> is organized into these same categories (Arrays, Dictionaries &amp; Hashmaps, Sorting, Search, Greedy, DP, Stacks/Queues, Trees, Graphs). Use it when you exhaust the lists here.</p>
+</section>
+
+<section class="panel" id="tab-p1" data-tab="p1" role="tabpanel">
+  <h2 class="sec">Phase 1 — Theory &amp; templates</h2>
+  <p class="sec-sub">Do <b>not</b> solve these. Read each card, then type the template out once from a blank file so your hands know it. Each card gives the recognition triggers (what to look for), the template, one worked example, complexity, and the pitfall that costs people the problem. Tier badge = priority.</p>
+
+  <details class="pat" open>
+    <summary><span class="idx">1</span> Hashing — frequency &amp; lookup<span class="tier tier-1">Tier 1</span><span class="caret">▸</span></summary>
+    <div class="pat-body">
+      <h5>Recognize when</h5>
+      <ul class="trigger-list">
+        <li>You need "has this value/complement appeared before?" → trade memory for time, drop a nested loop to O(n).</li>
+        <li>Counting occurrences, deduping, grouping by a key, anagram checks (count letters).</li>
+      </ul>
+      <h5>Worked example — Two Sum (unsorted, return indices)</h5>
+      <pre><code><span class="k">int</span>[] <span class="f">twoSum</span>(<span class="k">int</span>[] nums, <span class="k">int</span> target) {
+    Map&lt;Integer,Integer&gt; seen = <span class="k">new</span> HashMap&lt;&gt;();      <span class="c">// value -&gt; index</span>
+    <span class="k">for</span> (<span class="k">int</span> i = <span class="n">0</span>; i &lt; nums.length; i++) {
+        <span class="k">int</span> need = target - nums[i];
+        <span class="k">if</span> (seen.containsKey(need)) <span class="k">return</span> <span class="k">new</span> <span class="k">int</span>[]{seen.get(need), i};
+        seen.put(nums[i], i);
+    }
+    <span class="k">return</span> <span class="k">new</span> <span class="k">int</span>[]{-<span class="n">1</span>,-<span class="n">1</span>};
+}</code></pre>
+      <h5>Why it works</h5>
+      <p style="color:var(--ink-soft);font-size:15px;margin:0">The brute force checks every pair (O(n²)). Instead of re-searching for the complement each time, you remember every value you've seen in a map; the lookup is O(1), so the whole scan is O(n).</p>
+      <h5>Complexity</h5>
+      <div class="bigo"><span>Time <b>O(n)</b></span><span>Space <b>O(n)</b></span></div>
+      <div class="pitfall"><b>Pitfall:</b> put the current value into the map <i>after</i> checking for its complement, or you'll match an element with itself.</div>
+    </div>
+  </details>
+
+  <details class="pat">
+    <summary><span class="idx">2</span> Two Pointers<span class="tier tier-1">Tier 1</span><span class="caret">▸</span></summary>
+    <div class="pat-body">
+      <h5>Recognize when</h5>
+      <ul class="trigger-list">
+        <li>Input is <b>sorted</b> (or you can sort it) and you want a pair/triplet meeting a target.</li>
+        <li>Comparing from both ends (palindrome, container area), or partitioning in place.</li>
+        <li>Two sequences merged in order; or a slow/fast pair to drop duplicates.</li>
+      </ul>
+      <h5>Worked example — pair sum in a sorted array</h5>
+      <pre><code><span class="k">int</span>[] <span class="f">pairSum</span>(<span class="k">int</span>[] a, <span class="k">int</span> target) {   <span class="c">// a is sorted ascending</span>
+    <span class="k">int</span> lo = <span class="n">0</span>, hi = a.length - <span class="n">1</span>;
+    <span class="k">while</span> (lo &lt; hi) {
+        <span class="k">int</span> sum = a[lo] + a[hi];
+        <span class="k">if</span> (sum == target) <span class="k">return</span> <span class="k">new</span> <span class="k">int</span>[]{lo, hi};
+        <span class="k">if</span> (sum &lt; target) lo++;            <span class="c">// need bigger -&gt; move left bound up</span>
+        <span class="k">else</span> hi--;                          <span class="c">// need smaller -&gt; move right bound down</span>
+    }
+    <span class="k">return</span> <span class="k">new</span> <span class="k">int</span>[]{-<span class="n">1</span>,-<span class="n">1</span>};
+}</code></pre>
+      <h5>Why it works</h5>
+      <p style="color:var(--ink-soft);font-size:15px;margin:0">Sortedness gives a monotonic relationship: if the sum is too small, the only way to grow it is to raise the low pointer; too big, lower the high pointer. Each step eliminates one element, so it's a single O(n) pass instead of O(n²).</p>
+      <h5>Complexity</h5>
+      <div class="bigo"><span>Time <b>O(n)</b> (plus O(n log n) if you sort)</span><span>Space <b>O(1)</b></span></div>
+      <div class="pitfall"><b>Pitfall:</b> the monotonic argument only holds on sorted data. On unsorted input, use hashing instead.</div>
+    </div>
+  </details>
+
+  <details class="pat">
+    <summary><span class="idx">3</span> Sliding Window<span class="tier tier-1">Tier 1</span><span class="caret">▸</span></summary>
+    <div class="pat-body">
+      <h5>Recognize when</h5>
+      <ul class="trigger-list">
+        <li>The answer is a <b>contiguous</b> subarray/substring, and you want longest/shortest/max/min/count under a constraint.</li>
+        <li>Fixed window: "of size k". Variable window: "longest/shortest such that &lt;condition&gt;".</li>
+      </ul>
+      <h5>Worked example — longest substring without repeating characters (variable window)</h5>
+      <pre><code><span class="k">int</span> <span class="f">longestUnique</span>(String s) {
+    Map&lt;Character,Integer&gt; last = <span class="k">new</span> HashMap&lt;&gt;();  <span class="c">// char -&gt; most recent index</span>
+    <span class="k">int</span> start = <span class="n">0</span>, best = <span class="n">0</span>;
+    <span class="k">for</span> (<span class="k">int</span> end = <span class="n">0</span>; end &lt; s.length(); end++) {
+        <span class="k">char</span> c = s.charAt(end);
+        <span class="k">if</span> (last.containsKey(c) &amp;&amp; last.get(c) &gt;= start)
+            start = last.get(c) + <span class="n">1</span>;          <span class="c">// shrink from the left past the duplicate</span>
+        last.put(c, end);
+        best = Math.max(best, end - start + <span class="n">1</span>);  <span class="c">// window length</span>
+    }
+    <span class="k">return</span> best;
+}</code></pre>
+      <h5>Why it works</h5>
+      <p style="color:var(--ink-soft);font-size:15px;margin:0">Both pointers only move forward, so each element enters and leaves the window once → O(n). The window holds the current valid candidate; you grow it on the right and shrink it on the left only when the constraint breaks.</p>
+      <h5>Complexity</h5>
+      <div class="bigo"><span>Time <b>O(n)</b></span><span>Space <b>O(k)</b> (alphabet / window contents)</span></div>
+      <div class="pitfall"><b>Pitfall:</b> when shrinking, only jump <code>start</code> forward — never backward — or you'll re-count characters and the window logic collapses.</div>
+    </div>
+  </details>
+
+  <details class="pat">
+    <summary><span class="idx">4</span> Prefix Sum<span class="tier tier-1">Tier 1</span><span class="caret">▸</span></summary>
+    <div class="pat-body">
+      <h5>Recognize when</h5>
+      <ul class="trigger-list">
+        <li>Repeated range-sum queries, or "subarray summing to K / divisible by K / with property P".</li>
+        <li>Any time you'd otherwise recompute overlapping sums in a loop.</li>
+      </ul>
+      <h5>Worked example — count subarrays summing to K (prefix + hashing)</h5>
+      <pre><code><span class="k">int</span> <span class="f">subarraySumK</span>(<span class="k">int</span>[] nums, <span class="k">int</span> k) {
+    Map&lt;Integer,Integer&gt; count = <span class="k">new</span> HashMap&lt;&gt;(); <span class="c">// prefixSum -&gt; how many times seen</span>
+    count.put(<span class="n">0</span>, <span class="n">1</span>);                              <span class="c">// empty prefix</span>
+    <span class="k">int</span> sum = <span class="n">0</span>, res = <span class="n">0</span>;
+    <span class="k">for</span> (<span class="k">int</span> n : nums) {
+        sum += n;
+        res += count.getOrDefault(sum - k, <span class="n">0</span>);    <span class="c">// a prior prefix that makes the gap = k</span>
+        count.merge(sum, <span class="n">1</span>, Integer::sum);
+    }
+    <span class="k">return</span> res;
+}</code></pre>
+      <h5>Why it works</h5>
+      <p style="color:var(--ink-soft);font-size:15px;margin:0">Sum of <code>nums[i..j]</code> = prefix[j] − prefix[i−1]. Asking "which subarrays sum to k" becomes "for each prefix, how many earlier prefixes equal <code>sum − k</code>" — an O(1) map lookup per element. This combines two Tier-1 patterns, which is common.</p>
+      <h5>Complexity</h5>
+      <div class="bigo"><span>Time <b>O(n)</b></span><span>Space <b>O(n)</b></span></div>
+      <div class="pitfall"><b>Pitfall:</b> forgetting the <code>count.put(0,1)</code> seed — you'll miss subarrays that start at index 0.</div>
+    </div>
+  </details>
+
+  <details class="pat">
+    <summary><span class="idx">5</span> Binary Search (array &amp; on answer)<span class="tier tier-1">Tier 1</span><span class="caret">▸</span></summary>
+    <div class="pat-body">
+      <h5>Recognize when</h5>
+      <ul class="trigger-list">
+        <li>Sorted input + find/insert position, or O(log n) is explicitly required.</li>
+        <li><b>On the answer:</b> "minimize the maximum / maximize the minimum / smallest capacity/speed/days such that it works." The feasibility of a candidate answer is monotonic.</li>
+      </ul>
+      <h5>Template A — classic search on a sorted array</h5>
+      <pre><code><span class="k">int</span> <span class="f">search</span>(<span class="k">int</span>[] a, <span class="k">int</span> target) {
+    <span class="k">int</span> lo = <span class="n">0</span>, hi = a.length - <span class="n">1</span>;
+    <span class="k">while</span> (lo &lt;= hi) {
+        <span class="k">int</span> mid = lo + (hi - lo) / <span class="n">2</span>;   <span class="c">// avoids overflow vs (lo+hi)/2</span>
+        <span class="k">if</span> (a[mid] == target) <span class="k">return</span> mid;
+        <span class="k">if</span> (a[mid] &lt; target) lo = mid + <span class="n">1</span>;
+        <span class="k">else</span> hi = mid - <span class="n">1</span>;
+    }
+    <span class="k">return</span> -<span class="n">1</span>;
+}</code></pre>
+      <h5>Template B — binary search on the answer space</h5>
+      <pre><code><span class="c">// smallest x in [lo, hi] for which feasible(x) is true; feasible must be monotonic</span>
+<span class="k">int</span> <span class="f">minFeasible</span>(<span class="k">int</span> lo, <span class="k">int</span> hi) {
+    <span class="k">while</span> (lo &lt; hi) {
+        <span class="k">int</span> mid = lo + (hi - lo) / <span class="n">2</span>;
+        <span class="k">if</span> (feasible(mid)) hi = mid;        <span class="c">// mid works -&gt; answer is mid or smaller</span>
+        <span class="k">else</span> lo = mid + <span class="n">1</span>;                 <span class="c">// mid fails -&gt; need bigger</span>
+    }
+    <span class="k">return</span> lo;
+}</code></pre>
+      <h5>Why it works</h5>
+      <p style="color:var(--ink-soft);font-size:15px;margin:0">Each step halves the search space. The leap most people miss: the "space" doesn't have to be an array index — it can be the range of possible answers (e.g. eating speeds from 1 to max pile). If "answer x works ⇒ every x′ &gt; x also works," the boolean is sorted and binary search applies.</p>
+      <h5>Complexity</h5>
+      <div class="bigo"><span>Time <b>O(log n)</b> · on-answer <b>O(n log(range))</b></span><span>Space <b>O(1)</b></span></div>
+      <div class="pitfall"><b>Pitfall:</b> off-by-one infinite loops. Pick one template and keep its invariant straight: <code>lo &lt;= hi</code> with <code>mid±1</code> for exact-match; <code>lo &lt; hi</code> with <code>hi = mid</code> for boundary-finding.</div>
+    </div>
+  </details>
+
+  <details class="pat">
+    <summary><span class="idx">6</span> Sort + Greedy<span class="tier tier-1">Tier 1</span><span class="caret">▸</span></summary>
+    <div class="pat-body">
+      <h5>Recognize when</h5>
+      <ul class="trigger-list">
+        <li>Sorting first makes a locally-optimal choice obvious and safe.</li>
+        <li>"Maximum number of non-overlapping", "minimum to remove", "earliest deadline", "assign smallest that fits".</li>
+      </ul>
+      <h5>Worked example — max non-overlapping intervals (activity selection)</h5>
+      <pre><code><span class="k">int</span> <span class="f">maxNonOverlapping</span>(<span class="k">int</span>[][] intervals) {
+    Arrays.sort(intervals, (x, y) -&gt; x[<span class="n">1</span>] - y[<span class="n">1</span>]);   <span class="c">// by END time, ascending</span>
+    <span class="k">int</span> count = <span class="n">0</span>, lastEnd = Integer.MIN_VALUE;
+    <span class="k">for</span> (<span class="k">int</span>[] iv : intervals) {
+        <span class="k">if</span> (iv[<span class="n">0</span>] &gt;= lastEnd) {          <span class="c">// starts after the last one we kept ends</span>
+            count++;
+            lastEnd = iv[<span class="n">1</span>];
+        }
+    }
+    <span class="k">return</span> count;
+}</code></pre>
+      <h5>Why it works</h5>
+      <p style="color:var(--ink-soft);font-size:15px;margin:0">Picking the interval that <i>ends earliest</i> leaves the most room for the rest — a provably optimal greedy choice. The danger with greedy is that the local choice isn't always safe; the sort key is what makes it safe here.</p>
+      <h5>Complexity</h5>
+      <div class="bigo"><span>Time <b>O(n log n)</b></span><span>Space <b>O(1)</b></span></div>
+      <div class="pitfall"><b>Pitfall:</b> sorting by start time instead of end time. It feels natural and is wrong — it can pick a long early interval that blocks several short ones.</div>
+    </div>
+  </details>
+
+  <details class="pat">
+    <summary><span class="idx">7</span> Stack (matching &amp; monotonic)<span class="tier tier-1">Tier 1</span><span class="caret">▸</span></summary>
+    <div class="pat-body">
+      <h5>Recognize when</h5>
+      <ul class="trigger-list">
+        <li>Brackets / nesting / "valid sequence"; evaluating expressions; an undo-style most-recent-first need.</li>
+        <li><b>Monotonic stack:</b> "next/previous greater or smaller element", "how far until a taller bar".</li>
+      </ul>
+      <h5>Worked example A — valid parentheses</h5>
+      <pre><code><span class="k">boolean</span> <span class="f">isValid</span>(String s) {
+    Deque&lt;Character&gt; st = <span class="k">new</span> ArrayDeque&lt;&gt;();
+    Map&lt;Character,Character&gt; pair = Map.of(<span class="s">')'</span>,<span class="s">'('</span>, <span class="s">']'</span>,<span class="s">'['</span>, <span class="s">'}'</span>,<span class="s">'{'</span>);
+    <span class="k">for</span> (<span class="k">char</span> c : s.toCharArray()) {
+        <span class="k">if</span> (pair.containsKey(c)) {           <span class="c">// a closing bracket</span>
+            <span class="k">if</span> (st.isEmpty() || st.pop() != pair.get(c)) <span class="k">return</span> <span class="k">false</span>;
+        } <span class="k">else</span> st.push(c);                  <span class="c">// an opening bracket</span>
+    }
+    <span class="k">return</span> st.isEmpty();
+}</code></pre>
+      <h5>Worked example B — next greater element (monotonic stack)</h5>
+      <pre><code><span class="k">int</span>[] <span class="f">nextGreater</span>(<span class="k">int</span>[] a) {
+    <span class="k">int</span>[] res = <span class="k">new</span> <span class="k">int</span>[a.length];
+    Arrays.fill(res, -<span class="n">1</span>);
+    Deque&lt;Integer&gt; st = <span class="k">new</span> ArrayDeque&lt;&gt;();   <span class="c">// holds INDICES, values decreasing</span>
+    <span class="k">for</span> (<span class="k">int</span> i = <span class="n">0</span>; i &lt; a.length; i++) {
+        <span class="k">while</span> (!st.isEmpty() &amp;&amp; a[st.peek()] &lt; a[i])
+            res[st.pop()] = a[i];            <span class="c">// a[i] is the answer for everything smaller below it</span>
+        st.push(i);
+    }
+    <span class="k">return</span> res;
+}</code></pre>
+      <h5>Why it works</h5>
+      <p style="color:var(--ink-soft);font-size:15px;margin:0">A stack captures "most recent unresolved thing". For brackets, the top is the only opener a closer can legally match. For the monotonic version, each index is pushed and popped once → O(n), and the stack invariant guarantees the first taller element you meet is the true "next greater".</p>
+      <h5>Complexity</h5>
+      <div class="bigo"><span>Time <b>O(n)</b></span><span>Space <b>O(n)</b></span></div>
+      <div class="pitfall"><b>Pitfall:</b> use <code>ArrayDeque</code>, not the legacy <code>java.util.Stack</code> (synchronized, slower). And in Java, <code>st.pop() != pair.get(c)</code> compares <code>Character</code> objects — fine for the small cached range, but prefer <code>!Objects.equals(...)</code> or unbox explicitly if values can exceed 127.</div>
+    </div>
+  </details>
+
+  <details class="pat">
+    <summary><span class="idx">8</span> Linked List Two-Pointer<span class="tier tier-2">Tier 2</span><span class="caret">▸</span></summary>
+    <div class="pat-body">
+      <h5>Recognize when</h5>
+      <ul class="trigger-list">
+        <li>Reverse / reorder a list; detect a cycle; find the middle; find the kth node from the end.</li>
+        <li>A <b>dummy head</b> node simplifies edge cases when the head itself may change.</li>
+      </ul>
+      <h5>Worked example A — reverse a linked list</h5>
+      <pre><code>ListNode <span class="f">reverse</span>(ListNode head) {
+    ListNode prev = <span class="k">null</span>, cur = head;
+    <span class="k">while</span> (cur != <span class="k">null</span>) {
+        ListNode next = cur.next;   <span class="c">// save before we overwrite</span>
+        cur.next = prev;            <span class="c">// flip the pointer</span>
+        prev = cur;                 <span class="c">// advance both</span>
+        cur = next;
+    }
+    <span class="k">return</span> prev;                    <span class="c">// new head</span>
+}</code></pre>
+      <h5>Worked example B — cycle detection (Floyd's tortoise &amp; hare)</h5>
+      <pre><code><span class="k">boolean</span> <span class="f">hasCycle</span>(ListNode head) {
+    ListNode slow = head, fast = head;
+    <span class="k">while</span> (fast != <span class="k">null</span> &amp;&amp; fast.next != <span class="k">null</span>) {
+        slow = slow.next;           <span class="c">// +1</span>
+        fast = fast.next.next;      <span class="c">// +2</span>
+        <span class="k">if</span> (slow == fast) <span class="k">return</span> <span class="k">true</span>;  <span class="c">// they meet iff there's a cycle</span>
+    }
+    <span class="k">return</span> <span class="k">false</span>;
+}</code></pre>
+      <h5>Why it works</h5>
+      <p style="color:var(--ink-soft);font-size:15px;margin:0">Reversal is pure pointer bookkeeping — the only trick is caching <code>next</code> before you clobber it. The fast/slow trick works because a 2× speed pointer laps a 1× pointer inside any loop; the same idea finds the middle (fast hits the end when slow is halfway).</p>
+      <h5>Complexity</h5>
+      <div class="bigo"><span>Time <b>O(n)</b></span><span>Space <b>O(1)</b></span></div>
+      <div class="pitfall"><b>Pitfall:</b> dereferencing <code>fast.next.next</code> without the <code>fast != null &amp;&amp; fast.next != null</code> guard → NullPointerException on even-length lists.</div>
+    </div>
+  </details>
+
+  <details class="pat">
+    <summary><span class="idx">9</span> Tree Traversal (DFS &amp; BFS)<span class="tier tier-2">Tier 2</span><span class="caret">▸</span></summary>
+    <div class="pat-body">
+      <h5>Recognize when</h5>
+      <ul class="trigger-list">
+        <li>"Level by level / width / right-side view / zigzag" → BFS with a queue.</li>
+        <li>"Depth / path sum / validate / lowest common ancestor / mirror" → DFS recursion.</li>
+      </ul>
+      <h5>Worked example A — level-order traversal (BFS)</h5>
+      <pre><code>List&lt;List&lt;Integer&gt;&gt; <span class="f">levelOrder</span>(TreeNode root) {
+    List&lt;List&lt;Integer&gt;&gt; res = <span class="k">new</span> ArrayList&lt;&gt;();
+    <span class="k">if</span> (root == <span class="k">null</span>) <span class="k">return</span> res;
+    Queue&lt;TreeNode&gt; q = <span class="k">new</span> LinkedList&lt;&gt;();
+    q.add(root);
+    <span class="k">while</span> (!q.isEmpty()) {
+        <span class="k">int</span> size = q.size();             <span class="c">// freeze this level's count</span>
+        List&lt;Integer&gt; level = <span class="k">new</span> ArrayList&lt;&gt;();
+        <span class="k">for</span> (<span class="k">int</span> i = <span class="n">0</span>; i &lt; size; i++) {
+            TreeNode node = q.poll();
+            level.add(node.val);
+            <span class="k">if</span> (node.left != <span class="k">null</span>) q.add(node.left);
+            <span class="k">if</span> (node.right != <span class="k">null</span>) q.add(node.right);
+        }
+        res.add(level);
+    }
+    <span class="k">return</span> res;
+}</code></pre>
+      <h5>Worked example B — max depth (DFS recursion)</h5>
+      <pre><code><span class="k">int</span> <span class="f">maxDepth</span>(TreeNode root) {
+    <span class="k">if</span> (root == <span class="k">null</span>) <span class="k">return</span> <span class="n">0</span>;                 <span class="c">// base case</span>
+    <span class="k">return</span> <span class="n">1</span> + Math.max(maxDepth(root.left), maxDepth(root.right));
+}</code></pre>
+      <h5>Why it works</h5>
+      <p style="color:var(--ink-soft);font-size:15px;margin:0">The "freeze <code>q.size()</code> at the top of the loop" trick is what separates levels in BFS. DFS on trees is just recursion with a base case at <code>null</code>; most tree problems reduce to "combine the answers from the left and right subtrees".</p>
+      <h5>Complexity</h5>
+      <div class="bigo"><span>Time <b>O(n)</b></span><span>Space <b>O(width)</b> BFS · <b>O(height)</b> DFS</span></div>
+      <div class="pitfall"><b>Pitfall:</b> deep/skewed trees can blow the recursion stack in DFS; if depth can approach n, convert to an explicit stack.</div>
+    </div>
+  </details>
+
+  <details class="pat">
+    <summary><span class="idx">10</span> Recursion &amp; Backtracking<span class="tier tier-2">Tier 2</span><span class="caret">▸</span></summary>
+    <div class="pat-body">
+      <h5>Recognize when</h5>
+      <ul class="trigger-list">
+        <li>"Return / count <b>all</b> combinations / permutations / subsets / valid arrangements / paths."</li>
+        <li>Constraint satisfaction (Sudoku, word search, N-Queens). Small n (the size table says ≤ ~20).</li>
+      </ul>
+      <h5>Worked example — all subsets</h5>
+      <pre><code>List&lt;List&lt;Integer&gt;&gt; <span class="f">subsets</span>(<span class="k">int</span>[] nums) {
+    List&lt;List&lt;Integer&gt;&gt; res = <span class="k">new</span> ArrayList&lt;&gt;();
+    backtrack(nums, <span class="n">0</span>, <span class="k">new</span> ArrayList&lt;&gt;(), res);
+    <span class="k">return</span> res;
+}
+<span class="k">void</span> <span class="f">backtrack</span>(<span class="k">int</span>[] nums, <span class="k">int</span> start, List&lt;Integer&gt; cur, List&lt;List&lt;Integer&gt;&gt; res) {
+    res.add(<span class="k">new</span> ArrayList&lt;&gt;(cur));            <span class="c">// every prefix is a valid subset; copy it</span>
+    <span class="k">for</span> (<span class="k">int</span> i = start; i &lt; nums.length; i++) {
+        cur.add(nums[i]);                     <span class="c">// choose</span>
+        backtrack(nums, i + <span class="n">1</span>, cur, res);     <span class="c">// explore</span>
+        cur.remove(cur.size() - <span class="n">1</span>);          <span class="c">// un-choose (the backtrack)</span>
+    }
+}</code></pre>
+      <h5>Why it works</h5>
+      <p style="color:var(--ink-soft);font-size:15px;margin:0">The shape is always <b>choose → explore → un-choose</b>. The <code>start</code> index prevents revisiting earlier elements (so you get combinations, not duplicates). For permutations you'd track a <code>used[]</code> boolean array instead of <code>start</code>.</p>
+      <h5>Complexity</h5>
+      <div class="bigo"><span>Subsets <b>O(2ⁿ · n)</b> · permutations <b>O(n! · n)</b></span><span>Space <b>O(n)</b> recursion</span></div>
+      <div class="pitfall"><b>Pitfall:</b> adding <code>cur</code> directly to <code>res</code> instead of a copy — every entry then points at the same list that keeps mutating. Always <code>new ArrayList&lt;&gt;(cur)</code>.</div>
+    </div>
+  </details>
+
+  <details class="pat">
+    <summary><span class="idx">11</span> Intervals (sort + sweep)<span class="tier tier-2">Tier 2</span><span class="caret">▸</span></summary>
+    <div class="pat-body">
+      <h5>Recognize when</h5>
+      <ul class="trigger-list">
+        <li>Ranges that may overlap; merge them, insert one, or count maximum simultaneous overlap.</li>
+        <li>"Minimum meeting rooms", "can attend all meetings", "free time".</li>
+      </ul>
+      <h5>Worked example — merge overlapping intervals</h5>
+      <pre><code><span class="k">int</span>[][] <span class="f">merge</span>(<span class="k">int</span>[][] intervals) {
+    Arrays.sort(intervals, (x, y) -&gt; x[<span class="n">0</span>] - y[<span class="n">0</span>]);    <span class="c">// by START</span>
+    List&lt;<span class="k">int</span>[]&gt; out = <span class="k">new</span> ArrayList&lt;&gt;();
+    <span class="k">for</span> (<span class="k">int</span>[] iv : intervals) {
+        <span class="k">if</span> (out.isEmpty() || out.get(out.size()-<span class="n">1</span>)[<span class="n">1</span>] &lt; iv[<span class="n">0</span>])
+            out.add(iv);                                  <span class="c">// no overlap -&gt; new block</span>
+        <span class="k">else</span>
+            out.get(out.size()-<span class="n">1</span>)[<span class="n">1</span>] =
+                Math.max(out.get(out.size()-<span class="n">1</span>)[<span class="n">1</span>], iv[<span class="n">1</span>]); <span class="c">// overlap -&gt; extend the end</span>
+    }
+    <span class="k">return</span> out.toArray(<span class="k">new</span> <span class="k">int</span>[<span class="n">0</span>][]);
+}</code></pre>
+      <h5>Why it works</h5>
+      <p style="color:var(--ink-soft);font-size:15px;margin:0">After sorting by start, any overlap must be with the <i>immediately preceding</i> kept interval, so one linear pass suffices. For "max concurrent" problems, a different sweep — sort start and end events separately and walk them — counts overlaps without building the merged set.</p>
+      <h5>Complexity</h5>
+      <div class="bigo"><span>Time <b>O(n log n)</b></span><span>Space <b>O(n)</b></span></div>
+      <div class="pitfall"><b>Pitfall:</b> deciding whether touching endpoints (<code>[1,2]</code> and <code>[2,3]</code>) count as overlapping — read the problem; it changes <code>&lt;</code> to <code>&lt;=</code>.</div>
+    </div>
+  </details>
+
+  <details class="pat">
+    <summary><span class="idx">12</span> Heap / Priority Queue<span class="tier tier-2">Tier 2</span><span class="caret">▸</span></summary>
+    <div class="pat-body">
+      <h5>Recognize when</h5>
+      <ul class="trigger-list">
+        <li>"Top / smallest / K closest"; "merge K sorted lists"; streaming median; repeatedly extract the min/max.</li>
+        <li>You need <i>partial</i> ordering (the best k) but not a full sort.</li>
+      </ul>
+      <h5>Worked example — kth largest element (min-heap of size k)</h5>
+      <pre><code><span class="k">int</span> <span class="f">kthLargest</span>(<span class="k">int</span>[] nums, <span class="k">int</span> k) {
+    PriorityQueue&lt;Integer&gt; heap = <span class="k">new</span> PriorityQueue&lt;&gt;(); <span class="c">// min-heap by default</span>
+    <span class="k">for</span> (<span class="k">int</span> n : nums) {
+        heap.offer(n);
+        <span class="k">if</span> (heap.size() &gt; k) heap.poll();   <span class="c">// keep only the k largest; smallest falls out</span>
+    }
+    <span class="k">return</span> heap.peek();                     <span class="c">// the smallest of the top-k = kth largest</span>
+}</code></pre>
+      <h5>Why it works</h5>
+      <p style="color:var(--ink-soft);font-size:15px;margin:0">A size-k min-heap always holds the k biggest seen so far; the root is the kth largest. Sorting is O(n log n) and wasteful when k is small — this is O(n log k). For max-behavior use <code>new PriorityQueue&lt;&gt;(Collections.reverseOrder())</code> or a comparator.</p>
+      <h5>Complexity</h5>
+      <div class="bigo"><span>Time <b>O(n log k)</b></span><span>Space <b>O(k)</b></span></div>
+      <div class="pitfall"><b>Pitfall:</b> mixing up the heap direction. To keep the k <i>largest</i>, you evict with a <i>min</i>-heap. The intuition feels backwards the first few times — write the invariant down.</div>
+    </div>
+  </details>
+
+  <details class="pat">
+    <summary><span class="idx">13</span> Dynamic Programming<span class="tier tier-3">Tier 3</span><span class="caret">▸</span></summary>
+    <div class="pat-body">
+      <h5>Recognize when</h5>
+      <ul class="trigger-list">
+        <li>"Count the number of ways", "min/max cost or length", "can you reach / partition / make change".</li>
+        <li>A brute-force recursion exists but recomputes the same <code>(index, state)</code> repeatedly (overlapping subproblems + optimal substructure).</li>
+      </ul>
+      <h5>Worked example — house robber (1D DP, space-optimized)</h5>
+      <pre><code><span class="k">int</span> <span class="f">rob</span>(<span class="k">int</span>[] nums) {
+    <span class="k">int</span> prev2 = <span class="n">0</span>, prev1 = <span class="n">0</span>;            <span class="c">// best up to i-2 and i-1</span>
+    <span class="k">for</span> (<span class="k">int</span> n : nums) {
+        <span class="k">int</span> cur = Math.max(prev1, prev2 + n); <span class="c">// skip this house vs rob it</span>
+        prev2 = prev1;
+        prev1 = cur;
+    }
+    <span class="k">return</span> prev1;
+}</code></pre>
+      <h5>Recognition workflow (more useful than memorizing recurrences)</h5>
+      <p style="color:var(--ink-soft);font-size:15px;margin:0 0 6px">1) Write the recursive brute force and identify the <b>state</b> (what arguments change). 2) If the same state recurs, add a memo (<code>Integer[] dp</code>, fill with null). 3) Optionally flip to bottom-up tabulation. 4) Optionally drop the table to a few rolling variables, as above. For 2D problems (grids, two strings — edit distance, LCS) the state is a pair <code>(i, j)</code> and the table is a 2D array.</p>
+      <h5>Complexity</h5>
+      <div class="bigo"><span>1D <b>O(n)</b> · 2D <b>O(n·m)</b></span><span>Space <b>O(1)→O(n·m)</b></span></div>
+      <div class="pitfall"><b>Pitfall (and why this is Tier 3 for TCS):</b> DP recognition is the hardest to fake under time pressure. Target "I can identify the state and write the memoized recursion for classic 1D problems" — don't burn days on hard 2D DP you're unlikely to be gated on.</div>
+    </div>
+  </details>
+
+  <details class="pat">
+    <summary><span class="idx">14</span> Graph BFS / DFS<span class="tier tier-3">Tier 3</span><span class="caret">▸</span></summary>
+    <div class="pat-body">
+      <h5>Recognize when</h5>
+      <ul class="trigger-list">
+        <li>A grid or explicit graph; "number of connected regions / components / islands".</li>
+        <li>"Shortest number of steps" in an <b>unweighted</b> graph → BFS. "Ordering with prerequisites" → topological sort.</li>
+      </ul>
+      <h5>Worked example — number of islands (grid DFS / flood fill)</h5>
+      <pre><code><span class="k">int</span> <span class="f">numIslands</span>(<span class="k">char</span>[][] grid) {
+    <span class="k">int</span> count = <span class="n">0</span>;
+    <span class="k">for</span> (<span class="k">int</span> r = <span class="n">0</span>; r &lt; grid.length; r++)
+        <span class="k">for</span> (<span class="k">int</span> c = <span class="n">0</span>; c &lt; grid[<span class="n">0</span>].length; c++)
+            <span class="k">if</span> (grid[r][c] == <span class="s">'1'</span>) { sink(grid, r, c); count++; }
+    <span class="k">return</span> count;
+}
+<span class="k">void</span> <span class="f">sink</span>(<span class="k">char</span>[][] g, <span class="k">int</span> r, <span class="k">int</span> c) {
+    <span class="k">if</span> (r &lt; <span class="n">0</span> || c &lt; <span class="n">0</span> || r &gt;= g.length || c &gt;= g[<span class="n">0</span>].length || g[r][c] != <span class="s">'1'</span>) <span class="k">return</span>;
+    g[r][c] = <span class="s">'0'</span>;                       <span class="c">// mark visited in place</span>
+    sink(g, r+<span class="n">1</span>, c); sink(g, r-<span class="n">1</span>, c);
+    sink(g, r, c+<span class="n">1</span>); sink(g, r, c-<span class="n">1</span>);  <span class="c">// 4-directional flood</span>
+}</code></pre>
+      <h5>Why it works</h5>
+      <p style="color:var(--ink-soft);font-size:15px;margin:0">Each new <code>'1'</code> you encounter starts a fresh region; the flood fill consumes the entire connected piece so you never double-count. For shortest-path-in-steps, swap DFS for a BFS queue and count levels — BFS reaches nodes in increasing distance order, which DFS does not.</p>
+      <h5>Complexity</h5>
+      <div class="bigo"><span>Time <b>O(rows · cols)</b> / <b>O(V + E)</b></span><span>Space <b>O(rows · cols)</b></span></div>
+      <div class="pitfall"><b>Pitfall:</b> forgetting to mark nodes visited (here: overwriting to <code>'0'</code>) → infinite recursion. On a graph with an adjacency list, keep a separate <code>visited</code> set.</div>
+    </div>
+  </details>
+
+  <div class="callout info" style="margin-top:24px">
+    <p><b>Awareness-only (don't drill for TCS, but recognize the name):</b> Union-Find / DSU (connectivity, merging groups, cycle detection in undirected graphs), Trie (prefix lookups, autocomplete), Bit manipulation (XOR for the "single number", masks for subsets), Dijkstra (shortest path with <i>weights</i> — a heap-driven BFS). If you see one of these in the round, you'll likely have time to look up the template; you just need to recognize which one it is.</p>
+  </div>
+</section>
+
+<section class="panel" id="tab-p2" data-tab="p2" role="tabpanel">
+  <h2 class="sec">Phase 2 — Guided practice</h2>
+  <p class="sec-sub">The pattern is named for you; the solution is not. For each: confirm the recognition triggers fired, recall the template from Phase 1, adapt it, and solve it in your IDE / on the problem site. Links go to the problem statement — write the code yourself.</p>
+
+  <div class="callout warn"><p>Do these <b>after</b> reading the corresponding Phase-1 card, not before. The goal is template recall under a named pattern, which is the bridge to unprompted recognition in Phase 3.</p></div>
+
+  <div class="pgroup">
+    <div class="pgroup-h"><span class="pat-tag">Hashing</span><span class="count">3 problems</span></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/contains-duplicate/" target="_blank" rel="noopener">Contains Duplicate</a></span><span class="diff d-easy">Easy</span><span class="src">LeetCode 217</span></div><p class="hint"><b>Approach:</b> one pass, add to a <code>HashSet</code>; if <code>add</code> returns false you've seen it.</p></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/valid-anagram/" target="_blank" rel="noopener">Valid Anagram</a></span><span class="diff d-easy">Easy</span><span class="src">LeetCode 242</span></div><p class="hint"><b>Approach:</b> count letters of both (an <code>int[26]</code> is faster than a map for lowercase). Equal counts ⇒ anagram.</p></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/group-anagrams/" target="_blank" rel="noopener">Group Anagrams</a></span><span class="diff d-med">Medium</span><span class="src">LeetCode 49</span></div><p class="hint"><b>Approach:</b> map a canonical key (sorted string, or the 26-count signature) → list of words.</p></div>
+  </div>
+
+  <div class="pgroup">
+    <div class="pgroup-h"><span class="pat-tag">Two Pointers</span><span class="count">3 problems</span></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/valid-palindrome/" target="_blank" rel="noopener">Valid Palindrome</a></span><span class="diff d-easy">Easy</span><span class="src">LeetCode 125</span></div><p class="hint"><b>Approach:</b> pointers from both ends, skip non-alphanumerics, compare lowercased.</p></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/two-sum-ii-input-array-is-sorted/" target="_blank" rel="noopener">Two Sum II — Input Array Is Sorted</a></span><span class="diff d-med">Medium</span><span class="src">LeetCode 167</span></div><p class="hint"><b>Approach:</b> the exact template from card 2. Sortedness is the precondition that makes it valid.</p></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/3sum/" target="_blank" rel="noopener">3Sum</a></span><span class="diff d-med">Medium</span><span class="src">LeetCode 15</span></div><p class="hint"><b>Approach:</b> sort, fix one element, two-pointer the rest for the complement. Skip duplicates to dedupe triplets.</p></div>
+  </div>
+
+  <div class="pgroup">
+    <div class="pgroup-h"><span class="pat-tag">Sliding Window</span><span class="count">3 problems</span></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/maximum-average-subarray-i/" target="_blank" rel="noopener">Maximum Average Subarray I</a></span><span class="diff d-easy">Easy</span><span class="src">LeetCode 643</span></div><p class="hint"><b>Approach:</b> fixed window of size k — add the entering element, subtract the leaving one, track the max sum.</p></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/longest-substring-without-repeating-characters/" target="_blank" rel="noopener">Longest Substring Without Repeating Characters</a></span><span class="diff d-med">Medium</span><span class="src">LeetCode 3</span></div><p class="hint"><b>Approach:</b> the variable-window template from card 3.</p></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/longest-repeating-character-replacement/" target="_blank" rel="noopener">Longest Repeating Character Replacement</a></span><span class="diff d-med">Medium</span><span class="src">LeetCode 424</span></div><p class="hint"><b>Approach:</b> window is valid while <code>(windowLen − countOfMostFrequentChar) ≤ k</code>; shrink when it isn't.</p></div>
+  </div>
+
+  <div class="pgroup">
+    <div class="pgroup-h"><span class="pat-tag">Prefix Sum</span><span class="count">2 problems</span></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/find-pivot-index/" target="_blank" rel="noopener">Find Pivot Index</a></span><span class="diff d-easy">Easy</span><span class="src">LeetCode 724</span></div><p class="hint"><b>Approach:</b> total sum known; left sum running. Pivot where <code>left == total − left − a[i]</code>.</p></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/subarray-sum-equals-k/" target="_blank" rel="noopener">Subarray Sum Equals K</a></span><span class="diff d-med">Medium</span><span class="src">LeetCode 560</span></div><p class="hint"><b>Approach:</b> the prefix-count map from card 4. Note how prefix sum + hashing combine.</p></div>
+  </div>
+
+  <div class="pgroup">
+    <div class="pgroup-h"><span class="pat-tag">Binary Search</span><span class="count">3 problems</span></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/binary-search/" target="_blank" rel="noopener">Binary Search</a></span><span class="diff d-easy">Easy</span><span class="src">LeetCode 704</span></div><p class="hint"><b>Approach:</b> template A. Get the boundary conditions automatic.</p></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/find-minimum-in-rotated-sorted-array/" target="_blank" rel="noopener">Find Minimum in Rotated Sorted Array</a></span><span class="diff d-med">Medium</span><span class="src">LeetCode 153</span></div><p class="hint"><b>Approach:</b> compare <code>mid</code> to <code>hi</code> to decide which half holds the rotation point.</p></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/koko-eating-bananas/" target="_blank" rel="noopener">Koko Eating Bananas</a></span><span class="diff d-med">Medium</span><span class="src">LeetCode 875</span></div><p class="hint"><b>Approach:</b> binary search <i>on the answer</i> (template B). Search eating speeds; <code>feasible(speed)</code> = "finishes within h hours".</p></div>
+  </div>
+
+  <div class="pgroup">
+    <div class="pgroup-h"><span class="pat-tag">Sort + Greedy</span><span class="count">2 problems</span></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/maximum-subarray/" target="_blank" rel="noopener">Maximum Subarray</a></span><span class="diff d-med">Medium</span><span class="src">LeetCode 53</span></div><p class="hint"><b>Approach:</b> Kadane's — greedy running sum; drop it to 0 (or the current element) when it goes negative. Sits between greedy and 1D DP.</p></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/non-overlapping-intervals/" target="_blank" rel="noopener">Non-overlapping Intervals</a></span><span class="diff d-med">Medium</span><span class="src">LeetCode 435</span></div><p class="hint"><b>Approach:</b> the earliest-end greedy from card 6; removals = total − kept.</p></div>
+  </div>
+
+  <div class="pgroup">
+    <div class="pgroup-h"><span class="pat-tag">Stack</span><span class="count">3 problems</span></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/valid-parentheses/" target="_blank" rel="noopener">Valid Parentheses</a></span><span class="diff d-easy">Easy</span><span class="src">LeetCode 20</span></div><p class="hint"><b>Approach:</b> card 7, example A, verbatim.</p></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/min-stack/" target="_blank" rel="noopener">Min Stack</a></span><span class="diff d-med">Medium</span><span class="src">LeetCode 155</span></div><p class="hint"><b>Approach:</b> a second stack (or pair on the main stack) tracking the running minimum so <code>getMin</code> is O(1).</p></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/daily-temperatures/" target="_blank" rel="noopener">Daily Temperatures</a></span><span class="diff d-med">Medium</span><span class="src">LeetCode 739</span></div><p class="hint"><b>Approach:</b> monotonic stack of indices (card 7, example B). Answer = distance to next warmer day.</p></div>
+  </div>
+
+  <div class="pgroup">
+    <div class="pgroup-h"><span class="pat-tag">Linked List</span><span class="count">3 problems</span></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/reverse-linked-list/" target="_blank" rel="noopener">Reverse Linked List</a></span><span class="diff d-easy">Easy</span><span class="src">LeetCode 206</span></div><p class="hint"><b>Approach:</b> card 8, example A.</p></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/merge-two-sorted-lists/" target="_blank" rel="noopener">Merge Two Sorted Lists</a></span><span class="diff d-easy">Easy</span><span class="src">LeetCode 21</span></div><p class="hint"><b>Approach:</b> dummy head + two pointers; splice the smaller node each step. This is where the dummy-node trick pays off.</p></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/remove-nth-node-from-end-of-list/" target="_blank" rel="noopener">Remove Nth Node From End of List</a></span><span class="diff d-med">Medium</span><span class="src">LeetCode 19</span></div><p class="hint"><b>Approach:</b> advance a lead pointer n steps, then move both until lead hits the end; the trailing pointer lands before the target.</p></div>
+  </div>
+
+  <div class="pgroup">
+    <div class="pgroup-h"><span class="pat-tag">Tree DFS/BFS</span><span class="count">3 problems</span></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/maximum-depth-of-binary-tree/" target="_blank" rel="noopener">Maximum Depth of Binary Tree</a></span><span class="diff d-easy">Easy</span><span class="src">LeetCode 104</span></div><p class="hint"><b>Approach:</b> card 9, example B.</p></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/binary-tree-level-order-traversal/" target="_blank" rel="noopener">Binary Tree Level Order Traversal</a></span><span class="diff d-med">Medium</span><span class="src">LeetCode 102</span></div><p class="hint"><b>Approach:</b> BFS with the frozen <code>q.size()</code> trick (card 9, example A).</p></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/validate-binary-search-tree/" target="_blank" rel="noopener">Validate Binary Search Tree</a></span><span class="diff d-med">Medium</span><span class="src">LeetCode 98</span></div><p class="hint"><b>Approach:</b> DFS passing down a valid <code>(min, max)</code> range; each node must fall strictly inside.</p></div>
+  </div>
+
+  <div class="pgroup">
+    <div class="pgroup-h"><span class="pat-tag">Backtracking</span><span class="count">3 problems</span></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/subsets/" target="_blank" rel="noopener">Subsets</a></span><span class="diff d-med">Medium</span><span class="src">LeetCode 78</span></div><p class="hint"><b>Approach:</b> card 10, verbatim.</p></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/permutations/" target="_blank" rel="noopener">Permutations</a></span><span class="diff d-med">Medium</span><span class="src">LeetCode 46</span></div><p class="hint"><b>Approach:</b> same skeleton, but track <code>used[]</code> instead of a <code>start</code> index.</p></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/combination-sum/" target="_blank" rel="noopener">Combination Sum</a></span><span class="diff d-med">Medium</span><span class="src">LeetCode 39</span></div><p class="hint"><b>Approach:</b> backtrack with reuse allowed — recurse on the same index <code>i</code>, prune when the remaining target goes negative.</p></div>
+  </div>
+
+  <div class="pgroup">
+    <div class="pgroup-h"><span class="pat-tag">Intervals</span><span class="count">2 problems</span></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/merge-intervals/" target="_blank" rel="noopener">Merge Intervals</a></span><span class="diff d-med">Medium</span><span class="src">LeetCode 56</span></div><p class="hint"><b>Approach:</b> card 11, verbatim.</p></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/insert-interval/" target="_blank" rel="noopener">Insert Interval</a></span><span class="diff d-med">Medium</span><span class="src">LeetCode 57</span></div><p class="hint"><b>Approach:</b> three phases — intervals entirely before, the overlapping run (merge it), intervals entirely after.</p></div>
+  </div>
+
+  <div class="pgroup">
+    <div class="pgroup-h"><span class="pat-tag">Heap</span><span class="count">2 problems</span></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/kth-largest-element-in-an-array/" target="_blank" rel="noopener">Kth Largest Element in an Array</a></span><span class="diff d-med">Medium</span><span class="src">LeetCode 215</span></div><p class="hint"><b>Approach:</b> card 12, verbatim (or Quickselect if asked for average O(n)).</p></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/top-k-frequent-elements/" target="_blank" rel="noopener">Top K Frequent Elements</a></span><span class="diff d-med">Medium</span><span class="src">LeetCode 347</span></div><p class="hint"><b>Approach:</b> count with a map, then a size-k heap by frequency (or bucket sort by count for O(n)).</p></div>
+  </div>
+
+  <div class="pgroup">
+    <div class="pgroup-h"><span class="pat-tag">Dynamic Programming</span><span class="count">3 problems</span></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/climbing-stairs/" target="_blank" rel="noopener">Climbing Stairs</a></span><span class="diff d-easy">Easy</span><span class="src">LeetCode 70</span></div><p class="hint"><b>Approach:</b> <code>ways(n) = ways(n−1) + ways(n−2)</code> — Fibonacci in disguise. The gateway DP.</p></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/house-robber/" target="_blank" rel="noopener">House Robber</a></span><span class="diff d-med">Medium</span><span class="src">LeetCode 198</span></div><p class="hint"><b>Approach:</b> card 13, verbatim.</p></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/coin-change/" target="_blank" rel="noopener">Coin Change</a></span><span class="diff d-med">Medium</span><span class="src">LeetCode 322</span></div><p class="hint"><b>Approach:</b> <code>dp[amount]</code> = min coins; <code>dp[x] = 1 + min over coins of dp[x − coin]</code>. Classic unbounded DP.</p></div>
+  </div>
+
+  <div class="pgroup">
+    <div class="pgroup-h"><span class="pat-tag">Graph BFS/DFS</span><span class="count">3 problems</span></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/flood-fill/" target="_blank" rel="noopener">Flood Fill</a></span><span class="diff d-easy">Easy</span><span class="src">LeetCode 733</span></div><p class="hint"><b>Approach:</b> DFS/BFS from the start pixel, recolor connected same-color pixels. The minimal grid-traversal warm-up.</p></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/number-of-islands/" target="_blank" rel="noopener">Number of Islands</a></span><span class="diff d-med">Medium</span><span class="src">LeetCode 200</span></div><p class="hint"><b>Approach:</b> card 14, verbatim.</p></div>
+    <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/course-schedule/" target="_blank" rel="noopener">Course Schedule</a></span><span class="diff d-med">Medium</span><span class="src">LeetCode 207</span></div><p class="hint"><b>Approach:</b> detect a cycle in a directed graph — topological sort via Kahn's (in-degree + queue) or DFS coloring.</p></div>
+  </div>
+</section>
+
+<section class="panel" id="tab-p3" data-tab="p3" role="tabpanel">
+  <h2 class="sec">Phase 3 — Solo (pattern hidden)</h2>
+  <p class="sec-sub">No pattern is given. Run the diagnosis protocol from the Start Here tab, commit to an approach, then code it. Only after you've attempted it should you open "What pattern was this?" to check your diagnosis. Mediums first, hards at the end — those are your "couple of hards".</p>
+
+  <div class="callout warn"><p>Use a <b>timer</b>: 25 min for mediums, 40 for hards. If you're stuck at the time limit, open the reveal, see the pattern (not the solution), and re-attempt. The miss-then-see-the-pattern loop is exactly what builds recognition — a clean solve teaches less than a corrected wrong guess.</p></div>
+
+  <h3 class="block">Mediums — diagnose then solve</h3>
+
+  <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/product-of-array-except-self/" target="_blank" rel="noopener">Product of Array Except Self</a></span><span class="diff d-med">Medium</span><span class="src">LeetCode 238</span></div>
+    <details class="reveal"><summary>What pattern was this?</summary><div class="reveal-body"><b>Prefix / suffix products.</b> The "no division, O(n)" constraint is the tell. Build running products from the left, then multiply by running products from the right in a second pass.</div></details>
+  </div>
+
+  <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/find-all-anagrams-in-a-string/" target="_blank" rel="noopener">Find All Anagrams in a String</a></span><span class="diff d-med">Medium</span><span class="src">LeetCode 438</span></div>
+    <details class="reveal"><summary>What pattern was this?</summary><div class="reveal-body"><b>Sliding window + hashing.</b> "All substrings of fixed length that are anagrams" → fixed-size window over a 26-count signature; slide and compare counts.</div></details>
+  </div>
+
+  <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/search-in-rotated-sorted-array/" target="_blank" rel="noopener">Search in Rotated Sorted Array</a></span><span class="diff d-med">Medium</span><span class="src">LeetCode 33</span></div>
+    <details class="reveal"><summary>What pattern was this?</summary><div class="reveal-body"><b>Binary search (modified).</b> Sorted-ish + O(log n) demanded. At each step one half is properly sorted — figure out which, and whether the target lies in it.</div></details>
+  </div>
+
+  <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/word-search/" target="_blank" rel="noopener">Word Search</a></span><span class="diff d-med">Medium</span><span class="src">LeetCode 79</span></div>
+    <details class="reveal"><summary>What pattern was this?</summary><div class="reveal-body"><b>Backtracking on a grid (DFS).</b> "Does a path exist spelling the word" → DFS from each cell, mark visited, recurse on neighbors, un-mark on the way out.</div></details>
+  </div>
+
+  <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/rotting-oranges/" target="_blank" rel="noopener">Rotting Oranges</a></span><span class="diff d-med">Medium</span><span class="src">LeetCode 994</span></div>
+    <details class="reveal"><summary>What pattern was this?</summary><div class="reveal-body"><b>Multi-source BFS.</b> "Minimum minutes for spread" = shortest time in an unweighted grid → BFS from <i>all</i> rotten cells at once, counting levels.</div></details>
+  </div>
+
+  <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/longest-palindromic-substring/" target="_blank" rel="noopener">Longest Palindromic Substring</a></span><span class="diff d-med">Medium</span><span class="src">LeetCode 5</span></div>
+    <details class="reveal"><summary>What pattern was this?</summary><div class="reveal-body"><b>Expand around center</b> (or 2D DP). For each of the 2n−1 centers, expand outward while characters match. The "contiguous substring with a property" framing hints at a window-like scan; here the center-expansion variant is cleanest.</div></details>
+  </div>
+
+  <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/longest-increasing-subsequence/" target="_blank" rel="noopener">Longest Increasing Subsequence</a></span><span class="diff d-med">Medium</span><span class="src">LeetCode 300</span></div>
+    <details class="reveal"><summary>What pattern was this?</summary><div class="reveal-body"><b>DP</b> (O(n²)) — <code>dp[i]</code> = LIS ending at i. The O(n log n) version uses binary search over a "tails" array; recognizing the binary-search upgrade is a strong signal.</div></details>
+  </div>
+
+  <h3 class="block">Hards — your stretch set</h3>
+
+  <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/trapping-rain-water/" target="_blank" rel="noopener">Trapping Rain Water</a></span><span class="diff d-hard">Hard</span><span class="src">LeetCode 42</span></div>
+    <details class="reveal"><summary>What pattern was this?</summary><div class="reveal-body"><b>Two pointers</b> (or monotonic stack, or prefix max arrays). Water above each bar = min(maxLeft, maxRight) − height. Two pointers converging from both ends does it in O(1) space.</div></details>
+  </div>
+
+  <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/minimum-window-substring/" target="_blank" rel="noopener">Minimum Window Substring</a></span><span class="diff d-hard">Hard</span><span class="src">LeetCode 76</span></div>
+    <details class="reveal"><summary>What pattern was this?</summary><div class="reveal-body"><b>Variable sliding window + hashing.</b> "Shortest substring containing all of T" → grow the right to become valid, then shrink the left as far as still-valid, recording the minimum. The hardest version of card 3.</div></details>
+  </div>
+
+  <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/word-ladder/" target="_blank" rel="noopener">Word Ladder</a></span><span class="diff d-hard">Hard</span><span class="src">LeetCode 127</span></div>
+    <details class="reveal"><summary>What pattern was this?</summary><div class="reveal-body"><b>BFS shortest path.</b> "Fewest transformations" where each one-letter change is an edge → BFS over the implicit word graph; the first time you reach <code>endWord</code> is the shortest ladder.</div></details>
+  </div>
+
+  <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/merge-k-sorted-lists/" target="_blank" rel="noopener">Merge k Sorted Lists</a></span><span class="diff d-hard">Hard</span><span class="src">LeetCode 23</span></div>
+    <details class="reveal"><summary>What pattern was this?</summary><div class="reveal-body"><b>Heap (k-way merge).</b> "Merge K sorted" is the canonical heap signal — a size-k min-heap of the current front of each list; poll the smallest, push its successor.</div></details>
+  </div>
+
+  <div class="prob"><div class="prob-top"><span class="prob-name"><a href="https://leetcode.com/problems/edit-distance/" target="_blank" rel="noopener">Edit Distance</a></span><span class="diff d-hard">Hard</span><span class="src">LeetCode 72</span></div>
+    <details class="reveal"><summary>What pattern was this?</summary><div class="reveal-body"><b>2D DP.</b> Two strings + "minimum operations" → state <code>(i, j)</code> over both prefixes; each cell is the best of insert/delete/replace. The archetypal 2D table. If you only learn one hard DP, learn this shape.</div></details>
+  </div>
+
+  <div class="callout info" style="margin-top:22px"><p><b>After Phase 3:</b> the real test of recognition is doing fresh problems you've never seen, cold, on a timer, and naming the pattern in the first two minutes. Pull random mediums from the <a class="link" href="https://www.hackerrank.com/interview/interview-preparation-kit" target="_blank" rel="noopener">HackerRank Interview Preparation Kit</a> or LeetCode's tag filters and run the diagnosis protocol against each before writing a line.</p></div>
+
+  <p class="pat-foot">Built for a 7-day TCS coding-round ramp. Pattern triggers and complexity bounds are the load-bearing content — the problems are practice scaffolding around them. Phase-1 cards are collapsible; everything prints to a clean reference sheet.</p>
+</section>
+
+</div></main>
+</div>
+
+<!-- ============================ VISUALIZER ============================ -->
+<div data-section-panel="visualizer" style="display:none">
+<main><div class="wrap wide">
+  <div class="viz">
+    <p class="sec-sub" style="margin-bottom:16px">Optimal solutions for Maximum Average Subarray I, 3Sum, Subarray Sum Equals K, Binary Search, Valid Parentheses, and Longest Substring Without Repeating Characters — stepped frame by frame. Each step mirrors one operation of the real Java algorithm on the left.</p>
+
+    <div class="vtabs" role="tablist">
+      <button class="vtab-btn" id="t-slide" role="tab" aria-selected="true" aria-controls="tab-slide">Sliding Window — Max Average Subarray</button>
+      <button class="vtab-btn" id="t-three" role="tab" aria-selected="false" aria-controls="tab-three">3Sum — Nested Two-Pointer</button>
+      <button class="vtab-btn" id="t-subk" role="tab" aria-selected="false" aria-controls="tab-subk">Subarray Sum Equals K — Prefix Sum + HashMap</button>
+      <button class="vtab-btn" id="t-bs" role="tab" aria-selected="false" aria-controls="tab-bs">Binary Search</button>
+      <button class="vtab-btn" id="t-paren" role="tab" aria-selected="false" aria-controls="tab-paren">Valid Parentheses — Stack</button>
+      <button class="vtab-btn" id="t-lsub" role="tab" aria-selected="false" aria-controls="tab-lsub">Longest Substring — Variable Window</button>
+    </div>
+
+    <section class="vtab active vpanel" id="tab-slide" role="tabpanel">
+      <div class="params">
+        <div class="field"><label for="slide-arr">Array (comma-separated)</label><input id="slide-arr" value="1, 12, -5, -6, 50, 3"></div>
+        <div class="field"><label for="slide-k">k</label><input id="slide-k" value="4"></div>
+        <button class="apply" id="slide-apply">Apply &amp; reset</button>
+      </div>
+      <div class="err" id="slide-err"></div>
+      <div class="legend">
+        <span><span class="swatch" style="background:var(--win-bg);border-color:var(--win-bd)"></span>current window</span>
+        <span><span class="swatch" style="background:var(--enter-bg);border-color:var(--enter-bd)"></span>entering (+)</span>
+        <span><span class="swatch" style="background:var(--leave-bg);border-color:var(--leave-bd)"></span>leaving (−)</span>
+        <span><span class="swatch" style="background:transparent;border-color:var(--accent);box-shadow:inset 0 -4px 0 var(--accent)"></span>best window so far</span>
+      </div>
+      <div class="stage"><div class="array" id="slide-array"></div></div>
+      <div class="explain" id="slide-explain" aria-live="polite"></div>
+      <div class="controls">
+        <button id="slide-reset" title="Reset">⏮</button>
+        <button id="slide-prev" title="Step back (←)">◀</button>
+        <button class="play" id="slide-play" title="Play / pause (space)">▶ Play</button>
+        <button id="slide-next" title="Step forward (→)">▶</button>
+        <input type="range" class="scrub" id="slide-scrub" min="0" value="0" aria-label="Scrub steps">
+        <span class="counter" id="slide-counter">0 / 0</span>
+        <span class="speed">slow<input type="range" id="slide-speed" min="120" max="1400" value="650">fast</span>
+      </div>
+      <div class="grid2">
+        <div class="code" id="slide-code"></div>
+        <div class="state">
+          <h3>State</h3>
+          <div class="kv"><span class="k">phase</span><span class="v" id="slide-phase">—</span></div>
+          <div class="kv"><span class="k">windowSum</span><span class="v" id="slide-ws">—</span></div>
+          <div class="kv"><span class="k">maxSum</span><span class="v" id="slide-max">—</span></div>
+          <div class="kv"><span class="k">best window</span><span class="v" id="slide-best">—</span></div>
+          <div class="kv"><span class="k">max average</span><span class="v" id="slide-avg">—</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="vtab vpanel" id="tab-three" role="tabpanel">
+      <div class="params">
+        <div class="field"><label for="three-arr">Array (comma-separated) — target is 0</label><input id="three-arr" value="-1, 0, 1, 2, -1, -4"></div>
+        <button class="apply" id="three-apply">Apply &amp; reset</button>
+      </div>
+      <div class="err" id="three-err"></div>
+      <div class="legend">
+        <span><span class="swatch" style="background:var(--fix-bg);border-color:var(--fix-bd)"></span>i (fixed)</span>
+        <span><span class="swatch" style="background:var(--lp-bg);border-color:var(--lp-bd)"></span>left</span>
+        <span><span class="swatch" style="background:var(--rp-bg);border-color:var(--rp-bd)"></span>right</span>
+        <span><span class="swatch" style="background:var(--span);border-color:var(--border)"></span>search span</span>
+      </div>
+      <div class="stage"><div class="array" id="three-array"></div></div>
+      <div class="explain" id="three-explain" aria-live="polite"></div>
+      <div class="controls">
+        <button id="three-reset" title="Reset">⏮</button>
+        <button id="three-prev" title="Step back (←)">◀</button>
+        <button class="play" id="three-play" title="Play / pause (space)">▶ Play</button>
+        <button id="three-next" title="Step forward (→)">▶</button>
+        <input type="range" class="scrub" id="three-scrub" min="0" value="0" aria-label="Scrub steps">
+        <span class="counter" id="three-counter">0 / 0</span>
+        <span class="speed">slow<input type="range" id="three-speed" min="120" max="1400" value="650">fast</span>
+      </div>
+      <div class="grid2">
+        <div class="code" id="three-code"></div>
+        <div class="state">
+          <h3>State</h3>
+          <div class="kv"><span class="k">i</span><span class="v" id="three-i">—</span></div>
+          <div class="kv"><span class="k">left</span><span class="v" id="three-left">—</span></div>
+          <div class="kv"><span class="k">right</span><span class="v" id="three-right">—</span></div>
+          <div class="kv"><span class="k">sum</span><span class="v" id="three-sum">—</span></div>
+          <div class="found"><h3>Triples found</h3><div id="three-found"><span class="none">none yet</span></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="vtab vpanel" id="tab-subk" role="tabpanel">
+      <div class="params">
+        <div class="field"><label for="subk-arr">Array (comma-separated)</label><input id="subk-arr" value="3, 4, 7, 2, -3, 1, 4, 2"></div>
+        <div class="field"><label for="subk-k">k</label><input id="subk-k" value="7"></div>
+        <button class="apply" id="subk-apply">Apply &amp; reset</button>
+      </div>
+      <div class="err" id="subk-err"></div>
+      <div class="legend">
+        <span><span class="swatch" style="background:var(--fix-bg);border-color:var(--fix-bd)"></span>current index i</span>
+        <span><span class="swatch" style="background:var(--enter-bg);border-color:var(--enter-bd)"></span>subarray summing to k</span>
+        <span><span class="swatch" style="background:var(--enter-bg);border-color:var(--enter-bd);box-shadow:inset 4px 0 0 var(--enter-bd)"></span>subarray start</span>
+      </div>
+      <div class="stage"><div class="array" id="subk-array"></div></div>
+      <div class="explain" id="subk-explain" aria-live="polite"></div>
+      <div class="controls">
+        <button id="subk-reset" title="Reset">⏮</button>
+        <button id="subk-prev" title="Step back (←)">◀</button>
+        <button class="play" id="subk-play" title="Play / pause (space)">▶ Play</button>
+        <button id="subk-next" title="Step forward (→)">▶</button>
+        <input type="range" class="scrub" id="subk-scrub" min="0" value="0" aria-label="Scrub steps">
+        <span class="counter" id="subk-counter">0 / 0</span>
+        <span class="speed">slow<input type="range" id="subk-speed" min="120" max="1400" value="650">fast</span>
+      </div>
+      <div class="grid2">
+        <div class="code" id="subk-code"></div>
+        <div class="state">
+          <h3>State</h3>
+          <div class="kv"><span class="k">i</span><span class="v" id="subk-i">—</span></div>
+          <div class="kv"><span class="k">sum (prefix)</span><span class="v" id="subk-sum">—</span></div>
+          <div class="kv"><span class="k">sum − k (lookup)</span><span class="v" id="subk-comp">—</span></div>
+          <div class="kv"><span class="k">count</span><span class="v" id="subk-count">—</span></div>
+          <div class="found"><h3>prefixCount&nbsp;(sum → times)</h3><div id="subk-map"><span class="none">empty</span></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="vtab vpanel" id="tab-bs" role="tabpanel">
+      <div class="params">
+        <div class="field"><label for="bs-arr">Sorted array (comma-separated)</label><input id="bs-arr" value="-9, -4, 0, 3, 7, 8, 12, 15, 21"></div>
+        <div class="field"><label for="bs-target">target</label><input id="bs-target" value="8"></div>
+        <button class="apply" id="bs-apply">Apply &amp; reset</button>
+      </div>
+      <div class="err" id="bs-err"></div>
+      <div class="legend">
+        <span><span class="swatch" style="background:var(--win-bg);border-color:var(--win-bd)"></span>active range [lo..hi]</span>
+        <span><span class="swatch" style="background:var(--fix-bg);border-color:var(--fix-bd)"></span>mid (probed)</span>
+        <span><span class="swatch" style="background:var(--enter-bg);border-color:var(--enter-bd)"></span>found</span>
+        <span><span class="swatch" style="background:var(--panel);border-color:var(--border);opacity:.45"></span>eliminated</span>
+      </div>
+      <div class="stage"><div class="array" id="bs-array"></div></div>
+      <div class="explain" id="bs-explain" aria-live="polite"></div>
+      <div class="controls">
+        <button id="bs-reset" title="Reset">⏮</button>
+        <button id="bs-prev" title="Step back (←)">◀</button>
+        <button class="play" id="bs-play" title="Play / pause (space)">▶ Play</button>
+        <button id="bs-next" title="Step forward (→)">▶</button>
+        <input type="range" class="scrub" id="bs-scrub" min="0" value="0" aria-label="Scrub steps">
+        <span class="counter" id="bs-counter">0 / 0</span>
+        <span class="speed">slow<input type="range" id="bs-speed" min="120" max="1400" value="650">fast</span>
+      </div>
+      <div class="grid2">
+        <div class="code" id="bs-code"></div>
+        <div class="state">
+          <h3>State</h3>
+          <div class="kv"><span class="k">lo</span><span class="v" id="bs-lo">—</span></div>
+          <div class="kv"><span class="k">hi</span><span class="v" id="bs-hi">—</span></div>
+          <div class="kv"><span class="k">mid</span><span class="v" id="bs-mid">—</span></div>
+          <div class="kv"><span class="k">nums[mid]</span><span class="v" id="bs-midval">—</span></div>
+          <div class="kv"><span class="k">result</span><span class="v" id="bs-result">—</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="vtab vpanel" id="tab-paren" role="tabpanel">
+      <div class="params">
+        <div class="field"><label for="paren-str">Brackets ( ) [ ] { }</label><input id="paren-str" value="({[]})"></div>
+        <button class="apply" id="paren-apply">Apply &amp; reset</button>
+      </div>
+      <div class="err" id="paren-err"></div>
+      <div class="legend">
+        <span><span class="swatch" style="background:var(--fix-bg);border-color:var(--fix-bd)"></span>current char / push</span>
+        <span><span class="swatch" style="background:var(--enter-bg);border-color:var(--enter-bd)"></span>matched pair</span>
+        <span><span class="swatch" style="background:var(--leave-bg);border-color:var(--leave-bd)"></span>mismatch / unmatched</span>
+        <span><span class="swatch" style="background:var(--span);border-color:var(--border)"></span>opener still open</span>
+      </div>
+      <div class="stage"><div class="array" id="paren-array"></div></div>
+      <div class="explain" id="paren-explain" aria-live="polite"></div>
+      <div class="controls">
+        <button id="paren-reset" title="Reset">⏮</button>
+        <button id="paren-prev" title="Step back (←)">◀</button>
+        <button class="play" id="paren-play" title="Play / pause (space)">▶ Play</button>
+        <button id="paren-next" title="Step forward (→)">▶</button>
+        <input type="range" class="scrub" id="paren-scrub" min="0" value="0" aria-label="Scrub steps">
+        <span class="counter" id="paren-counter">0 / 0</span>
+        <span class="speed">slow<input type="range" id="paren-speed" min="120" max="1400" value="650">fast</span>
+      </div>
+      <div class="grid2">
+        <div class="code" id="paren-code"></div>
+        <div class="state">
+          <h3>State</h3>
+          <div class="kv"><span class="k">i</span><span class="v" id="paren-i">—</span></div>
+          <div class="kv"><span class="k">char</span><span class="v" id="paren-char">—</span></div>
+          <div class="kv"><span class="k">action</span><span class="v" id="paren-action">—</span></div>
+          <div class="kv"><span class="k">valid?</span><span class="v" id="paren-result">—</span></div>
+          <div class="found"><h3>stack&nbsp;(bottom → top)</h3><div id="paren-stack"><span class="none">empty</span></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="vtab vpanel" id="tab-lsub" role="tabpanel">
+      <div class="params">
+        <div class="field"><label for="lsub-str">String</label><input id="lsub-str" value="abcabcbb"></div>
+        <button class="apply" id="lsub-apply">Apply &amp; reset</button>
+      </div>
+      <div class="err" id="lsub-err"></div>
+      <div class="legend">
+        <span><span class="swatch" style="background:var(--win-bg);border-color:var(--win-bd)"></span>current window [left..right]</span>
+        <span><span class="swatch" style="background:var(--enter-bg);border-color:var(--enter-bd)"></span>right (entering)</span>
+        <span><span class="swatch" style="background:var(--leave-bg);border-color:var(--leave-bd)"></span>duplicate (forces jump)</span>
+        <span><span class="swatch" style="background:transparent;border-color:var(--accent);box-shadow:inset 0 -4px 0 var(--accent)"></span>longest so far</span>
+      </div>
+      <div class="stage"><div class="array" id="lsub-array"></div></div>
+      <div class="explain" id="lsub-explain" aria-live="polite"></div>
+      <div class="controls">
+        <button id="lsub-reset" title="Reset">⏮</button>
+        <button id="lsub-prev" title="Step back (←)">◀</button>
+        <button class="play" id="lsub-play" title="Play / pause (space)">▶ Play</button>
+        <button id="lsub-next" title="Step forward (→)">▶</button>
+        <input type="range" class="scrub" id="lsub-scrub" min="0" value="0" aria-label="Scrub steps">
+        <span class="counter" id="lsub-counter">0 / 0</span>
+        <span class="speed">slow<input type="range" id="lsub-speed" min="120" max="1400" value="650">fast</span>
+      </div>
+      <div class="grid2">
+        <div class="code" id="lsub-code"></div>
+        <div class="state">
+          <h3>State</h3>
+          <div class="kv"><span class="k">right</span><span class="v" id="lsub-right">—</span></div>
+          <div class="kv"><span class="k">left</span><span class="v" id="lsub-left">—</span></div>
+          <div class="kv"><span class="k">char</span><span class="v" id="lsub-char">—</span></div>
+          <div class="kv"><span class="k">window length</span><span class="v" id="lsub-len">—</span></div>
+          <div class="kv"><span class="k">best length</span><span class="v" id="lsub-best">—</span></div>
+          <div class="found"><h3>last&nbsp;(char → index)</h3><div id="lsub-map"><span class="none">empty</span></div></div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      Keyboard: <kbd>←</kbd> / <kbd>→</kbd> step · <kbd>space</kbd> play/pause (when not typing).<br>
+      Each step mirrors one operation of the real Java algorithm shown on the left.
+    </footer>
+  </div>
+</div></main>
+</div>
+
+<footer class="app-foot">
+  <div class="wrap wide">Coding track · pattern recognition + step-through visualizer · all examples in Java.</div>
+</footer>
+
+<script src="assets/app.js"></script>
+<script>
+"use strict";
+/* ---------- code listings ---------- */
+const SLIDE_CODE = [
+"double findMaxAverage(int[] nums, int k) {",
+"    long windowSum = 0;",
+"    for (int i = 0; i < k; i++) {",
+"        windowSum += nums[i];",
+"    }",
+"    long maxSum = windowSum;",
+"    for (int i = k; i < nums.length; i++) {",
+"        windowSum += nums[i] - nums[i - k];",
+"        maxSum = Math.max(maxSum, windowSum);",
+"    }",
+"    return (double) maxSum / k;",
+"}"];
+const THREE_CODE = [
+"List<List<Integer>> threeSum(int[] nums) {",
+"    Arrays.sort(nums);",
+"    List<List<Integer>> res = new ArrayList<>();",
+"    for (int i = 0; i < nums.length - 2; i++) {",
+"        if (i > 0 && nums[i] == nums[i - 1]) continue;",
+"        int left = i + 1, right = nums.length - 1;",
+"        while (left < right) {",
+"            int sum = nums[i] + nums[left] + nums[right];",
+"            if (sum == 0) {",
+"                res.add(List.of(nums[i], nums[left], nums[right]));",
+"                left++; right--;",
+"                while (left < right && nums[left] == nums[left - 1]) left++;",
+"                while (left < right && nums[right] == nums[right + 1]) right--;",
+"            } else if (sum < 0) {",
+"                left++;",
+"            } else {",
+"                right--;",
+"            }",
+"        }",
+"    }",
+"    return res;",
+"}"];
+const SUBK_CODE = [
+"int subarraySum(int[] nums, int k) {",
+"    Map<Integer,Integer> prefixCount = new HashMap<>();",
+"    prefixCount.put(0, 1);",
+"    int sum = 0, count = 0;",
+"    for (int i = 0; i < nums.length; i++) {",
+"        sum += nums[i];",
+"        count += prefixCount.getOrDefault(sum - k, 0);",
+"        prefixCount.merge(sum, 1, Integer::sum);",
+"    }",
+"    return count;",
+"}"];
+const BS_CODE = [
+"int search(int[] nums, int target) {",
+"    int lo = 0, hi = nums.length - 1;",
+"    while (lo <= hi) {",
+"        int mid = lo + (hi - lo) / 2;",
+"        if (nums[mid] == target) {",
+"            return mid;",
+"        } else if (nums[mid] < target) {",
+"            lo = mid + 1;",
+"        } else {",
+"            hi = mid - 1;",
+"        }",
+"    }",
+"    return -1;",
+"}"];
+const PAREN_CODE = [
+"boolean isValid(String s) {",
+"    Deque<Character> stack = new ArrayDeque<>();",
+"    for (char c : s.toCharArray()) {",
+"        if (c == '(') stack.push(')');",
+"        else if (c == '[') stack.push(']');",
+"        else if (c == '{') stack.push('}');",
+"        else if (stack.isEmpty() || stack.pop() != c) return false;",
+"    }",
+"    return stack.isEmpty();",
+"}"];
+const LSUB_CODE = [
+"int lengthOfLongestSubstring(String s) {",
+"    Map<Character,Integer> last = new HashMap<>();",
+"    int left = 0, best = 0;",
+"    for (int right = 0; right < s.length(); right++) {",
+"        char c = s.charAt(right);",
+"        if (last.containsKey(c) && last.get(c) >= left) {",
+"            left = last.get(c) + 1;",
+"        }",
+"        last.put(c, right);",
+"        best = Math.max(best, right - left + 1);",
+"    }",
+"    return best;",
+"}"];
+
+/* ---------- frame generators ---------- */
+function buildSlideFrames(nums, k){
+  const f=[], n=nums.length; let windowSum=0;
+  for(let i=0;i<k;i++){
+    windowSum+=nums[i];
+    f.push({line:3,phase:"build first window",win:[0,i],enter:i,leave:null,windowSum,maxSum:null,best:null,k,
+      explain:`Build the first window — add nums[${i}] = ${nums[i]}. windowSum = ${windowSum}.`});
+  }
+  let maxSum=windowSum,best=[0,k-1];
+  f.push({line:5,phase:"seed max",win:[0,k-1],enter:null,leave:null,windowSum,maxSum,best,k,
+    explain:`First window of length ${k} complete. Seed maxSum = ${maxSum} (average ${(maxSum/k).toFixed(2)}). No sentinel needed.`});
+  for(let i=k;i<n;i++){
+    windowSum+=nums[i]-nums[i-k]; const win=[i-k+1,i];
+    f.push({line:7,phase:"slide",win,enter:i,leave:i-k,windowSum,maxSum,best,k,
+      explain:`Slide right: add nums[${i}] = ${nums[i]}, drop nums[${i-k}] = ${nums[i-k]}. windowSum = ${windowSum}.`});
+    if(windowSum>maxSum){maxSum=windowSum;best=win.slice();
+      f.push({line:8,phase:"slide",win,enter:null,leave:null,windowSum,maxSum,best,k,
+        explain:`${windowSum} > previous max → new maxSum = ${maxSum} (average ${(maxSum/k).toFixed(2)}).`});
+    }else{
+      f.push({line:8,phase:"slide",win,enter:null,leave:null,windowSum,maxSum,best,k,
+        explain:`${windowSum} ≤ maxSum (${maxSum}). Best window unchanged.`});
+    }
+  }
+  f.push({line:10,phase:"done",win:best,enter:null,leave:null,windowSum,maxSum,best,k,
+    explain:`Finished. Maximum average = ${maxSum} / ${k} = ${(maxSum/k).toFixed(5)}.`});
+  return {frames:f,nums};
+}
+function buildThreeFrames(input){
+  const f=[], nums=[...input].sort((a,b)=>a-b), n=nums.length, found=[];
+  const clone=()=>found.map(t=>t.slice());
+  f.push({line:1,i:-1,left:-1,right:-1,sum:null,found:clone(),
+    explain:`Sort first: [${nums.join(", ")}]. The convergence rule and the duplicate-skipping both depend on sorted order.`});
+  for(let i=0;i<n-2;i++){
+    f.push({line:3,i,left:-1,right:-1,sum:null,found:clone(),
+      explain:`Fix i = ${i} (nums[i] = ${nums[i]}). Find a pair to its right summing to ${-nums[i]}.`});
+    if(i>0&&nums[i]===nums[i-1]){
+      f.push({line:4,i,left:-1,right:-1,sum:null,found:clone(),
+        explain:`nums[${i}] = ${nums[i]} repeats nums[${i-1}] — skip this i to avoid duplicate triples.`});
+      continue;
+    }
+    let left=i+1,right=n-1;
+    f.push({line:5,i,left,right,sum:null,found:clone(),
+      explain:`Start two pointers: left = ${left}, right = ${right}. Converge inward.`});
+    while(left<right){
+      const sum=nums[i]+nums[left]+nums[right];
+      f.push({line:7,i,left,right,sum,found:clone(),
+        explain:`sum = ${nums[i]} + ${nums[left]} + ${nums[right]} = ${sum}.`});
+      if(sum===0){
+        found.push([nums[i],nums[left],nums[right]]);
+        f.push({line:9,i,left,right,sum,found:clone(),
+          explain:`sum = 0 → record [${nums[i]}, ${nums[left]}, ${nums[right]}].`});
+        left++;right--;
+        while(left<right&&nums[left]===nums[left-1])left++;
+        while(left<right&&nums[right]===nums[right+1])right--;
+        f.push({line:10,i,left,right,sum:null,found:clone(),
+          explain:`Move both inward, then skip duplicate neighbours. left = ${left}, right = ${right}.`});
+      }else if(sum<0){
+        left++;
+        f.push({line:14,i,left,right,sum,found:clone(),
+          explain:`sum = ${sum} < 0 → too small. Move left rightward to ${left} for a larger value.`});
+      }else{
+        right--;
+        f.push({line:16,i,left,right,sum,found:clone(),
+          explain:`sum = ${sum} > 0 → too large. Move right leftward to ${right} for a smaller value.`});
+      }
+    }
+  }
+  f.push({line:20,i:-1,left:-1,right:-1,sum:null,found:clone(),
+    explain:`Done. ${found.length?found.length+" triple(s) found.":"No triples sum to 0."}`});
+  return {frames:f,nums};
+}
+function buildSubkFrames(nums, k){
+  const f=[], n=nums.length;
+  const prefixCount=new Map();
+  const startIdx=new Map();
+  prefixCount.set(0,1); startIdx.set(0,[0]);
+  const snap=()=>[...prefixCount.entries()];
+  let sum=0, count=0;
+  f.push({line:2,i:-1,sum:0,comp:null,count:0,map:snap(),mapQuery:null,mapUpdated:0,matchSpan:null,matchLs:null,
+    explain:`Seed prefixCount with {0:1}: prefix sum 0 has occurred once (the empty prefix before index 0), so a subarray starting at index 0 can be counted. sum = 0, count = 0.`});
+  for(let i=0;i<n;i++){
+    sum+=nums[i];
+    f.push({line:5,i,sum,comp:null,count,map:snap(),mapQuery:null,mapUpdated:null,matchSpan:null,matchLs:null,
+      explain:`Add nums[${i}] = ${nums[i]}. Running prefix sum = ${sum} (total of nums[0..${i}]).`});
+    const comp=sum-k, hit=prefixCount.get(comp)||0;
+    if(hit>0){
+      const ls=(startIdx.get(comp)||[]).slice().sort((a,b)=>a-b);
+      count+=hit;
+      const subs=ls.map(l=>`nums[${l}..${i}]`).join(", ");
+      f.push({line:6,i,sum,comp,count,map:snap(),mapQuery:comp,mapUpdated:null,matchSpan:[Math.min(...ls),i],matchLs:ls,
+        explain:`Look up sum − k = ${comp}: in the map ${hit}×, so ${hit} subarray(s) ending at ${i} sum to ${k} → ${subs}. count = ${count}.`});
+    }else{
+      f.push({line:6,i,sum,comp,count,map:snap(),mapQuery:comp,mapUpdated:null,matchSpan:null,matchLs:null,
+        explain:`Look up sum − k = ${comp}: not in the map, so no subarray ending at ${i} sums to ${k}. count unchanged (${count}).`});
+    }
+    prefixCount.set(sum,(prefixCount.get(sum)||0)+1);
+    if(startIdx.has(sum)) startIdx.get(sum).push(i+1); else startIdx.set(sum,[i+1]);
+    f.push({line:7,i,sum,comp:null,count,map:snap(),mapQuery:null,mapUpdated:sum,matchSpan:null,matchLs:null,
+      explain:`Record prefix sum ${sum} in prefixCount (now ${prefixCount.get(sum)}×). A later index whose prefix sum is ${sum+k} will pair with this boundary.`});
+  }
+  f.push({line:9,i:-1,sum,comp:null,count,map:snap(),mapQuery:null,mapUpdated:null,matchSpan:null,matchLs:null,
+    explain:`Done. ${count} subarray(s) sum to ${k}.`});
+  return {frames:f,nums};
+}
+function buildBsFrames(input, target){
+  const nums=[...input].sort((a,b)=>a-b), n=nums.length, f=[];
+  f.push({line:1,lo:0,hi:n-1,mid:null,target,found:null,
+    explain:`Binary search needs a sorted array: [${nums.join(", ")}]. Set lo = 0, hi = n − 1 = ${n-1}.`});
+  let lo=0,hi=n-1,foundAt=-1;
+  while(lo<=hi){
+    f.push({line:2,lo,hi,mid:null,target,found:null,
+      explain:`lo (${lo}) ≤ hi (${hi}) → the range [${lo}..${hi}] (${hi-lo+1} element${hi-lo+1===1?"":"s"}) may still hold ${target}. Keep searching.`});
+    const mid=lo+Math.floor((hi-lo)/2);
+    f.push({line:3,lo,hi,mid,target,found:null,
+      explain:`mid = lo + (hi − lo)/2 = ${lo} + ${Math.floor((hi-lo)/2)} = ${mid}. (Use lo+(hi−lo)/2, not (lo+hi)/2 — the sum can overflow int for large indices.)`});
+    f.push({line:4,lo,hi,mid,target,found:null,
+      explain:`Compare nums[${mid}] = ${nums[mid]} with target ${target}.`});
+    if(nums[mid]===target){
+      foundAt=mid;
+      f.push({line:5,lo,hi,mid,target,found:mid,
+        explain:`nums[${mid}] = ${nums[mid]} == target → found at index ${mid}. return ${mid}.`});
+      break;
+    }else if(nums[mid]<target){
+      f.push({line:7,lo:mid+1,hi,mid,target,found:null,
+        explain:`nums[${mid}] = ${nums[mid]} < target → the target can only be to the right. Discard [${lo}..${mid}]: lo = mid + 1 = ${mid+1}.`});
+      lo=mid+1;
+    }else{
+      f.push({line:9,lo,hi:mid-1,mid,target,found:null,
+        explain:`nums[${mid}] = ${nums[mid]} > target → the target can only be to the left. Discard [${mid}..${hi}]: hi = mid − 1 = ${mid-1}.`});
+      hi=mid-1;
+    }
+  }
+  if(foundAt<0){
+    f.push({line:12,lo,hi,mid:null,target,found:-1,
+      explain:`lo (${lo}) > hi (${hi}) → the range is empty; ${target} is not in the array. return −1.`});
+  }
+  return {frames:f,nums};
+}
+function buildParenFrames(chars){
+  const f=[], n=chars.length, stack=[];
+  const snap=()=>stack.map(e=>({ch:e.ch,idx:e.idx}));
+  const opens=()=>stack.map(e=>e.idx);
+  const OPEN={"(":")","[":"]","{":"}"};
+  const lineFor={"(":3,"[":4,"{":5};
+  for(let i=0;i<n;i++){
+    const c=chars[i];
+    if(OPEN[c]){
+      const closer=OPEN[c];
+      stack.push({ch:closer,idx:i});
+      f.push({line:lineFor[c],i,stack:snap(),openIdxs:opens(),action:"push",result:null,matchIdx:null,failIdxs:[],
+        explain:`'${c}' is an opener → push its expected closer '${closer}'. Stack depth ${stack.length}.`});
+    }else{
+      if(stack.length===0){
+        f.push({line:6,i,stack:snap(),openIdxs:opens(),action:"empty",result:false,matchIdx:null,failIdxs:[i],
+          explain:`'${c}' is a closing bracket but the stack is empty — no opener is waiting for it. return false.`});
+        return {frames:f,nums:chars};
+      }
+      const top=stack[stack.length-1];
+      if(top.ch===c){
+        stack.pop();
+        f.push({line:6,i,stack:snap(),openIdxs:opens(),action:"match",result:null,matchIdx:top.idx,failIdxs:[],
+          explain:`'${c}' matches the expected '${top.ch}' on top (opener '${chars[top.idx]}' at index ${top.idx}) → pop. Stack depth ${stack.length}.`});
+      }else{
+        f.push({line:6,i,stack:snap(),openIdxs:opens(),action:"mismatch",result:false,matchIdx:null,failIdxs:[i,top.idx],
+          explain:`'${c}' does not match the expected '${top.ch}' on top (opener '${chars[top.idx]}' at index ${top.idx}) → mismatched bracket. return false.`});
+        return {frames:f,nums:chars};
+      }
+    }
+  }
+  const ok=stack.length===0;
+  f.push({line:8,i:-1,stack:snap(),openIdxs:opens(),action:"done",result:ok,matchIdx:null,failIdxs:ok?[]:opens(),
+    explain:ok
+      ?`End of string and the stack is empty — every opener was closed in the correct order. return true.`
+      :`End of string but ${stack.length} opener(s) are still on the stack with no matching closer → return false.`});
+  return {frames:f,nums:chars};
+}
+function buildLsubFrames(chars){
+  const f=[], n=chars.length;
+  const last=new Map();
+  const snap=()=>[...last.entries()];
+  let left=0,best=0,bestWin=[0,-1];
+  for(let right=0;right<n;right++){
+    const c=chars[right];
+    f.push({line:4,right,left,c,best,win:[left,right],bestWin:bestWin.slice(),map:snap(),mapQuery:null,mapUpdated:null,dupIdx:null,
+      explain:`Read s[${right}] = '${c}'. Tentative window [${left}..${right}].`});
+    const prev=last.has(c)?last.get(c):-1, inWin=last.has(c)&&prev>=left;
+    f.push({line:5,right,left,c,best,win:[left,right],bestWin:bestWin.slice(),map:snap(),mapQuery:c,mapUpdated:null,dupIdx:inWin?prev:null,
+      explain:inWin
+        ?`'${c}' was last seen at index ${prev}, which is inside the window (≥ left ${left}) → it repeats.`
+        :(last.has(c)
+            ?`'${c}' was last seen at index ${prev}, before left (${left}) — outside the window, so it does not repeat here.`
+            :`'${c}' has not been seen yet — no repeat.`)});
+    if(inWin){
+      left=prev+1;
+      f.push({line:6,right,left,c,best,win:[left,right],bestWin:bestWin.slice(),map:snap(),mapQuery:c,mapUpdated:null,dupIdx:prev,
+        explain:`Move left to ${left} (one past the duplicate at ${prev}) so the window holds no repeated '${c}'.`});
+    }
+    last.set(c,right);
+    f.push({line:8,right,left,c,best,win:[left,right],bestWin:bestWin.slice(),map:snap(),mapQuery:null,mapUpdated:c,dupIdx:null,
+      explain:`Record last['${c}'] = ${right}.`});
+    const len=right-left+1; let note;
+    if(len>best){ best=len; bestWin=[left,right]; note=`New best = ${best} → "${chars.slice(left,right+1).join("")}".`; }
+    else note=`best stays ${best}.`;
+    f.push({line:9,right,left,c,best,win:[left,right],bestWin:bestWin.slice(),map:snap(),mapQuery:null,mapUpdated:null,dupIdx:null,
+      explain:`Window length = ${right} − ${left} + 1 = ${len}. ${note}`});
+  }
+  f.push({line:11,right:-1,left,c:null,best,win:null,bestWin:bestWin.slice(),map:snap(),mapQuery:null,mapUpdated:null,dupIdx:null,
+    explain:`Done. Longest substring without repeating characters has length ${best}${bestWin[1]>=bestWin[0]?` — "${chars.slice(bestWin[0],bestWin[1]+1).join("")}"`:""}.`});
+  return {frames:f,nums:chars};
+}
+
+/* ---------- generic player ---------- */
+function parseArray(str){
+  const parts=str.split(",").map(s=>s.trim()).filter(s=>s.length>0);
+  if(parts.length===0) return {error:"Enter at least one number."};
+  const out=[];
+  for(const p of parts){ const v=Number(p); if(!Number.isFinite(v)) return {error:`"${p}" is not a number.`}; out.push(v); }
+  return {arr:out};
+}
+function $(id){return document.getElementById(id);}
+
+function makePlayer(cfg){
+  const els={
+    array:$(cfg.p+"-array"), code:$(cfg.p+"-code"), explain:$(cfg.p+"-explain"),
+    counter:$(cfg.p+"-counter"), scrub:$(cfg.p+"-scrub"), speed:$(cfg.p+"-speed"),
+    play:$(cfg.p+"-play"), next:$(cfg.p+"-next"), prev:$(cfg.p+"-prev"),
+    reset:$(cfg.p+"-reset"), err:$(cfg.p+"-err")
+  };
+  let frames=[], nums=[], idx=0, timer=null;
+  cfg.code.forEach((src,n)=>{
+    const line=document.createElement("div"); line.className="line"; line.dataset.line=n;
+    const ln=document.createElement("span"); ln.className="ln"; ln.textContent=(n+1);
+    const sp=document.createElement("span"); sp.className="src"; sp.textContent=src;
+    line.appendChild(ln); line.appendChild(sp); els.code.appendChild(line);
+  });
+  const codeLines=[...els.code.querySelectorAll(".line")];
+
+  function show(){
+    const fr=frames[idx];
+    cfg.render(fr,nums,cfg.p);
+    codeLines.forEach(l=>l.classList.toggle("active",+l.dataset.line===fr.line));
+    const active=codeLines.find(l=>+l.dataset.line===fr.line);
+    if(active) active.scrollIntoView({block:"nearest"});
+    els.explain.textContent=fr.explain;
+    els.counter.textContent=(idx+1)+" / "+frames.length;
+    els.scrub.value=idx;
+    els.prev.disabled=idx===0;
+    els.next.disabled=idx===frames.length-1;
+  }
+  function go(i){ idx=Math.max(0,Math.min(frames.length-1,i)); show(); }
+  function next(){ if(idx<frames.length-1) go(idx+1); else pause(); }
+  function prev(){ if(idx>0) go(idx-1); }
+  function setPlayBtn(on){ els.play.textContent=on?"❚❚ Pause":"▶ Play"; }
+  function play(){
+    if(timer) return;
+    if(idx>=frames.length-1) go(0);
+    setPlayBtn(true);
+    timer=setInterval(()=>{ if(idx>=frames.length-1) pause(); else next(); }, +els.speed.value);
+  }
+  function pause(){ if(timer){clearInterval(timer);timer=null;} setPlayBtn(false); }
+  function toggle(){ timer?pause():play(); }
+  function apply(){
+    const pr=cfg.readParams();
+    if(pr.error){ els.err.textContent=pr.error; els.err.classList.add("show"); return; }
+    els.err.classList.remove("show");
+    const g=cfg.build(...pr.args); frames=g.frames; nums=g.nums;
+    els.scrub.max=frames.length-1;
+    pause(); go(0);
+  }
+  els.next.onclick=next; els.prev.onclick=prev; els.play.onclick=toggle;
+  els.reset.onclick=()=>{pause();go(0);};
+  els.scrub.oninput=()=>{pause();go(+els.scrub.value);};
+  els.speed.oninput=()=>{ if(timer){pause();play();} };
+  $(cfg.p+"-apply").onclick=apply;
+  apply();
+  return {next,prev,toggle,isPlaying:()=>!!timer};
+}
+
+/* ---------- renderers ---------- */
+function renderSlide(fr,nums){
+  const host=$("slide-array"); let h="";
+  for(let idx=0;idx<nums.length;idx++){
+    let cls="cell";
+    if(fr.win&&idx>=fr.win[0]&&idx<=fr.win[1]) cls+=" win";
+    if(idx===fr.enter) cls+=" enter";
+    if(idx===fr.leave) cls+=" leave";
+    if(fr.best&&idx>=fr.best[0]&&idx<=fr.best[1]) cls+=" best";
+    let badge=""; if(idx===fr.enter)badge="+"; else if(idx===fr.leave)badge="−";
+    h+=`<div class="${cls}"><span class="idx">${idx}</span>${nums[idx]}<span class="badge">${badge}</span></div>`;
+  }
+  host.innerHTML=h;
+  $("slide-phase").textContent=fr.phase;
+  $("slide-ws").textContent=fr.windowSum;
+  $("slide-max").textContent=fr.maxSum===null?"—":fr.maxSum;
+  $("slide-best").textContent=fr.best?`[${fr.best[0]} … ${fr.best[1]}]`:"—";
+  $("slide-avg").textContent=fr.maxSum===null?"—":(fr.maxSum/fr.k).toFixed(4);
+}
+function renderThree(fr,nums){
+  const host=$("three-array"); let h="";
+  for(let idx=0;idx<nums.length;idx++){
+    let cls="cell",badge="";
+    if(fr.left>=0&&fr.right>=0&&idx>fr.left&&idx<fr.right) cls+=" span";
+    if(idx===fr.i){cls+=" fixed";badge="i";}
+    else if(idx===fr.left){cls+=" lp";badge="L";}
+    else if(idx===fr.right){cls+=" rp";badge="R";}
+    h+=`<div class="${cls}"><span class="idx">${idx}</span>${nums[idx]}<span class="badge">${badge}</span></div>`;
+  }
+  host.innerHTML=h;
+  $("three-i").textContent=fr.i<0?"—":fr.i;
+  $("three-left").textContent=fr.left<0?"—":fr.left;
+  $("three-right").textContent=fr.right<0?"—":fr.right;
+  $("three-sum").textContent=fr.sum===null?"—":fr.sum;
+  const fd=$("three-found");
+  if(!fr.found||fr.found.length===0){ fd.innerHTML='<span class="none">none yet</span>'; }
+  else{ fd.innerHTML=fr.found.map(t=>`<span class="chip">[${t.join(", ")}]</span>`).join(""); }
+}
+function renderSubk(fr,nums){
+  const host=$("subk-array"); let h="";
+  for(let idx=0;idx<nums.length;idx++){
+    let cls="cell",badge="";
+    if(fr.matchSpan && idx>=fr.matchSpan[0] && idx<=fr.matchSpan[1]-1) cls+=" enter";
+    if(idx===fr.i){ cls+=" fixed"; badge="i"; }
+    if(fr.matchLs && fr.matchLs.indexOf(idx)>=0) cls+=" mstart";
+    h+=`<div class="${cls}"><span class="idx">${idx}</span>${nums[idx]}<span class="badge">${badge}</span></div>`;
+  }
+  host.innerHTML=h;
+  $("subk-i").textContent=fr.i<0?"—":fr.i;
+  $("subk-sum").textContent=fr.sum;
+  $("subk-comp").textContent=fr.comp===null?"—":fr.comp;
+  $("subk-count").textContent=fr.count;
+  const mp=$("subk-map");
+  if(!fr.map||fr.map.length===0){ mp.innerHTML='<span class="none">empty</span>'; }
+  else{ mp.innerHTML=fr.map.map(([key,c])=>{
+    let mc="mapchip";
+    if(fr.mapQuery!==null && key===fr.mapQuery) mc+=" q";
+    if(fr.mapUpdated!==null && key===fr.mapUpdated) mc+=" u";
+    return `<span class="${mc}">${key}→${c}</span>`;
+  }).join(""); }
+}
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function renderBs(fr,nums){
+  const host=$("bs-array"); let h="";
+  for(let idx=0;idx<nums.length;idx++){
+    let cls="cell",badge="";
+    const inRange=idx>=fr.lo&&idx<=fr.hi;
+    if(idx===fr.found){ cls+=" enter best"; badge="✓"; }
+    else if(inRange){
+      if(idx===fr.mid){ cls+=" fixed"; badge="mid"; }
+      else{
+        cls+=" win";
+        if(idx===fr.lo&&idx===fr.hi) badge="lo·hi";
+        else if(idx===fr.lo) badge="lo";
+        else if(idx===fr.hi) badge="hi";
+      }
+    } else { cls+=" dead"; }
+    h+=`<div class="${cls}"><span class="idx">${idx}</span>${nums[idx]}<span class="badge">${badge}</span></div>`;
+  }
+  host.innerHTML=h;
+  $("bs-lo").textContent=fr.lo;
+  $("bs-hi").textContent=fr.hi;
+  $("bs-mid").textContent=fr.mid===null?"—":fr.mid;
+  $("bs-midval").textContent=fr.mid===null?"—":nums[fr.mid];
+  $("bs-result").textContent=fr.found===null?"searching…":(fr.found>=0?("index "+fr.found):"−1 (not found)");
+}
+function renderParen(fr,chars){
+  const host=$("paren-array"); let h="";
+  const openSet=new Set(fr.openIdxs||[]), failSet=new Set(fr.failIdxs||[]);
+  for(let idx=0;idx<chars.length;idx++){
+    let cls="cell",badge="";
+    if(openSet.has(idx)) cls+=" span";
+    if(idx===fr.matchIdx) cls+=" enter";
+    if(failSet.has(idx)) cls+=" leave";
+    if(idx===fr.i){
+      if(fr.action==="push"){ cls+=" fixed"; badge="push"; }
+      else if(fr.action==="match"){ cls+=" enter"; badge="✓"; }
+      else { cls+=" leave"; badge="✗"; }
+    }
+    h+=`<div class="${cls}"><span class="idx">${idx}</span>${esc(chars[idx])}<span class="badge">${badge}</span></div>`;
+  }
+  host.innerHTML=h;
+  $("paren-i").textContent=fr.i<0?"—":fr.i;
+  $("paren-char").textContent=fr.i<0?"—":chars[fr.i];
+  $("paren-action").textContent=fr.action;
+  $("paren-result").textContent=fr.result===null?"scanning…":(fr.result?"valid ✓":"invalid ✗");
+  const sp=$("paren-stack");
+  if(!fr.stack||fr.stack.length===0){ sp.innerHTML='<span class="none">empty</span>'; }
+  else{ sp.innerHTML=fr.stack.map((e,k)=>{
+    const top=k===fr.stack.length-1;
+    return `<span class="mapchip${top?" u":""}">${esc(e.ch)} <span style="opacity:.55">↤ i${e.idx}</span></span>`;
+  }).join(""); }
+}
+function renderLsub(fr,chars){
+  const host=$("lsub-array"); let h="";
+  for(let idx=0;idx<chars.length;idx++){
+    let cls="cell",badge="";
+    if(fr.win&&idx>=fr.win[0]&&idx<=fr.win[1]) cls+=" win";
+    if(fr.bestWin&&fr.bestWin[1]>=fr.bestWin[0]&&idx>=fr.bestWin[0]&&idx<=fr.bestWin[1]) cls+=" best";
+    if(idx===fr.right){ cls+=" enter"; badge="→"; }
+    if(fr.dupIdx!=null&&idx===fr.dupIdx){ cls+=" leave"; badge="dup"; }
+    h+=`<div class="${cls}"><span class="idx">${idx}</span>${esc(chars[idx])}<span class="badge">${badge}</span></div>`;
+  }
+  host.innerHTML=h;
+  $("lsub-right").textContent=fr.right<0?"—":fr.right;
+  $("lsub-left").textContent=fr.left;
+  $("lsub-char").textContent=fr.c==null?"—":fr.c;
+  $("lsub-len").textContent=fr.right<0?"—":(fr.right-fr.left+1);
+  $("lsub-best").textContent=fr.best;
+  const mp=$("lsub-map");
+  if(!fr.map||fr.map.length===0){ mp.innerHTML='<span class="none">empty</span>'; }
+  else{ mp.innerHTML=fr.map.map(([key,v])=>{
+    let mc="mapchip";
+    if(fr.mapQuery!==null&&key===fr.mapQuery) mc+=" q";
+    if(fr.mapUpdated!==null&&key===fr.mapUpdated) mc+=" u";
+    return `<span class="${mc}">${esc(key)}→${v}</span>`;
+  }).join(""); }
+}
+
+/* ---------- wire up ---------- */
+const slidePlayer=makePlayer({
+  p:"slide", code:SLIDE_CODE, build:buildSlideFrames, render:renderSlide,
+  readParams:()=>{
+    const a=parseArray($("slide-arr").value); if(a.error) return {error:a.error};
+    const k=Number($("slide-k").value);
+    if(!Number.isInteger(k)||k<1) return {error:"k must be a positive integer."};
+    if(k>a.arr.length) return {error:`k (${k}) cannot exceed the array length (${a.arr.length}).`};
+    return {args:[a.arr,k]};
+  }
+});
+const threePlayer=makePlayer({
+  p:"three", code:THREE_CODE, build:buildThreeFrames, render:renderThree,
+  readParams:()=>{
+    const a=parseArray($("three-arr").value); if(a.error) return {error:a.error};
+    return {args:[a.arr]};
+  }
+});
+const subkPlayer=makePlayer({
+  p:"subk", code:SUBK_CODE, build:buildSubkFrames, render:renderSubk,
+  readParams:()=>{
+    const a=parseArray($("subk-arr").value); if(a.error) return {error:a.error};
+    if(!a.arr.every(Number.isInteger)) return {error:"Use integer values — prefix sums are hashed for exact equality."};
+    const k=Number($("subk-k").value);
+    if(!Number.isInteger(k)) return {error:"k must be an integer."};
+    return {args:[a.arr,k]};
+  }
+});
+const bsPlayer=makePlayer({
+  p:"bs", code:BS_CODE, build:buildBsFrames, render:renderBs,
+  readParams:()=>{
+    const a=parseArray($("bs-arr").value); if(a.error) return {error:a.error};
+    const t=Number($("bs-target").value);
+    if(!Number.isFinite(t)) return {error:"target must be a number."};
+    return {args:[a.arr,t]};
+  }
+});
+const parenPlayer=makePlayer({
+  p:"paren", code:PAREN_CODE, build:buildParenFrames, render:renderParen,
+  readParams:()=>{
+    const raw=$("paren-str").value.trim();
+    if(raw.length===0) return {error:"Enter a non-empty string of brackets."};
+    const chars=raw.split("");
+    if(!chars.every(c=>"()[]{}".includes(c))) return {error:"Use only ( ) [ ] { } characters — no spaces or letters."};
+    return {args:[chars]};
+  }
+});
+const lsubPlayer=makePlayer({
+  p:"lsub", code:LSUB_CODE, build:buildLsubFrames, render:renderLsub,
+  readParams:()=>{
+    const raw=$("lsub-str").value;
+    if(raw.length===0) return {error:"Enter a non-empty string."};
+    if(raw.length>30) return {error:"Keep the string to 30 characters or fewer so the cells stay readable."};
+    return {args:[raw.split("")]};
+  }
+});
+const PLAYERS={slide:slidePlayer,three:threePlayer,subk:subkPlayer,bs:bsPlayer,paren:parenPlayer,lsub:lsubPlayer};
+
+/* ---------- visualizer tabs ---------- */
+const TAB_NAMES=["slide","three","subk","bs","paren","lsub"];
+let activeTab="slide";
+function selectVizTab(name){
+  activeTab=name;
+  TAB_NAMES.forEach(t=>{
+    $("t-"+t).setAttribute("aria-selected", t===name);
+    $("tab-"+t).classList.toggle("active", t===name);
+  });
+}
+TAB_NAMES.forEach(t=>{ $("t-"+t).onclick=()=>selectVizTab(t); });
+
+/* ---------- keyboard (only when the Visualizer section is visible) ---------- */
+document.addEventListener("keydown",e=>{
+  const vizSec=document.querySelector('[data-section-panel="visualizer"]');
+  if(!vizSec || vizSec.offsetParent===null) return;
+  const tag=(document.activeElement&&document.activeElement.tagName)||"";
+  if(tag==="INPUT"||tag==="TEXTAREA") return;
+  const pl=PLAYERS[activeTab];
+  if(e.key==="ArrowRight"){e.preventDefault();pl.next();}
+  else if(e.key==="ArrowLeft"){e.preventDefault();pl.prev();}
+  else if(e.key===" "){e.preventDefault();pl.toggle();}
+});
+
+/* ---------- section sub-nav (Patterns | Visualizer) ---------- */
+PrepUI.initSubnav(document.querySelector('[data-subnav]'), {
+  onChange:function(name){
+    var crumb=document.querySelector('.app-crumb');
+    if(crumb) crumb.textContent = name==='visualizer' ? 'Algorithm Visualizer' : 'Pattern Recognition';
+  }
+});
+</script>
+</body>
+</html>

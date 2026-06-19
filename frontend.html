@@ -1,0 +1,799 @@
+<!doctype html>
+<html lang="en" data-track="frontend">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Frontend — React &amp; Redux · Interview Prep Suite</title>
+<script>(function(){try{var t=localStorage.getItem('prep:theme');if(t!=='dark'&&t!=='light')t=matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/app.css">
+<style>
+  /* token bridge: map the cheatsheet's names onto shared tokens */
+  body{
+    --border:var(--line); --muted:var(--ink-soft); --faint:var(--ink-faint);
+    --react:var(--accent); --react-soft:var(--accent-wash);
+    --redux:#6a3fb5; --redux-soft:#efe9fb;
+    --warn:var(--med); --warn-soft:var(--med-wash); --ok:var(--easy);
+  }
+  :root[data-theme="dark"] body{ --redux:#b18bf0; --redux-soft:#231a39; }
+
+  a{color:inherit}
+
+  /* search + icon buttons in the shared top bar */
+  .search{flex:1 1 260px; max-width:420px; position:relative}
+  .search input{width:100%; font-family:var(--mono); font-size:13px; color:var(--ink);
+    background:var(--surface); border:1px solid var(--line-strong); border-radius:8px;
+    padding:8px 30px 8px 12px; outline:none}
+  .search input:focus{border-color:var(--accent)}
+  .search .kbd{position:absolute; right:8px; top:50%; transform:translateY(-50%);
+    font-family:var(--mono); font-size:11px; color:var(--ink-faint);
+    border:1px solid var(--line-strong); border-radius:5px; padding:1px 5px}
+  .iconbtn{font-family:var(--mono); font-size:12px; cursor:pointer; color:var(--ink-soft);
+    background:var(--surface); border:1px solid var(--line-strong); border-radius:100px;
+    padding:6px 12px; transition:.15s}
+  .iconbtn:hover{border-color:var(--accent); color:var(--accent)}
+
+  /* layout */
+  .wrap{max-width:1280px; margin:0 auto; padding:24px 22px 80px;
+    display:grid; grid-template-columns:230px 1fr; gap:34px}
+  nav.toc{position:sticky; top:62px; align-self:start; max-height:calc(100vh - 84px);
+    overflow:auto; font-size:13px; padding-right:6px}
+  nav.toc .grp{font-family:var(--mono); font-size:10.5px; letter-spacing:.08em;
+    text-transform:uppercase; color:var(--ink-faint); margin:16px 0 6px}
+  nav.toc a{display:block; color:var(--ink-soft); text-decoration:none; padding:3px 8px;
+    border-radius:6px; border-left:2px solid transparent}
+  nav.toc a:hover{color:var(--ink); background:var(--surface-2)}
+  nav.toc a.react{border-left-color:var(--react)}
+  nav.toc a.redux{border-left-color:var(--redux)}
+  nav.toc a.active{background:var(--surface-2); color:var(--ink); font-weight:600; border-left-color:var(--ink)}
+  main{min-width:0}
+
+  .intro{margin-bottom:30px}
+  .intro h2{font-family:var(--display); font-size:30px; margin:0 0 8px; letter-spacing:-.02em; line-height:1.1; font-weight:700}
+  .intro p{color:var(--ink-soft); max-width:62ch; margin:0}
+
+  section{margin-bottom:38px; scroll-margin-top:72px}
+  .sec-head{display:flex; align-items:center; gap:12px; margin-bottom:14px; padding-bottom:8px; border-bottom:1px solid var(--line)}
+  .sec-head .num{font-family:var(--mono); font-size:12px; color:var(--ink-faint)}
+  .sec-head h3{font-family:var(--display); font-size:19px; margin:0; letter-spacing:-.01em; font-weight:600}
+  .pill{font-family:var(--mono); font-size:10px; letter-spacing:.06em; text-transform:uppercase; padding:3px 8px; border-radius:20px; font-weight:600}
+  .pill.react{background:var(--react-soft); color:var(--react)}
+  .pill.redux{background:var(--redux-soft); color:var(--redux)}
+
+  .grid{display:grid; gap:14px}
+  @media(min-width:1080px){.grid.two{grid-template-columns:1fr 1fr}}
+  .card{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+    padding:16px 18px; border-left:3px solid var(--line); margin:0}
+  .card.react{border-left-color:var(--react)}
+  .card.redux{border-left-color:var(--redux)}
+  .card h4{margin:0 0 2px; font-family:var(--mono); font-size:15px; font-weight:700; letter-spacing:-.01em; color:var(--ink)}
+  .card .sub{color:var(--ink-soft); font-size:13.5px; margin:0 0 10px}
+  .card pre{margin:10px 0; background:var(--surface-2); border:1px solid var(--line); border-radius:8px; padding:11px 13px; overflow-x:auto}
+  .card code, pre code{font-family:var(--mono); font-size:12.5px; color:var(--ink); line-height:1.55; background:none; border:0; padding:0}
+  p code,li code,td code{background:var(--code-inline-bg); padding:1px 5px; border-radius:5px; font-size:12px; border:1px solid var(--line); color:var(--accent-ink)}
+  .note{display:flex; gap:8px; margin-top:10px; font-size:13px; color:var(--ink); background:var(--warn-soft); border-radius:8px; padding:9px 11px}
+  .note b{color:var(--warn)}
+  .note.ask{background:var(--surface-2)}
+  .note.ask b{color:var(--react)}
+  .note .ic{font-family:var(--mono); font-weight:700; flex-shrink:0}
+
+  .card table{width:100%; border-collapse:collapse; font-size:13.5px; margin:6px 0}
+  .card th,.card td{text-align:left; padding:8px 10px; border-bottom:1px solid var(--line); vertical-align:top}
+  .card th{font-family:var(--mono); font-size:11px; letter-spacing:.04em; text-transform:uppercase; color:var(--ink-soft); font-weight:600}
+  .card tr:last-child td{border-bottom:none}
+
+  ul.tight{margin:6px 0; padding-left:18px}
+  ul.tight li{margin:4px 0}
+
+  .qa{border-left:3px solid var(--line); padding:4px 0 4px 14px; margin:12px 0}
+  .qa .q{font-weight:600; margin:0 0 4px}
+  .qa .a{color:var(--ink-soft); margin:0; font-size:13.5px}
+  .qa .q::before{content:"Q "; font-family:var(--mono); color:var(--react); font-weight:700}
+
+  .empty{display:none; text-align:center; color:var(--ink-soft); font-family:var(--mono); padding:60px 0}
+
+  @media(max-width:880px){ .wrap{grid-template-columns:1fr} nav.toc{display:none} }
+  @media print{
+    .search,.iconbtn,.note.ask{display:none!important}
+    .wrap{display:block; max-width:none; padding:0}
+    .card,section{break-inside:avoid}
+  }
+</style>
+</head>
+<body>
+
+<div class="app-topbar">
+  <div class="app-topbar-inner">
+    <a class="app-brand" href="index.html"><span class="dot"></span>Interview Prep Suite</a>
+    <span class="app-crumb"><b>React</b> &amp; Redux</span>
+    <span class="app-spacer"></span>
+    <div class="search">
+      <input id="q" type="text" placeholder="filter hooks &amp; topics… (useEffect, selector, memo)" autocomplete="off" spellcheck="false">
+      <span class="kbd">/</span>
+    </div>
+    <button class="iconbtn" onclick="window.print()">⎙ print</button>
+    <a class="app-back" href="index.html">← Hub</a>
+    <button class="theme-toggle" type="button" aria-label="Toggle dark mode"><span class="tt-ic"></span><span class="tt-label">Dark</span></button>
+  </div>
+</div>
+
+<div class="wrap">
+  <nav class="toc" id="toc">
+    <div class="grp">React</div>
+    <a class="react" href="#core">Core hooks</a>
+    <a class="react" href="#perf">Performance hooks</a>
+    <a class="react" href="#advanced">Advanced hooks</a>
+    <a class="react" href="#concurrent">Concurrent hooks</a>
+    <a class="react" href="#react19">React 19 hooks</a>
+    <a class="react" href="#rules">Rules &amp; custom hooks</a>
+    <a class="react" href="#essentials">React essentials</a>
+    <div class="grp">Redux</div>
+    <a class="redux" href="#redux-core">Core concepts</a>
+    <a class="redux" href="#redux-hooks">Redux hooks</a>
+    <a class="redux" href="#rtk">Redux Toolkit</a>
+    <a class="redux" href="#rtkq">RTK Query</a>
+    <a class="redux" href="#decision">State decision guide</a>
+    <div class="grp">Drill</div>
+    <a href="#gotchas">Gotchas &amp; Q&amp;A</a>
+  </nav>
+
+  <main>
+    <div class="intro">
+      <h2>Hooks reference for the loop</h2>
+      <p>Signatures, minimal correct examples, and the gotcha an interviewer probes for. React 19 stable. Redux via Redux Toolkit (the official default — plain <code>createStore</code> is legacy). Press <code>/</code> to filter, <code>&larr;</code> <code>&rarr;</code> to move between sections.</p>
+    </div>
+
+    <!-- ================= REACT CORE ================= -->
+    <section id="core">
+      <div class="sec-head">
+        <span class="num">01</span><h3>Core hooks</h3><span class="pill react">react</span>
+      </div>
+      <div class="grid two">
+
+        <div class="card react">
+          <h4>useState</h4>
+          <p class="sub">Local reactive state. Setter triggers re-render.</p>
+<pre><code>const [count, setCount] = useState(0);
+// functional update — use when next depends on prev
+setCount(c =&gt; c + 1);
+// lazy init — fn runs once, not every render
+const [v] = useState(() =&gt; expensiveInit());</code></pre>
+          <div class="note"><span class="ic">!</span><span><b>Gotcha:</b> state updates are async &amp; batched. Reading <code>count</code> right after <code>setCount</code> gives the old value. Multiple <code>setCount(c=&gt;c+1)</code> in one event stack correctly; <code>setCount(count+1)</code> twice does not.</span></div>
+        </div>
+
+        <div class="card react">
+          <h4>useEffect</h4>
+          <p class="sub">Synchronize with external systems after render (subscriptions, fetch, DOM).</p>
+<pre><code>useEffect(() =&gt; {
+  const id = setInterval(tick, 1000);
+  return () =&gt; clearInterval(id); // cleanup
+}, [dep]); // deps control re-run</code></pre>
+          <div class="note"><span class="ic">!</span><span><b>Deps:</b> <code>[]</code> = once on mount; omitted = every render; <code>[a,b]</code> = when a or b change (Object.is). Cleanup runs before next effect &amp; on unmount. In StrictMode dev, effects run twice — your cleanup must make that safe.</span></div>
+        </div>
+
+        <div class="card react">
+          <h4>useContext</h4>
+          <p class="sub">Read a context value without prop drilling.</p>
+<pre><code>const ThemeCtx = createContext('light');
+// provider
+&lt;ThemeCtx.Provider value={theme}&gt;…&lt;/ThemeCtx.Provider&gt;
+// consumer
+const theme = useContext(ThemeCtx);</code></pre>
+          <div class="note"><span class="ic">!</span><span><b>Gotcha:</b> every consumer re-renders when the provider <code>value</code> changes by identity. Passing <code>{a,b}</code> inline creates a new object each render → memoize the value. Not a substitute for a real state manager when updates are frequent.</span></div>
+        </div>
+
+        <div class="card react">
+          <h4>useReducer</h4>
+          <p class="sub">State via reducer — for complex/related state or when next state depends on prior.</p>
+<pre><code>function reducer(state, action){
+  switch(action.type){
+    case 'inc': return {n: state.n + 1};
+    default: return state;
+  }
+}
+const [state, dispatch] = useReducer(reducer, {n:0});
+dispatch({type:'inc'});</code></pre>
+          <div class="note"><span class="ic">?</span><span><b>vs useState:</b> reach for it when state transitions are non-trivial, multiple sub-values move together, or you want logic testable in isolation. Same mental model as Redux, scoped to one component.</span></div>
+        </div>
+
+        <div class="card react">
+          <h4>useRef</h4>
+          <p class="sub">Mutable box that persists across renders without causing re-renders.</p>
+<pre><code>const inputRef = useRef(null);
+inputRef.current.focus();        // DOM access
+const renders = useRef(0);
+renders.current++;               // instance variable</code></pre>
+          <div class="note"><span class="ic">!</span><span><b>Key idea:</b> mutating <code>.current</code> does <i>not</i> trigger a render. Use for DOM nodes, timer IDs, previous values, any "I need to remember this but it shouldn't paint." Don't read/write <code>.current</code> during render.</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ================= PERF ================= -->
+    <section id="perf">
+      <div class="sec-head"><span class="num">02</span><h3>Performance hooks</h3><span class="pill react">react</span></div>
+      <div class="grid two">
+
+        <div class="card react">
+          <h4>useMemo</h4>
+          <p class="sub">Cache a <i>computed value</i> between renders.</p>
+<pre><code>const sorted = useMemo(
+  () =&gt; bigList.sort(cmp),
+  [bigList]            // recompute only when deps change
+);</code></pre>
+          <div class="note"><span class="ic">!</span><span><b>Use when:</b> the computation is genuinely expensive, or the result is a referential dependency for another hook / <code>React.memo</code> child. Don't wrap every value — memoization has its own cost. It's an optimization, not a semantic guarantee.</span></div>
+        </div>
+
+        <div class="card react">
+          <h4>useCallback</h4>
+          <p class="sub">Cache a <i>function identity</i> between renders. <code>useCallback(fn,d)</code> ≡ <code>useMemo(()=&gt;fn,d)</code>.</p>
+<pre><code>const onAdd = useCallback(
+  (item) =&gt; setList(l =&gt; [...l, item]),
+  []                 // stable identity
+);
+&lt;MemoChild onAdd={onAdd} /&gt;</code></pre>
+          <div class="note"><span class="ic">!</span><span><b>Only matters</b> when the function is passed to a memoized child or used in a dependency array. Wrapping a handler that goes to a plain DOM element buys nothing.</span></div>
+        </div>
+
+        <div class="card react">
+          <h4>React.memo</h4>
+          <p class="sub">HOC that skips re-render if props are shallow-equal. (Not a hook, but its partner.)</p>
+<pre><code>const Row = React.memo(function Row({label}){…});
+// custom comparator (rare)
+React.memo(Row, (prev,next) =&gt; prev.id===next.id);</code></pre>
+          <div class="note"><span class="ic">?</span><span><b>The trio:</b> <code>memo</code> stops the child re-rendering; <code>useCallback</code>/<code>useMemo</code> keep its props referentially stable so <code>memo</code> actually hits. One without the others is usually pointless.</span></div>
+        </div>
+
+        <div class="card react">
+          <h4>React Compiler (context)</h4>
+          <p class="sub">Worth a sentence in interviews.</p>
+          <ul class="tight">
+            <li>The React Compiler (RC, 2024→) auto-memoizes components, reducing the need for manual <code>useMemo</code>/<code>useCallback</code>/<code>memo</code>.</li>
+            <li>Correct answer to "how do you optimize re-renders?" now includes: <i>measure first</i> (Profiler), fix structure (lift/colocate state, split components, pass children), then memoize.</li>
+          </ul>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ================= ADVANCED ================= -->
+    <section id="advanced">
+      <div class="sec-head"><span class="num">03</span><h3>Advanced hooks</h3><span class="pill react">react</span></div>
+      <div class="grid two">
+
+        <div class="card react">
+          <h4>useLayoutEffect</h4>
+          <p class="sub">Like <code>useEffect</code> but fires synchronously <i>after DOM mutation, before paint</i>.</p>
+<pre><code>useLayoutEffect(() =&gt; {
+  const {height} = ref.current.getBoundingClientRect();
+  setH(height);              // measure before user sees it
+}, []);</code></pre>
+          <div class="note"><span class="ic">?</span><span><b>vs useEffect:</b> use only when you must read layout and re-render before paint to avoid a visible flicker. Blocks paint, so it's slower — default to <code>useEffect</code>.</span></div>
+        </div>
+
+        <div class="card react">
+          <h4>useImperativeHandle</h4>
+          <p class="sub">Customize the ref instance a parent receives.</p>
+<pre><code>const Input = forwardRef((props, ref) =&gt; {
+  const inner = useRef();
+  useImperativeHandle(ref, () =&gt; ({
+    focus: () =&gt; inner.current.focus()
+  }));
+  return &lt;input ref={inner} /&gt;;
+});</code></pre>
+          <div class="note"><span class="ic">!</span><span>Escape hatch — exposes imperative methods. In React 19 <code>ref</code> is a normal prop, so <code>forwardRef</code> is no longer required.</span></div>
+        </div>
+
+        <div class="card react">
+          <h4>useId</h4>
+          <p class="sub">Stable unique id, SSR-safe (server &amp; client match).</p>
+<pre><code>const id = useId();
+&lt;label htmlFor={id}&gt;Name&lt;/label&gt;
+&lt;input id={id} /&gt;</code></pre>
+          <div class="note"><span class="ic">!</span><span>For accessibility wiring, <b>not</b> for list keys. Never use it as a React <code>key</code>.</span></div>
+        </div>
+
+        <div class="card react">
+          <h4>useDebugValue</h4>
+          <p class="sub">Label custom hooks in React DevTools.</p>
+<pre><code>useDebugValue(isOnline ? 'Online' : 'Offline');</code></pre>
+          <div class="note ask"><span class="ic">i</span><span>Low-frequency interview topic — recognize it, move on.</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ================= CONCURRENT ================= -->
+    <section id="concurrent">
+      <div class="sec-head"><span class="num">04</span><h3>Concurrent hooks</h3><span class="pill react">react 18+</span></div>
+      <div class="grid two">
+
+        <div class="card react">
+          <h4>useTransition</h4>
+          <p class="sub">Mark a state update as non-urgent so it doesn't block input.</p>
+<pre><code>const [isPending, startTransition] = useTransition();
+startTransition(() =&gt; {
+  setQuery(input);   // low priority, interruptible
+});
+{isPending &amp;&amp; &lt;Spinner/&gt;}</code></pre>
+          <div class="note"><span class="ic">?</span><span><b>Why:</b> keeps the typed input responsive while an expensive list filters. Urgent update (the keystroke) wins; the transition is deferred/interrupted.</span></div>
+        </div>
+
+        <div class="card react">
+          <h4>useDeferredValue</h4>
+          <p class="sub">Render a "lagging" copy of a value at lower priority.</p>
+<pre><code>const deferred = useDeferredValue(query);
+const list = useMemo(
+  () =&gt; filter(items, deferred), [deferred]
+);</code></pre>
+          <div class="note"><span class="ic">?</span><span><b>vs useTransition:</b> <code>useTransition</code> wraps the <i>update you trigger</i>; <code>useDeferredValue</code> defers a <i>value you receive</i> (e.g. a prop you don't control). Same goal, different access point.</span></div>
+        </div>
+
+        <div class="card react">
+          <h4>useSyncExternalStore</h4>
+          <p class="sub">Subscribe to an external (non-React) store safely under concurrency.</p>
+<pre><code>const state = useSyncExternalStore(
+  subscribe,        // (cb) =&gt; unsubscribe
+  getSnapshot,      // () =&gt; current value
+  getServerSnapshot // optional, for SSR
+);</code></pre>
+          <div class="note"><span class="ic">i</span><span>The hook library authors use (react-redux, Zustand) to avoid tearing. You rarely call it directly, but know <i>why</i> it exists: consistent reads during concurrent renders.</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ================= REACT 19 ================= -->
+    <section id="react19">
+      <div class="sec-head"><span class="num">05</span><h3>React 19 hooks</h3><span class="pill react">react 19</span></div>
+      <div class="grid two">
+
+        <div class="card react">
+          <h4>use</h4>
+          <p class="sub">Read a Promise (suspends) or Context. May be called conditionally.</p>
+<pre><code>function Comments({promise}){
+  const data = use(promise);   // suspends until resolved
+  return &lt;List items={data} /&gt;;
+}
+// also: const theme = use(ThemeCtx);</code></pre>
+          <div class="note"><span class="ic">!</span><span>The one "hook" exempt from the call-at-top rule — <code>use</code> is allowed inside conditionals/loops. Suspends, so pair with <code>&lt;Suspense&gt;</code> and an error boundary.</span></div>
+        </div>
+
+        <div class="card react">
+          <h4>useActionState</h4>
+          <p class="sub">State + pending for a form Action (replaces useFormState).</p>
+<pre><code>const [state, formAction, isPending] =
+  useActionState(async (prev, formData) =&gt; {
+    return await submit(formData);
+  }, initialState);
+&lt;form action={formAction}&gt;…&lt;/form&gt;</code></pre>
+          <div class="note"><span class="ic">i</span><span>Part of React "Actions" — async form submission with built-in pending/error/optimistic flow, less manual <code>useState</code> plumbing.</span></div>
+        </div>
+
+        <div class="card react">
+          <h4>useFormStatus</h4>
+          <p class="sub">Read the parent <code>&lt;form&gt;</code>'s submission status. From <code>react-dom</code>.</p>
+<pre><code>const {pending, data, method} = useFormStatus();
+return &lt;button disabled={pending}&gt;
+  {pending ? 'Saving…' : 'Save'}
+&lt;/button&gt;;</code></pre>
+          <div class="note"><span class="ic">!</span><span>Must be in a component <i>rendered inside</i> the form — it reads context, not its own props. Common gotcha: calling it in the same component that renders the <code>&lt;form&gt;</code> returns nothing.</span></div>
+        </div>
+
+        <div class="card react">
+          <h4>useOptimistic</h4>
+          <p class="sub">Show an optimistic UI state while an async action is in flight.</p>
+<pre><code>const [optimistic, addOptimistic] =
+  useOptimistic(messages, (state, newMsg) =&gt;
+    [...state, {...newMsg, sending:true}]);
+addOptimistic(draft);   // UI updates instantly
+await sendMessage(draft); // reverts/reconciles on settle</code></pre>
+          <div class="note"><span class="ic">i</span><span>Reverts automatically to the real state once the action resolves. Pairs with <code>useActionState</code> / form Actions.</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ================= RULES ================= -->
+    <section id="rules">
+      <div class="sec-head"><span class="num">06</span><h3>Rules of hooks &amp; custom hooks</h3><span class="pill react">react</span></div>
+      <div class="grid two">
+
+        <div class="card react">
+          <h4>Rules of Hooks</h4>
+          <ul class="tight">
+            <li><b>Only call at the top level</b> — never inside conditions, loops, or nested functions. (Exception: <code>use</code>.)</li>
+            <li><b>Only call from</b> React function components or other custom hooks.</li>
+            <li><b>Why:</b> React tracks hook state by <i>call order</i>, not name. Conditional calls shift the order and corrupt the mapping.</li>
+          </ul>
+          <div class="note"><span class="ic">!</span><span>Classic interview trap: "why can't you put <code>useState</code> in an <code>if</code>?" → because hook identity is positional across renders.</span></div>
+        </div>
+
+        <div class="card react">
+          <h4>Custom hooks</h4>
+          <p class="sub">Extract reusable stateful logic. Name must start with <code>use</code>.</p>
+<pre><code>function useToggle(init=false){
+  const [on, setOn] = useState(init);
+  const toggle = useCallback(() =&gt; setOn(o =&gt; !o), []);
+  return [on, toggle];
+}
+const [open, toggleOpen] = useToggle();</code></pre>
+          <div class="note"><span class="ic">?</span><span>Sharing a hook shares <i>logic</i>, not <i>state</i> — each call gets its own isolated state. To share state, lift it to context or a store.</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ================= ESSENTIALS ================= -->
+    <section id="essentials">
+      <div class="sec-head"><span class="num">07</span><h3>React essentials (non-hook, frequently asked)</h3><span class="pill react">react</span></div>
+      <div class="grid two">
+
+        <div class="card react">
+          <h4>Keys &amp; reconciliation</h4>
+          <ul class="tight">
+            <li>Keys must be <b>stable, unique among siblings</b>. Index-as-key breaks on reorder/insert/delete (wrong element reused, lost input state).</li>
+            <li>React diffs the virtual DOM by type + key to decide reuse vs remount.</li>
+            <li>Changing a component's <code>key</code> forces a full remount — a legit reset trick.</li>
+          </ul>
+        </div>
+
+        <div class="card react">
+          <h4>Controlled vs uncontrolled</h4>
+<pre><code>// controlled — React owns the value
+&lt;input value={v} onChange={e=&gt;setV(e.target.value)} /&gt;
+// uncontrolled — DOM owns it, read via ref
+&lt;input defaultValue="x" ref={ref} /&gt;</code></pre>
+          <div class="note"><span class="ic">?</span><span>Controlled = single source of truth, validation, conditional UI. Uncontrolled = simpler, less re-render, file inputs.</span></div>
+        </div>
+
+        <div class="card react">
+          <h4>Lazy loading &amp; Suspense</h4>
+<pre><code>const Chart = lazy(() =&gt; import('./Chart'));
+&lt;Suspense fallback={&lt;Spinner/&gt;}&gt;
+  &lt;Chart /&gt;
+&lt;/Suspense&gt;</code></pre>
+          <div class="note"><span class="ic">?</span><span>Code-splitting at route/component boundaries cuts initial bundle. Suspense also coordinates data fetching (<code>use</code>) and shows fallbacks.</span></div>
+        </div>
+
+        <div class="card react">
+          <h4>Error boundaries</h4>
+          <p class="sub">Catch render errors in a subtree. Still class-only.</p>
+<pre><code>class Boundary extends React.Component{
+  state={err:null};
+  static getDerivedStateFromError(e){return {err:e}}
+  componentDidCatch(e,info){log(e,info)}
+  render(){return this.state.err ? &lt;Fallback/&gt; : this.props.children}
+}</code></pre>
+          <div class="note"><span class="ic">!</span><span>No hook equivalent yet. They do <i>not</i> catch errors in event handlers, async code, or SSR — only in render/lifecycle of children.</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ================= REDUX CORE ================= -->
+    <section id="redux-core">
+      <div class="sec-head"><span class="num">08</span><h3>Redux — core concepts</h3><span class="pill redux">redux</span></div>
+      <div class="grid">
+
+        <div class="card redux">
+          <h4>The one-way data flow</h4>
+<pre><code>UI dispatch(action) ─▶ reducer(state, action) ─▶ new state ─▶ store ─▶ UI
+                                  ▲ pure, no mutation, no side effects</code></pre>
+          <table>
+            <tr><th>Term</th><th>What it is</th></tr>
+            <tr><td><code>store</code></td><td>Single immutable state tree + dispatch.</td></tr>
+            <tr><td><code>action</code></td><td>Plain object <code>{type, payload}</code> describing <i>what happened</i>.</td></tr>
+            <tr><td><code>reducer</code></td><td><b>Pure</b> <code>(state, action) =&gt; newState</code>. No mutation, no I/O, no randomness.</td></tr>
+            <tr><td><code>dispatch</code></td><td>Sends an action to the store.</td></tr>
+            <tr><td><code>selector</code></td><td><code>state =&gt; derivedValue</code>. Reads/computes from the tree.</td></tr>
+            <tr><td><code>middleware</code></td><td>Intercepts dispatch (logging, async thunks).</td></tr>
+          </table>
+          <div class="note"><span class="ic">!</span><span><b>Three principles:</b> single source of truth · state is read-only (change only via actions) · changes via pure reducers.</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ================= REDUX HOOKS ================= -->
+    <section id="redux-hooks">
+      <div class="sec-head"><span class="num">09</span><h3>React-Redux hooks</h3><span class="pill redux">react-redux</span></div>
+      <div class="grid two">
+
+        <div class="card redux">
+          <h4>useSelector</h4>
+          <p class="sub">Read &amp; subscribe to a slice of store state.</p>
+<pre><code>const count = useSelector(state =&gt; state.counter.value);
+// re-renders when the selected value changes (===)</code></pre>
+          <div class="note"><span class="ic">!</span><span><b>Gotcha:</b> returning a <i>new</i> object/array each call (<code>state =&gt; ({a,b})</code>) breaks the default <code>===</code> equality → re-render every dispatch. Fix with <code>shallowEqual</code> as the 2nd arg, or a memoized selector (<code>createSelector</code>), or select primitives separately.</span></div>
+        </div>
+
+        <div class="card redux">
+          <h4>useDispatch</h4>
+          <p class="sub">Get the store's dispatch function.</p>
+<pre><code>const dispatch = useDispatch();
+dispatch(increment());          // action creator
+dispatch(addTodo({text:'x'}));</code></pre>
+          <div class="note"><span class="ic">i</span><span><code>dispatch</code> identity is stable — safe to omit from / include in dep arrays without re-running.</span></div>
+        </div>
+
+        <div class="card redux">
+          <h4>useStore</h4>
+          <p class="sub">Access the store instance directly. Rarely needed.</p>
+<pre><code>const store = useStore();
+store.getState();</code></pre>
+          <div class="note"><span class="ic">i</span><span>Escape hatch for reading state in a callback without subscribing. Prefer <code>useSelector</code>; reach here only when you explicitly do <i>not</i> want a subscription.</span></div>
+        </div>
+
+        <div class="card redux">
+          <h4>Provider setup</h4>
+<pre><code>import {Provider} from 'react-redux';
+&lt;Provider store={store}&gt;
+  &lt;App /&gt;
+&lt;/Provider&gt;</code></pre>
+          <div class="note"><span class="ic">?</span><span>Under the hood react-redux uses <code>useSyncExternalStore</code> to subscribe each connected component to the store safely under concurrent rendering.</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ================= RTK ================= -->
+    <section id="rtk">
+      <div class="sec-head"><span class="num">10</span><h3>Redux Toolkit (RTK)</h3><span class="pill redux">official default</span></div>
+      <div class="grid two">
+
+        <div class="card redux">
+          <h4>configureStore</h4>
+          <p class="sub">Sets up store + good defaults (thunk, DevTools, immutability checks).</p>
+<pre><code>const store = configureStore({
+  reducer: { counter: counterReducer, todos: todosReducer }
+});</code></pre>
+          <div class="note"><span class="ic">i</span><span>Replaces <code>createStore</code> + manual middleware/devtools wiring. Includes <b>redux-thunk</b> by default.</span></div>
+        </div>
+
+        <div class="card redux">
+          <h4>createSlice</h4>
+          <p class="sub">Reducer + action creators + types in one shot.</p>
+<pre><code>const counter = createSlice({
+  name: 'counter',
+  initialState: {value: 0},
+  reducers: {
+    increment: (s) =&gt; { s.value++ },        // "mutate" — Immer
+    addBy: (s, action) =&gt; { s.value += action.payload }
+  }
+});
+export const {increment, addBy} = counter.actions;
+export default counter.reducer;</code></pre>
+          <div class="note"><span class="ic">!</span><span><b>The "mutation" question:</b> RTK uses <b>Immer</b>. You write mutating syntax against a draft; Immer produces a new immutable state. You may mutate the draft <i>or</i> return a new value — never both.</span></div>
+        </div>
+
+        <div class="card redux">
+          <h4>createAsyncThunk</h4>
+          <p class="sub">Async logic → auto pending/fulfilled/rejected actions.</p>
+<pre><code>const fetchUser = createAsyncThunk(
+  'users/fetch',
+  async (id) =&gt; (await api.get(id)).data
+);
+// in slice:
+extraReducers: (builder) =&gt; {
+  builder
+    .addCase(fetchUser.pending,   s =&gt; { s.loading = true })
+    .addCase(fetchUser.fulfilled, (s,a) =&gt; { s.loading=false; s.data=a.payload })
+    .addCase(fetchUser.rejected,  (s,a) =&gt; { s.loading=false; s.error=a.error });
+}</code></pre>
+          <div class="note"><span class="ic">?</span><span>Why thunks: reducers must be pure, so side effects (fetch) live in thunks/middleware, which dispatch plain actions on completion.</span></div>
+        </div>
+
+        <div class="card redux">
+          <h4>createSelector (reselect)</h4>
+          <p class="sub">Memoized derived data — recomputes only when inputs change.</p>
+<pre><code>const selectDone = createSelector(
+  [state =&gt; state.todos],
+  (todos) =&gt; todos.filter(t =&gt; t.done)  // cached
+);</code></pre>
+          <div class="note"><span class="ic">!</span><span>Prevents the "<code>useSelector</code> returns a new array every render" re-render problem for computed/filtered data.</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ================= RTK QUERY ================= -->
+    <section id="rtkq">
+      <div class="sec-head"><span class="num">11</span><h3>RTK Query</h3><span class="pill redux">data fetching</span></div>
+      <div class="grid two">
+
+        <div class="card redux">
+          <h4>createApi</h4>
+          <p class="sub">Declarative data layer — caching, dedup, invalidation, auto-generated hooks.</p>
+<pre><code>const api = createApi({
+  reducerPath: 'api',
+  baseQuery: fetchBaseQuery({baseUrl:'/api'}),
+  tagTypes: ['Post'],
+  endpoints: (b) =&gt; ({
+    getPosts: b.query({ query: () =&gt; 'posts', providesTags:['Post'] }),
+    addPost:  b.mutation({ query: body =&gt; ({url:'posts',method:'POST',body}),
+                           invalidatesTags:['Post'] })
+  })
+});
+export const {useGetPostsQuery, useAddPostMutation} = api;</code></pre>
+        </div>
+
+        <div class="card redux">
+          <h4>Generated hooks</h4>
+<pre><code>// query
+const {data, error, isLoading, isFetching, refetch} =
+  useGetPostsQuery();
+// mutation
+const [addPost, {isLoading: saving}] = useAddPostMutation();
+await addPost({title:'Hi'}).unwrap();   // throw on error</code></pre>
+          <div class="note"><span class="ic">?</span><span><b>When to mention:</b> if asked "how do you handle server state in Redux," RTK Query is the modern answer — it replaces hand-written thunks + loading-flag reducers for API data, and overlaps with React Query / SWR conceptually.</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ================= DECISION ================= -->
+    <section id="decision">
+      <div class="sec-head"><span class="num">12</span><h3>State management — decision guide</h3><span class="pill redux">judgment</span></div>
+      <div class="grid">
+        <div class="card">
+          <table>
+            <tr><th>Need</th><th>Reach for</th></tr>
+            <tr><td>State used by one component / a couple of children</td><td><code>useState</code> / lift state up</td></tr>
+            <tr><td>Complex transitions in one component</td><td><code>useReducer</code></td></tr>
+            <tr><td>Low-frequency global value (theme, locale, auth user)</td><td>Context + <code>useState</code>/<code>useReducer</code></td></tr>
+            <tr><td>Large app, frequent global updates, time-travel/debug, many consumers</td><td>Redux Toolkit</td></tr>
+            <tr><td>Server/API data (caching, refetch, invalidation)</td><td>RTK Query / React Query — <b>not</b> hand-rolled Redux</td></tr>
+            <tr><td>Lightweight global store, less boilerplate</td><td>Zustand / Jotai (know they exist)</td></tr>
+          </table>
+          <div class="note"><span class="ic">!</span><span><b>The mature answer:</b> "I don't default to Redux. Most state is local. I separate <i>server state</i> (RTK Query/React Query) from <i>client/UI state</i> (local, or Redux when it's genuinely global and shared). Context is for low-churn values, not a state manager." Saying "I always use Redux" is a red flag to senior interviewers.</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= GOTCHAS ================= -->
+    <section id="gotchas">
+      <div class="sec-head"><span class="num">13</span><h3>Gotchas &amp; rapid-fire Q&amp;A</h3><span class="pill react">drill</span></div>
+      <div class="grid two">
+
+        <div class="card">
+          <h4>Stale closure</h4>
+          <p class="sub">The #1 hooks bug.</p>
+<pre><code>useEffect(() =&gt; {
+  const id = setInterval(() =&gt; {
+    setCount(count + 1);   // ❌ count frozen at mount value
+  }, 1000);
+  return () =&gt; clearInterval(id);
+}, []);                    // empty deps → closure captures count=0</code></pre>
+          <div class="note"><span class="ic">!</span><span><b>Fix:</b> functional updater <code>setCount(c =&gt; c + 1)</code>, or add <code>count</code> to deps, or hold it in a ref. Be ready to explain <i>why</i>: the effect closes over the render's variables.</span></div>
+        </div>
+
+        <div class="card">
+          <h4>Batching</h4>
+<pre><code>setA(1); setB(2);   // one re-render (React 18 batches everywhere,
+                    // incl. promises, timeouts, native events)</code></pre>
+          <div class="note"><span class="ic">i</span><span>Pre-18, updates outside React event handlers weren't batched. React 18 automatic batching changed that.</span></div>
+        </div>
+
+        <div class="qa">
+          <p class="q">Why do hooks have to run in the same order every render?</p>
+          <p class="a">React stores hook state in a list keyed by call index, not name. Conditional calls would desync that list with state.</p>
+        </div>
+        <div class="qa">
+          <p class="q">useMemo vs useCallback?</p>
+          <p class="a">Same machine. <code>useMemo</code> caches the <i>return value</i>; <code>useCallback</code> caches the <i>function itself</i>. <code>useCallback(fn,d) === useMemo(()=&gt;fn,d)</code>.</p>
+        </div>
+        <div class="qa">
+          <p class="q">useEffect vs useLayoutEffect?</p>
+          <p class="a"><code>useEffect</code> runs after paint (async, non-blocking). <code>useLayoutEffect</code> runs after DOM mutation but before paint (sync) — use to measure/mutate layout without flicker.</p>
+        </div>
+        <div class="qa">
+          <p class="q">Why must reducers be pure?</p>
+          <p class="a">Predictability, time-travel debugging, and React may call them multiple times. Side effects go in thunks/middleware, not reducers.</p>
+        </div>
+        <div class="qa">
+          <p class="q">How does RTK let you "mutate" state?</p>
+          <p class="a">Immer wraps the draft; mutations are recorded and applied to a fresh immutable copy. The actual store state is never mutated.</p>
+        </div>
+        <div class="qa">
+          <p class="q">Context vs Redux?</p>
+          <p class="a">Context is a dependency-injection mechanism (passes a value down), not a state manager. It re-renders all consumers on change and has no dev tooling, middleware, or selector memoization. Redux adds those for frequently-updated shared state.</p>
+        </div>
+        <div class="qa">
+          <p class="q">Why is index a bad key?</p>
+          <p class="a">On reorder/insert/delete, indices shift, so React maps the wrong DOM nodes — corrupted state, wrong animations, lost focus. Use a stable id.</p>
+        </div>
+        <div class="qa">
+          <p class="q">How do you stop unnecessary re-renders?</p>
+          <p class="a">Measure with Profiler first. Then: colocate/lift state correctly, split components, pass <code>children</code>, memoize selectors, then <code>React.memo</code>/<code>useMemo</code>/<code>useCallback</code> — or rely on the React Compiler.</p>
+        </div>
+        <div class="qa">
+          <p class="q">Can you call hooks in a custom hook?</p>
+          <p class="a">Yes — custom hooks are the one place besides components where hooks may be called. They share logic, not state.</p>
+        </div>
+
+      </div>
+    </section>
+
+    <div class="empty" id="empty">no matches — clear the filter to see everything</div>
+  </main>
+</div>
+
+<footer class="app-foot">
+  <div class="wrap" style="display:block; padding-top:0; padding-bottom:50px">
+    React 19 · Redux Toolkit · react-redux · RTK Query · built for interview drilling · verify against current docs before relying on edge cases
+  </div>
+</footer>
+
+<script src="assets/app.js"></script>
+<script>
+(function(){
+  var q = document.getElementById('q');
+  document.addEventListener('keydown', function(e){
+    if (e.key === '/' && document.activeElement !== q){ e.preventDefault(); q.focus(); }
+    if (e.key === 'Escape' && document.activeElement === q){ q.value=''; filter(); q.blur(); }
+  });
+
+  var cards = Array.prototype.slice.call(document.querySelectorAll('.card, .qa'));
+  var sections = Array.prototype.slice.call(document.querySelectorAll('section'));
+  var empty = document.getElementById('empty');
+
+  function filter(){
+    var term = q.value.trim().toLowerCase();
+    var anyVisible = false;
+    if (!term){
+      cards.forEach(function(c){ c.style.display=''; });
+      sections.forEach(function(s){ s.style.display=''; });
+      empty.style.display='none';
+      return;
+    }
+    cards.forEach(function(c){
+      var hit = c.textContent.toLowerCase().indexOf(term) !== -1;
+      c.style.display = hit ? '' : 'none';
+      if (hit) anyVisible = true;
+    });
+    sections.forEach(function(s){
+      var visible = s.querySelectorAll('.card, .qa');
+      var show = Array.prototype.some.call(visible, function(c){ return c.style.display !== 'none'; });
+      s.style.display = show ? '' : 'none';
+    });
+    empty.style.display = anyVisible ? 'none' : 'block';
+  }
+  q.addEventListener('input', filter);
+
+  // arrow-key section navigation
+  var tocLinks = Array.prototype.slice.call(document.querySelectorAll('nav.toc a'));
+  var linkById = {};
+  tocLinks.forEach(function(a){ linkById[a.getAttribute('href').slice(1)] = a; });
+  var activeId = sections.length ? sections[0].id : null;
+
+  function visibleSections(){ return sections.filter(function(s){ return s.style.display !== 'none'; }); }
+  function indexOfId(list, id){ for (var i=0;i<list.length;i++){ if (list[i].id === id) return i; } return 0; }
+  function setActive(id){ activeId = id; tocLinks.forEach(function(a){ a.classList.remove('active'); }); if (linkById[id]) linkById[id].classList.add('active'); }
+  function goTo(sec){ sec.scrollIntoView({behavior:'smooth', block:'start'}); setActive(sec.id); }
+
+  document.addEventListener('keydown', function(e){
+    if (document.activeElement === q) return;
+    if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    var list = visibleSections();
+    if (!list.length) return;
+    e.preventDefault();
+    var i = indexOfId(list, activeId);
+    i = e.key === 'ArrowRight' ? Math.min(i + 1, list.length - 1) : Math.max(i - 1, 0);
+    goTo(list[i]);
+  });
+
+  if ('IntersectionObserver' in window){
+    var spy = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){ if (en.isIntersecting) setActive(en.target.id); });
+    }, {rootMargin: '-45% 0px -50% 0px', threshold: 0});
+    sections.forEach(function(s){ spy.observe(s); });
+  }
+  setActive(activeId);
+})();
+</script>
+</body>
+</html>

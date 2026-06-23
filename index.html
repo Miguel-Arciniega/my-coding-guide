@@ -112,6 +112,11 @@
       <div class="l">Behavioral stories ready</div>
       <div class="bar"><i id="bh-bar"></i></div>
     </div>
+    <div class="stat" data-track="java">
+      <div class="v"><span id="jv-good">0</span><small>/22</small></div>
+      <div class="l">Java features mastered</div>
+      <div class="bar"><i id="jv-bar"></i></div>
+    </div>
     <div class="stat" data-track="hub">
       <div class="v"><span id="sd-again">0</span></div>
       <div class="l">Concepts flagged to review</div>
@@ -179,6 +184,22 @@
     </div>
 
     <div class="track-group" data-group>
+      <div class="track-group-h"><h2>Java</h2><span class="ln"></span></div>
+      <div class="track-cards">
+        <a class="track-card" data-track="java" data-mode="reference" href="java.html">
+          <div class="tc-top"><span class="tc-title">Version Evolution</span><span class="badge ref">Reference</span></div>
+          <p class="tc-blurb">What each LTS added — Java 8 → 11 → 17 → 21. Timeline map, per-version memory buckets, before→after code, and the one-line answers to say out loud.</p>
+          <div class="tc-meta"><span class="tc-time">~15 min read</span></div>
+        </a>
+        <a class="track-card" data-track="java" data-mode="drill" href="drills.html?deck=java">
+          <div class="tc-top"><span class="tc-title">Version Drill</span><span class="badge drill">Drill</span></div>
+          <p class="tc-blurb">22 spaced-repetition cards on what landed in each Java LTS — records, sealed types, virtual threads, pattern matching. Reveal, grade, repeat.</p>
+          <div class="tc-meta"><span class="tc-prog" id="prog-jv"></span><span class="tc-time">22 cards</span></div>
+        </a>
+      </div>
+    </div>
+
+    <div class="track-group" data-group>
       <div class="track-group-h"><h2>System Design</h2><span class="ln"></span></div>
       <div class="track-cards">
         <a class="track-card" data-track="drills" data-mode="drill" href="drills.html?deck=sysdesign">
@@ -215,21 +236,26 @@
 <script>
 (function(){
   var P = PrepUI.Progress;
-  var SD_TOTAL = 30, BH_TOTAL = 8;
-  var sd = P.deckStats('sysdesign', SD_TOTAL), bh = P.deckStats('behavioral', BH_TOTAL);
+  var SD_TOTAL = 30, BH_TOTAL = 8, JV_TOTAL = 22;
+  var sd = P.deckStats('sysdesign', SD_TOTAL), bh = P.deckStats('behavioral', BH_TOTAL),
+      jv = P.deckStats('java', JV_TOTAL);
 
   document.getElementById('sd-good').textContent = sd.good;
   document.getElementById('sd-again').textContent = sd.again;
   document.getElementById('bh-done').textContent = bh.done;
+  document.getElementById('jv-good').textContent = jv.good;
   setTimeout(function(){
     document.getElementById('sd-bar').style.width = Math.round(sd.good/SD_TOTAL*100)+'%';
     document.getElementById('bh-bar').style.width = Math.round(bh.done/BH_TOTAL*100)+'%';
+    document.getElementById('jv-bar').style.width = Math.round(jv.good/JV_TOTAL*100)+'%';
   }, 60);
 
   var psd = document.getElementById('prog-sd');
   if (sd.good) psd.textContent = sd.good+'/'+SD_TOTAL+' mastered';
   var pbh = document.getElementById('prog-bh');
   if (bh.done) pbh.textContent = bh.done+'/'+BH_TOTAL+' ready';
+  var pjv = document.getElementById('prog-jv');
+  if (jv.good) pjv.textContent = jv.good+'/'+JV_TOTAL+' mastered';
 
   var last = P.get().lastVisited;
   if (last && last.indexOf('index') !== 0) {

@@ -50,6 +50,7 @@
   .eyebrow2.patterns,.eyebrow2.deep{background:var(--deep-bg); color:var(--deep-fg)}
   .eyebrow2.technique{background:var(--good-wash); color:var(--good)}
   .eyebrow2.spine{background:var(--surface-2); color:var(--ink-soft)}
+  .eyebrow2.j8,.eyebrow2.j11,.eyebrow2.j17,.eyebrow2.j21{background:var(--accent-wash); color:var(--accent-ink)}
   .front{font-size:19px; font-weight:600; line-height:1.45; letter-spacing:-.005em; font-family:var(--display)}
   .front .hook{display:block; margin-top:8px; font-family:var(--sans); font-weight:400; font-size:16px; color:var(--ink-soft); line-height:1.6}
   .back{margin-top:18px; padding-top:16px; border-top:1px dashed var(--line); font-size:15.5px; color:var(--ink)}
@@ -103,6 +104,7 @@
     <div class="subnav-wrap" id="deck-switch-wrap">
       <div class="subnav" data-subnav role="tablist" aria-label="Deck">
         <button data-section="sysdesign" aria-selected="true">System Design</button>
+        <button data-section="java">Java Versions</button>
         <button data-section="behavioral">Behavioral</button>
       </div>
     </div>
@@ -127,7 +129,7 @@
 </div></main>
 
 <footer class="app-foot">
-  <div class="wrap drill-wrap">Active recall · System Design concepts + Behavioral stories · grade honestly, the hub tracks it.</div>
+  <div class="wrap drill-wrap">Active recall · System Design concepts · Java versions · Behavioral stories · grade honestly, the hub tracks it.</div>
 </footer>
 
 <script src="assets/app.js"></script>
@@ -138,7 +140,7 @@
   var params = new URLSearchParams(location.search);
   var quick = params.get('mode') === 'quick';
   var quickN = Math.max(1, parseInt(params.get('n') || '10', 10) || 10);
-  var deckId = (params.get('deck') === 'behavioral') ? 'behavioral' : 'sysdesign';
+  var deckId = DECKS[params.get('deck')] ? params.get('deck') : 'sysdesign';
 
   var filter = 'all';
   var order = [];          // array of {deckId, card}
@@ -162,7 +164,7 @@
   }
   function setGrade(dId, id, got){
     if (dId === 'behavioral') P.setCard('behavioral', id, got ? 'done' : 'none');
-    else P.setCard('sysdesign', id, got ? 'good' : 'again');
+    else P.setCard(dId, id, got ? 'good' : 'again');
   }
 
   /* ---- build the working queue ---- */
@@ -261,7 +263,7 @@
     if (quick){
       progressEl.textContent = order.length + ' cards in this session';
     } else if (d.schema === 'concept'){
-      var good = P.deckStats('sysdesign', d.cards.length).good;
+      var good = P.deckStats(deckId, d.cards.length).good;
       progressEl.textContent = good + ' of ' + d.cards.length + ' marked got-it';
     } else {
       var done = P.deckStats('behavioral', d.cards.length).done;
@@ -339,9 +341,9 @@
     document.getElementById('deck-switch-wrap').style.display = 'none';
     var qb = document.getElementById('quick-banner');
     qb.style.display = '';
-    blurbEl.textContent = 'A short mixed session across both decks — flagged-for-review and unseen cards first.';
+    blurbEl.textContent = 'A short mixed session across all your decks — flagged-for-review and unseen cards first.';
     rebuild(false);
-    qb.innerHTML = '<b>⚡ Quick refresh</b> · ' + order.length + ' cards across System Design + Behavioral. <a class="link" href="drills.html?deck=sysdesign">Study a full deck →</a>';
+    qb.innerHTML = '<b>⚡ Quick refresh</b> · ' + order.length + ' cards across all decks. <a class="link" href="drills.html?deck=sysdesign">Study a full deck →</a>';
     render();
   } else {
     var subBtns = [].slice.call(document.querySelectorAll('[data-subnav] button'));

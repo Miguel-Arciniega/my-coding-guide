@@ -85,6 +85,7 @@
 [data-track="data"]    { --accent-l:#0c8a99; --accent-d:#4fd3e0; }
 [data-track="frontend"]{ --accent-l:#0a7d9c; --accent-d:#3cc9e8; }
 [data-track="drills"]  { --accent-l:#185fa5; --accent-d:#7fb0ff; }
+[data-track="java"]    { --accent-l:#c74634; --accent-d:#e8826b; }
 [data-track="hub"]     { --accent-l:#5b3fc4; --accent-d:#a78bff; }
 
 /* =========================================================================

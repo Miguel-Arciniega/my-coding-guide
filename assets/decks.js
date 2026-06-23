@@ -86,6 +86,76 @@ window.DECKS = {
     ]
   },
 
+  java: {
+    id: "java",
+    label: "Java Versions",
+    schema: "concept",
+    blurb: "What each LTS added — Java 8 → 11 → 17 → 21. Answer the bucket out loud before revealing.",
+    topics: [
+      { key: "all", label: "All" },
+      { key: "j8", label: "Java 8" },
+      { key: "j11", label: "Java 11" },
+      { key: "j17", label: "Java 17" },
+      { key: "j21", label: "Java 21" },
+      { key: "missed", label: "Missed" }
+    ],
+    topicLabels: {
+      j8: "Java 8 (2014)",
+      j11: "Java 11 (2018)",
+      j17: "Java 17 (2021)",
+      j21: "Java 21 (2023)"
+    },
+    cards: [
+      {id:"j8-1",topic:"j8",front:"Java 8 (LTS): what did it add — the 5-item bucket?",
+       back:"<ul><li><strong>Lambdas</strong> — pass behavior as a value.</li><li><strong>Stream API</strong> — declarative collection processing.</li><li><strong>Optional&lt;T&gt;</strong> — model absence in the type.</li><li><strong>java.time</strong> — immutable, thread-safe dates.</li><li><strong>Default methods</strong> — method bodies in interfaces.</li></ul><p>One line: <em>Java 8 made Java functional.</em> Method references and <code>CompletableFuture</code> ride along.</p>"},
+      {id:"j8-2",topic:"j8",front:"A lambda has what type — and what does it replace?",
+       back:"<p>A lambda's type is a <strong>functional interface</strong> — any interface with a single abstract method (<code>@FunctionalInterface</code> enforces it). The four core shapes: <code>Function&lt;T,R&gt;</code>, <code>Predicate&lt;T&gt;</code>, <code>Consumer&lt;T&gt;</code>, <code>Supplier&lt;T&gt;</code>.</p><p>It replaces the <strong>anonymous inner class</strong> — <code>(a,b) -&gt; a.compareTo(b)</code> instead of a four-line <code>new Comparator(){…}</code>.</p>"},
+      {id:"j8-3",topic:"j8",front:"Stream pipeline anatomy — and when does it actually run?",
+       back:"<p><strong>Source</strong> (collection/array) → zero or more <strong>intermediate</strong> ops (<code>filter</code>, <code>map</code>, <code>sorted</code> — all lazy) → one <strong>terminal</strong> op (<code>collect</code>, <code>reduce</code>, <code>forEach</code>, <code>count</code>).</p><p>Nothing executes until the terminal op. <code>Collectors.groupingBy</code> is the one to know — it's SQL <code>GROUP BY</code> for objects.</p>"},
+      {id:"j8-4",topic:"j8",front:"Optional — what's it for, and the misuse to avoid?",
+       back:"<p>Encodes \"value might be absent\" in the type, so callers can't ignore it like a raw <code>null</code>. Chain <code>map</code> / <code>filter</code> / <code>orElseThrow</code> / <code>orElseGet</code>.</p><p><strong>Misuse:</strong> calling <code>.get()</code> without checking (defeats the point), and using <code>Optional</code> for fields or method parameters — it's designed as a <em>return type</em>.</p>"},
+      {id:"j8-5",topic:"j8",front:"Why were default methods added to interfaces?",
+       back:"<p>So an interface can gain new methods <em>without</em> breaking every existing implementer. The canonical example: <code>Collection.stream()</code> was added as a default method in Java 8 — every collection got streams for free.</p><p class='alt'>Also asked as: \"How did Java add stream() to all collections without breaking code?\"</p>"},
+      {id:"j8-6",topic:"j8",front:"Why prefer java.time over Date/Calendar?",
+       back:"<p>The old <code>Date</code>/<code>Calendar</code> are <strong>mutable</strong> and <strong>not thread-safe</strong> (and <code>Date</code> months were 0-based — a classic bug). <code>java.time</code> (<code>LocalDate</code>, <code>LocalDateTime</code>, <code>Instant</code>, <code>Duration</code>) is immutable, thread-safe, and clearly named. Always reach for it.</p>"},
+
+      {id:"j11-1",topic:"j11",front:"Java 11 (LTS): why does it matter, and what landed?",
+       back:"<p>It's the <strong>first LTS after 8</strong> — the version most teams actually migrated to, so \"modern baseline.\"</p><ul><li>Standard <code>HttpClient</code> (<code>java.net.http</code>, HTTP/2, sync + async).</li><li>String helpers: <code>isBlank</code>, <code>strip</code>, <code>lines</code>, <code>repeat</code>.</li><li><code>Files.readString</code> / <code>writeString</code>.</li><li>Run a source file directly: <code>java Hello.java</code>.</li></ul>"},
+      {id:"j11-2",topic:"j11",front:"var — which version, and where can't you use it?",
+       back:"<p>Local-variable type inference (<code>var</code>) arrived in <strong>Java 10</strong>; Java 11 allowed <code>var</code> in <strong>lambda parameters</strong>. It's compile-time inference — the variable is still statically typed.</p><p><strong>Not allowed:</strong> fields, method parameters, return types, or without an initializer (<code>var x;</code> won't compile, nor <code>var x = null;</code>).</p>"},
+      {id:"j11-3",topic:"j11",front:"The Java 11 HttpClient — what did it replace, key features?",
+       back:"<p>Replaces the clunky <code>HttpURLConnection</code> (and removes the need for a third-party client for simple calls). In <code>java.net.http</code>: <code>HttpClient</code>, <code>HttpRequest</code>, <code>HttpResponse</code>. Supports <strong>HTTP/2</strong>, WebSocket, and both <strong>synchronous</strong> (<code>send</code>) and <strong>async</strong> (<code>sendAsync</code> → <code>CompletableFuture</code>) calls.</p>"},
+      {id:"j11-4",topic:"j11",front:"Name the String methods added in Java 11.",
+       back:"<ul><li><code>isBlank()</code> — true if empty or whitespace-only.</li><li><code>strip()</code> / <code>stripLeading()</code> / <code>stripTrailing()</code> — Unicode-aware <code>trim()</code>.</li><li><code>lines()</code> — a <code>Stream&lt;String&gt;</code> of lines.</li><li><code>repeat(n)</code> — repeat the string n times.</li></ul>"},
+
+      {id:"j17-1",topic:"j17",front:"Java 17 (LTS): the 5 features that became standard?",
+       back:"<ul><li><strong>Records</strong> — immutable data carriers.</li><li><strong>Sealed</strong> classes/interfaces — restricted hierarchies.</li><li><strong>Pattern matching for instanceof</strong> — test + bind.</li><li><strong>Switch expressions</strong> — arrow labels, returns a value.</li><li><strong>Text blocks</strong> — triple-quoted multi-line strings.</li></ul><p>Plus helpful NullPointerExceptions. These had all been previewing since 14–16; 17 made them final.</p>"},
+      {id:"j17-2",topic:"j17",front:"Records — what does the compiler generate, and the compact constructor?",
+       back:"<p>From <code>record Point(int x, int y){}</code> you get: the canonical <strong>constructor</strong>, accessors <code>x()</code>/<code>y()</code>, and <code>equals</code>, <code>hashCode</code>, <code>toString</code>. Fields are <code>final</code>; the record itself is immutable.</p><p>Add a <strong>compact constructor</strong> (<code>public Point { … }</code>, no params listed) when you need validation or normalization before the fields are assigned.</p>"},
+      {id:"j17-3",topic:"j17",front:"Sealed classes — what and why?",
+       back:"<p><code>sealed interface Shape permits Circle, Square</code> restricts <em>which</em> types may implement/extend it. Subtypes must be <code>final</code>, <code>sealed</code>, or <code>non-sealed</code>.</p><p><strong>Why:</strong> a closed, known hierarchy the compiler can reason about — which is what makes a <code>switch</code> over it <strong>exhaustive</strong> (no <code>default</code> needed) in Java 21.</p>"},
+      {id:"j17-4",topic:"j17",front:"Pattern matching for instanceof — what does it remove?",
+       back:"<p><code>if (o instanceof String s) { … s.length() … }</code> tests and <strong>binds</strong> in one step. It removes the redundant explicit cast (<code>String s = (String) o;</code>) that always followed an <code>instanceof</code> check. The binding <code>s</code> is in scope only where the type is guaranteed.</p>"},
+      {id:"j17-5",topic:"j17",front:"Switch expression vs the old switch statement?",
+       back:"<ul><li>Returns a <strong>value</strong>: <code>var r = switch(x){ … };</code></li><li><strong>Arrow</strong> labels (<code>case A -&gt; …</code>) — no fall-through, no <code>break</code>.</li><li><code>yield</code> returns from a block-bodied case.</li><li><strong>Exhaustive</strong> over enums/sealed types — compiler checks all cases.</li></ul><p>The old statement is fall-through by default — a frequent bug source.</p>"},
+      {id:"j17-6",topic:"j17",front:"Which Java 17 features were previews first — and why know that?",
+       back:"<p>Switch expressions (final in 14), text blocks (15), records &amp; pattern-matching <code>instanceof</code> (16), sealed classes (17). They incubated across 12–16 as <em>preview</em> features.</p><p><strong>Why it matters:</strong> saying \"these finalized in 17 after previewing\" reads as senior and keeps you from mis-dating a feature to the wrong release.</p>"},
+
+      {id:"j21-1",topic:"j21",front:"Java 21 (LTS): the headline features?",
+       back:"<ul><li><strong>Virtual threads</strong> — millions of cheap threads (Project Loom).</li><li><strong>Pattern matching for switch</strong> — type patterns + guards, exhaustive with sealed types.</li><li><strong>Record patterns</strong> — destructure records, nestable.</li><li><strong>Sequenced collections</strong> — uniform <code>getFirst</code>/<code>getLast</code>/<code>reversed</code>.</li></ul>"},
+      {id:"j21-2",topic:"j21",front:"Virtual threads — what problem, and how do they scale?",
+       back:"<p>They make the simple <strong>thread-per-task</strong> model scale. A virtual thread costs ~KBs (not ~MBs) and isn't pinned to an OS thread: while it <strong>blocks on I/O the JVM unmounts it</strong> from its carrier and runs another, so a handful of OS threads serve millions of tasks.</p><p>You write plain blocking code and get async-like scalability. Create via <code>Executors.newVirtualThreadPerTaskExecutor()</code>.</p>"},
+      {id:"j21-3",topic:"j21",front:"Pattern matching for switch — what makes it exhaustive?",
+       back:"<p><code>switch(shape){ case Circle c -&gt; …; case Square s -&gt; … }</code> matches on type, with optional <code>when</code> guards. When the selector is a <strong>sealed</strong> type, the compiler knows every permitted subtype, so it can <strong>enforce exhaustiveness</strong> — no <code>default</code> branch needed. Effectively replaces the visitor pattern.</p>"},
+      {id:"j21-4",topic:"j21",front:"Record patterns — what do they let you do?",
+       back:"<p>Destructure a record straight into its components inside <code>instanceof</code> or <code>switch</code>: <code>case Point(int x, int y) -&gt; …</code>. They <strong>nest</strong>: <code>case Line(Point(var x1, var y1), Point p2) -&gt; …</code>. No accessor calls — the fields are bound directly.</p>"},
+      {id:"j21-5",topic:"j21",front:"Sequenced collections — what gap do they fill?",
+       back:"<p>A uniform first/last API across ordered collections. <code>SequencedCollection</code> adds <code>getFirst()</code>, <code>getLast()</code>, <code>addFirst()</code>, <code>addLast()</code>, <code>reversed()</code> — implemented by <code>List</code>, <code>Deque</code>, <code>LinkedHashSet</code>, etc. Before, getting the last element differed per type (<code>list.get(size-1)</code> vs <code>deque.getLast()</code>).</p>"},
+      {id:"j21-6",topic:"j21",front:"What was still a preview in Java 21 (don't claim as final)?",
+       back:"<p><strong>String templates</strong>, <strong>structured concurrency</strong>, and <strong>scoped values</strong> were <em>preview</em> features in 21 — name them as \"coming\", not done. (Virtual threads, pattern-matching switch, and record patterns <em>are</em> final in 21.)</p>"}
+    ]
+  },
+
   behavioral: {
     id: "behavioral",
     label: "Behavioral",

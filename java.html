@@ -1,0 +1,561 @@
+<!doctype html>
+<html lang="en" data-track="java">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Java — Version Evolution · Interview Prep Suite</title>
+<script>(function(){try{var t=localStorage.getItem('prep:theme');if(t!=='dark'&&t!=='light')t=matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+<link rel="stylesheet" href="assets/app.css">
+<style>
+  /* legacy color aliases used by inline content styles, mapped to shared tokens */
+  body{--gold:var(--accent); --red:var(--hard); --green:var(--easy);
+       --teal:#5fc6cf; --violet:#b3a7ff; --blue:#7fb0f2; --dim:var(--ink-soft); --faint:var(--ink-faint)}
+
+  .page-head-inner{padding:26px 0 0}
+
+  /* section intros */
+  .panel .eyebrow{color:var(--ink-faint); margin-bottom:6px}
+  h2.ph{font-family:var(--display); font-weight:700; font-size:1.5rem; margin:0 0 4px; letter-spacing:-.01em}
+  .lede{color:var(--ink-soft); margin:0 0 22px; max-width:74ch; font-size:.96rem}
+  .panel h3{font-family:var(--display); font-weight:600; font-size:1.04rem; color:var(--ink);
+     margin:34px 0 12px; padding-left:11px; border-left:3px solid var(--accent);
+     display:flex; align-items:center; gap:10px; flex-wrap:wrap}
+  .panel h3:first-of-type{margin-top:6px}
+  .panel p{margin:0 0 14px; max-width:80ch}
+  .mut{color:var(--ink-soft)}
+  code.inl{font-family:var(--mono); font-size:.84em; background:var(--code-inline-bg);
+    border:1px solid var(--line); border-radius:5px; padding:1.5px 6px; color:var(--accent-ink)}
+
+  /* code blocks (caption + copy bar) */
+  .code{position:relative; margin:0 0 20px; border:1px solid var(--line-strong);
+    border-radius:var(--radius-sm); background:var(--code-bg); overflow:hidden}
+  .code.solo{margin-bottom:20px}
+  .code .cap{font-family:var(--mono); font-size:.7rem; letter-spacing:.04em; color:var(--code-dim);
+    padding:8px 14px; border-bottom:1px solid color-mix(in srgb,var(--code-bg) 78%,#fff);
+    display:flex; align-items:center; justify-content:space-between; gap:10px}
+  .code .cap .dot{display:inline-flex; gap:6px; align-items:center}
+  .code .cap .dot i{width:9px; height:9px; border-radius:50%;
+    background:color-mix(in srgb,var(--code-bg) 60%,#fff); display:block}
+  .copy{appearance:none; background:none; border:1px solid color-mix(in srgb,var(--code-bg) 65%,#fff);
+    color:var(--code-dim); font-family:var(--mono); font-size:.68rem; padding:3px 9px; border-radius:6px;
+    cursor:pointer; transition:.15s}
+  .copy:hover{color:var(--accent); border-color:var(--accent)}
+  .copy.ok{color:#84d99a; border-color:#84d99a}
+  .code pre{margin:0; padding:15px 16px; overflow-x:auto; background:transparent; border:0; border-radius:0}
+  .code pre code{font-family:var(--mono); font-size:.82rem; line-height:1.6; color:var(--code-ink)}
+  pre code.hljs{background:transparent; padding:0}
+  /* hljs token recolor to shared code palette */
+  .hljs-keyword,.hljs-built_in{color:var(--code-key)!important}
+  .hljs-string{color:var(--code-str)!important}
+  .hljs-number{color:var(--code-num)!important}
+  .hljs-title.function_{color:#7fb0f2!important}
+  .hljs-type,.hljs-title.class_{color:#5fc6cf!important}
+  .hljs-meta{color:var(--accent)!important}
+  .hljs-comment{color:var(--code-com)!important; font-style:italic}
+  .hljs-attr,.hljs-title{color:#5fc6cf!important}
+
+  /* before / after two-up */
+  .ba{display:grid; gap:14px; margin:0 0 18px}
+  @media (min-width:840px){.ba{grid-template-columns:1fr 1fr}}
+  .ba .code{margin:0}
+  .ba-tag{font-family:var(--mono); font-size:.62rem; letter-spacing:.1em; text-transform:uppercase;
+    padding:1px 7px; border-radius:20px; font-weight:600}
+  .ba-tag.old{color:var(--hard); background:var(--hard-wash)}
+  .ba-tag.new{color:var(--easy); background:var(--easy-wash)}
+
+  /* reference tables */
+  .tbl-wrap{overflow-x:auto; margin:0 0 22px; border:1px solid var(--line); border-radius:var(--radius)}
+  .tbl-wrap table{min-width:560px}
+  .tbl-wrap thead th{color:var(--accent-ink); text-transform:uppercase; letter-spacing:.05em}
+  td.m,th.m{font-family:var(--mono); font-size:.82em; color:var(--accent-ink); white-space:nowrap}
+  td .ver{font-family:var(--mono); font-size:.82em; color:var(--code-key)}
+
+  /* timeline matrix */
+  .lts{font-family:var(--mono); font-size:.6rem; letter-spacing:.06em; text-transform:uppercase;
+    font-weight:600; padding:1px 7px; border-radius:20px; color:var(--easy);
+    border:1px solid color-mix(in srgb,var(--easy) 40%,var(--line)); background:var(--easy-wash)}
+
+  /* callouts */
+  .call{display:flex; gap:12px; border:1px solid var(--accent-line); background:var(--accent-wash);
+    border-radius:var(--radius); padding:13px 15px; margin:6px 0 22px; font-size:.9rem; color:var(--ink)}
+  .call .ic{color:var(--accent); font-family:var(--mono); font-weight:600; flex:none}
+  .call.warn{border-color:color-mix(in srgb,var(--hard) 45%,var(--line)); background:var(--hard-wash)}
+  .call.warn .ic{color:var(--hard)}
+  .call b{color:var(--ink); font-weight:600}
+  .call code{font-family:var(--mono); font-size:.85em; color:var(--accent-ink)}
+
+  /* memory bucket — the per-version mnemonic */
+  .bucket{display:flex; gap:13px; align-items:center; flex-wrap:wrap;
+    border:1px solid var(--accent-line); border-left:4px solid var(--accent);
+    background:var(--accent-wash); border-radius:var(--radius); padding:12px 16px; margin:0 0 24px}
+  .bucket .bk-label{font-family:var(--mono); font-size:.62rem; letter-spacing:.1em; text-transform:uppercase;
+    color:var(--accent); font-weight:600; flex:none}
+  .bucket .bk-items{display:flex; flex-wrap:wrap; gap:6px}
+  .bucket .bk-items span{font-family:var(--mono); font-size:.78rem; color:var(--ink); font-weight:600;
+    background:var(--surface); border:1px solid var(--line); border-radius:20px; padding:2px 11px}
+
+  /* interview soundbite */
+  .mic{border:1px solid var(--line-strong); background:var(--surface-2); border-radius:var(--radius);
+    padding:13px 16px; margin:6px 0 24px}
+  .mic .mic-label{font-family:var(--mono); font-size:.62rem; letter-spacing:.1em; text-transform:uppercase;
+    color:var(--accent); font-weight:600; margin:0 0 6px; display:flex; align-items:center; gap:7px}
+  .mic p{margin:0; font-size:.95rem; color:var(--ink); font-style:italic; max-width:80ch}
+  .mic code{font-family:var(--mono); font-size:.85em; font-style:normal; color:var(--accent-ink)}
+
+  ul.tight{margin:0 0 18px; padding-left:20px}
+  ul.tight li{margin:0 0 7px; max-width:80ch}
+  ul.tight li::marker{color:var(--accent)}
+
+  main{padding-top:14px}
+</style>
+</head>
+<body>
+
+<div class="app-topbar">
+  <div class="app-topbar-inner">
+    <a class="app-brand" href="index.html"><span class="dot"></span>Interview Prep Suite</a>
+    <span class="app-crumb">Java versions</span>
+    <span class="app-spacer"></span>
+    <a class="app-back" href="index.html">← Hub</a>
+    <button class="theme-toggle" type="button" aria-label="Toggle dark mode"><span class="tt-ic"></span><span class="tt-label">Dark</span></button>
+  </div>
+</div>
+
+<header class="page-head">
+  <div class="wrap page-head-inner">
+    <p class="eyebrow">Java track</p>
+    <h1 class="title">Java Version Evolution</h1>
+    <p class="subtitle">The LTS-to-LTS story interviewers actually ask about: <b>8 → 11 → 17 → 21</b>. Start on <b>Timeline</b> to build the map, then take one version per tab. Each tab is the same shape — a memory bucket, what landed, before→after code, and the one-line answer to say out loud.</p>
+  </div>
+</header>
+
+<nav class="tabs" aria-label="Java versions">
+  <div class="tabs-inner" role="tablist">
+    <button class="tab-btn" role="tab" data-tab="timeline" aria-selected="true">Timeline</button>
+    <button class="tab-btn" role="tab" data-tab="j8" aria-selected="false">Java 8</button>
+    <button class="tab-btn" role="tab" data-tab="j11" aria-selected="false">Java 11</button>
+    <button class="tab-btn" role="tab" data-tab="j17" aria-selected="false">Java 17</button>
+    <button class="tab-btn" role="tab" data-tab="j21" aria-selected="false">Java 21</button>
+  </div>
+</nav>
+
+<main><div class="wrap">
+
+  <!-- ============================ TIMELINE ============================ -->
+  <section class="panel active" id="tab-timeline" data-tab="timeline" role="tabpanel">
+    <p class="eyebrow">The map — read this first</p>
+    <h2 class="ph">The LTS line at a glance</h2>
+    <p class="lede">Java ships every 6 months, but companies standardize on the <b>Long-Term Support</b> releases. Those are your four exam topics. Learn the one flagship idea per release first; the details hang off it.</p>
+
+    <div class="tbl-wrap"><table>
+      <thead><tr><th class="m">Version</th><th>Year</th><th>Support</th><th>The one-line headline</th><th>Memory bucket</th></tr></thead>
+      <tbody>
+        <tr><td><span class="ver">Java 8</span></td><td>2014</td><td><span class="lts">LTS</span></td><td><b>Functional Java.</b> Lambdas + Streams changed how everyone writes Java.</td><td class="m">lambdas · streams · Optional · java.time · default methods</td></tr>
+        <tr><td><span class="ver">Java 11</span></td><td>2018</td><td><span class="lts">LTS</span></td><td><b>The modern baseline.</b> First LTS after 8 — where most shops migrated. Cleanup + a real HTTP client.</td><td class="m">var in lambdas · String/Files helpers · HttpClient · run .java</td></tr>
+        <tr><td><span class="ver">Java 17</span></td><td>2021</td><td><span class="lts">LTS</span></td><td><b>The language modernizes.</b> Years of preview features go final — records, sealed, pattern matching.</td><td class="m">records · sealed · pattern instanceof · switch expr · text blocks</td></tr>
+        <tr><td><span class="ver">Java 21</span></td><td>2023</td><td><span class="lts">LTS</span></td><td><b>Concurrency + pattern matching land.</b> Virtual threads make blocking code scale; pattern matching completes.</td><td class="m">virtual threads · pattern switch · record patterns · sequenced collections</td></tr>
+      </tbody>
+    </table></div>
+
+    <div class="call"><span class="ic">→</span><div><b>Why these four?</b> They're the LTS releases — patched for years, so production targets them. The in-between releases (9, 10, 12–16, 18–20) are where features <b>incubate</b> as previews; an LTS is where they become <b>standard</b>. Knowing "which LTS made it final" is the senior-sounding detail.</div></div>
+
+    <h3>The preview → GA lineage (the part that makes it click)</h3>
+    <p>A feature you call "Java 17" usually spent 2–3 releases as a <i>preview</i> first. You don't have to memorize every step, but knowing the shape stops you from mis-dating things in an interview.</p>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>Feature</th><th class="m">Previewed</th><th class="m">Final (GA)</th></tr></thead>
+      <tbody>
+        <tr><td>Switch expressions</td><td class="m">12–13</td><td class="m">14</td></tr>
+        <tr><td>Text blocks</td><td class="m">13–14</td><td class="m">15</td></tr>
+        <tr><td>Records</td><td class="m">14–15</td><td class="m">16 (in 17 LTS)</td></tr>
+        <tr><td>Pattern matching for <code class="inl">instanceof</code></td><td class="m">14–15</td><td class="m">16 (in 17 LTS)</td></tr>
+        <tr><td>Sealed classes</td><td class="m">15–16</td><td class="m">17</td></tr>
+        <tr><td>Pattern matching for <code class="inl">switch</code></td><td class="m">17–20</td><td class="m">21</td></tr>
+        <tr><td>Record patterns</td><td class="m">19–20</td><td class="m">21</td></tr>
+        <tr><td>Virtual threads</td><td class="m">19–20</td><td class="m">21</td></tr>
+      </tbody>
+    </table></div>
+    <div class="call"><span class="ic">★</span><div><b>The framing to repeat:</b> "8 gave us functional programming, 11 was the cleanup LTS everyone migrated to, 17 finalized the modern language features that had been previewing — records, sealed types, pattern matching — and 21 brought virtual threads and completed pattern matching." That one sentence answers most "tell me about recent Java" openers.</div></div>
+  </section>
+
+  <!-- ============================ JAVA 8 ============================ -->
+  <section class="panel" id="tab-j8" data-tab="j8" role="tabpanel">
+    <p class="eyebrow">2014 · LTS · the big one</p>
+    <h2 class="ph">Java 8 — functional Java</h2>
+    <p class="lede">The release that redefined idiomatic Java. If you internalize one version cold, make it this — every later feature assumes you write streams and lambdas fluently.</p>
+
+    <div class="bucket"><span class="bk-label">Memory bucket</span><div class="bk-items">
+      <span>Lambdas</span><span>Streams</span><span>Optional</span><span>java.time</span><span>default methods</span>
+    </div></div>
+
+    <h3>What landed</h3>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th class="m">Feature</th><th>What it does</th><th>Why it matters</th></tr></thead>
+      <tbody>
+        <tr><td class="m">Lambdas</td><td><code class="inl">(a, b) -&gt; a + b</code> — pass behavior as a value.</td><td>Kills anonymous-class boilerplate; the foundation everything else builds on.</td></tr>
+        <tr><td class="m">Functional interfaces</td><td>One abstract method: <code class="inl">Function</code>, <code class="inl">Predicate</code>, <code class="inl">Consumer</code>, <code class="inl">Supplier</code>. <code class="inl">@FunctionalInterface</code> enforces it.</td><td>The <i>types</i> a lambda fits into. Know the four core shapes.</td></tr>
+        <tr><td class="m">Stream API</td><td><code class="inl">filter / map / reduce / collect</code> over collections — lazy, chainable, parallelizable.</td><td>Declarative data processing. The single most-tested Java 8 topic.</td></tr>
+        <tr><td class="m">Method references</td><td><code class="inl">User::getName</code> — shorthand for a lambda that just calls one method.</td><td>Cleaner than <code class="inl">u -&gt; u.getName()</code> when you're not transforming.</td></tr>
+        <tr><td class="m">Optional&lt;T&gt;</td><td>A box that holds a value or nothing — <code class="inl">map / filter / orElseThrow</code>.</td><td>Encodes "might be absent" in the type instead of returning <code class="inl">null</code>.</td></tr>
+        <tr><td class="m">Default methods</td><td>Interfaces can ship method bodies: <code class="inl">default boolean isEmpty(){…}</code>.</td><td>Lets interfaces evolve without breaking implementers (how <code class="inl">Collection.stream()</code> was added).</td></tr>
+        <tr><td class="m">java.time</td><td><code class="inl">LocalDate</code>, <code class="inl">LocalDateTime</code>, <code class="inl">Instant</code>, <code class="inl">Duration</code> — immutable, thread-safe.</td><td>Replaces the broken, mutable <code class="inl">Date</code>/<code class="inl">Calendar</code>. Always reach for <code class="inl">java.time</code>.</td></tr>
+        <tr><td class="m">CompletableFuture</td><td>Composable async pipelines: <code class="inl">thenApply</code>, <code class="inl">thenCompose</code>, <code class="inl">allOf</code>.</td><td>Non-blocking orchestration without callback hell.</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>Anonymous class → lambda</h3>
+    <div class="ba">
+      <div class="code"><div class="cap"><span class="dot"><i></i><span class="ba-tag old">before</span> pre-8</span><button class="copy">copy</button></div>
+        <pre><code class="language-java" data-snippet="j8_lambda_old"></code></pre></div>
+      <div class="code"><div class="cap"><span class="dot"><i></i><span class="ba-tag new">after</span> Java 8</span><button class="copy">copy</button></div>
+        <pre><code class="language-java" data-snippet="j8_lambda_new"></code></pre></div>
+    </div>
+
+    <h3>Imperative loop → stream pipeline</h3>
+    <div class="ba">
+      <div class="code"><div class="cap"><span class="dot"><i></i><span class="ba-tag old">before</span> loop + temp list</span><button class="copy">copy</button></div>
+        <pre><code class="language-java" data-snippet="j8_stream_old"></code></pre></div>
+      <div class="code"><div class="cap"><span class="dot"><i></i><span class="ba-tag new">after</span> stream</span><button class="copy">copy</button></div>
+        <pre><code class="language-java" data-snippet="j8_stream_new"></code></pre></div>
+    </div>
+    <div class="call"><span class="ic">→</span><div><b>Stream mental model:</b> a <b>source</b> (collection) → zero or more <b>intermediate</b> ops (<code>filter</code>, <code>map</code>, lazy) → one <b>terminal</b> op (<code>collect</code>, <code>reduce</code>, <code>forEach</code>) that triggers execution. Nothing runs until the terminal op. <code>Collectors.groupingBy</code> is the one to know — it's SQL <code>GROUP BY</code> for objects.</div></div>
+
+    <div class="mic"><p class="mic-label">🎤 Say it out loud</p><p>"Java 8 made Java functional — lambdas let you pass behavior, the Stream API processes collections declaratively, <code>Optional</code> models absence in the type system, and <code>java.time</code> finally fixed dates. Default methods are the quiet hero: they're how the JDK added <code>stream()</code> to <code>Collection</code> without breaking every implementation."</p></div>
+
+    <div class="call"><span class="ic">i</span><div><b>Pre-8 baseline (assume these too):</b> generics (Java 5), enhanced for-loop &amp; autoboxing (5), try-with-resources &amp; the diamond operator <code>&lt;&gt;</code> (7). Interviewers treat these as table stakes, not "new."</div></div>
+  </section>
+
+  <!-- ============================ JAVA 11 ============================ -->
+  <section class="panel" id="tab-j11" data-tab="j11" role="tabpanel">
+    <p class="eyebrow">2018 · LTS · the migration target</p>
+    <h2 class="ph">Java 11 — the modern baseline</h2>
+    <p class="lede">The first LTS after 8, so it's the version most teams actually upgraded to. Fewer headline language features, more "the platform grew up": a real HTTP client, handy String/File helpers, and a lighter runtime.</p>
+
+    <div class="bucket"><span class="bk-label">Memory bucket</span><div class="bk-items">
+      <span>var in lambdas</span><span>String helpers</span><span>Files.readString</span><span>HttpClient</span><span>run .java directly</span>
+    </div></div>
+
+    <h3>What landed</h3>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th class="m">Feature</th><th>What it does</th><th>Why it matters</th></tr></thead>
+      <tbody>
+        <tr><td class="m">var in lambdas</td><td><code class="inl">(var x, var y) -&gt; x + y</code> — local-variable syntax inside lambda params.</td><td>Lets you put annotations on inferred params. (Local <code class="inl">var</code> itself arrived in Java 10.)</td></tr>
+        <tr><td class="m">String methods</td><td><code class="inl">isBlank()</code>, <code class="inl">strip()</code>, <code class="inl">lines()</code>, <code class="inl">repeat(n)</code>.</td><td>Everyday helpers you used to pull from Apache Commons. <code class="inl">strip()</code> is Unicode-aware, unlike <code class="inl">trim()</code>.</td></tr>
+        <tr><td class="m">Files read/write</td><td><code class="inl">Files.readString(path)</code> / <code class="inl">Files.writeString(path, s)</code>.</td><td>One-liners for whole-file text I/O — no reader/writer boilerplate.</td></tr>
+        <tr><td class="m">HttpClient</td><td>Standard <code class="inl">java.net.http</code> client — sync + async, HTTP/2, WebSocket.</td><td>Replaces clunky <code class="inl">HttpURLConnection</code>; no more reaching for a third-party client for simple calls.</td></tr>
+        <tr><td class="m">Run source directly</td><td><code class="inl">java Hello.java</code> — no separate <code class="inl">javac</code> step.</td><td>Scripting-style quick runs and teaching; single-file programs just work.</td></tr>
+        <tr><td class="m">Collection/Predicate</td><td><code class="inl">Collection.toArray(String[]::new)</code>, <code class="inl">Predicate.not(...)</code>.</td><td>Small ergonomics — <code class="inl">not()</code> reads better than negating inside the lambda.</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>HttpURLConnection → HttpClient</h3>
+    <div class="ba">
+      <div class="code"><div class="cap"><span class="dot"><i></i><span class="ba-tag old">before</span> HttpURLConnection</span><button class="copy">copy</button></div>
+        <pre><code class="language-java" data-snippet="j11_http_old"></code></pre></div>
+      <div class="code"><div class="cap"><span class="dot"><i></i><span class="ba-tag new">after</span> Java 11 HttpClient</span><button class="copy">copy</button></div>
+        <pre><code class="language-java" data-snippet="j11_http_new"></code></pre></div>
+    </div>
+
+    <h3>String &amp; file helpers in practice</h3>
+    <div class="code solo"><div class="cap"><span>the small wins you reach for daily</span><button class="copy">copy</button></div>
+      <pre><code class="language-java" data-snippet="j11_strings"></code></pre></div>
+
+    <div class="mic"><p class="mic-label">🎤 Say it out loud</p><p>"Java 11 was the LTS everyone migrated to after 8. It's lighter on language features but practical: a built-in <code>HttpClient</code> with HTTP/2, String helpers like <code>isBlank</code> and <code>strip</code>, <code>Files.readString</code>, and you can run a <code>.java</code> file without compiling first. The big context is Java 9's module system and the removal of the bundled Java EE modules."</p></div>
+
+    <div class="call"><span class="ic">i</span><div><b>Lineage between 8 and 11:</b> Java 9 added the <b>module system</b> (<code>module-info.java</code>), the <code>jshell</code> REPL, and collection factories (<code>List.of</code>, <code>Map.of</code>); Java 10 added local-variable <code>var</code>. Both are pre-11 but commonly attributed to "modern Java."</div></div>
+  </section>
+
+  <!-- ============================ JAVA 17 ============================ -->
+  <section class="panel" id="tab-j17" data-tab="j17" role="tabpanel">
+    <p class="eyebrow">2021 · LTS · the language modernizes</p>
+    <h2 class="ph">Java 17 — modern language features go final</h2>
+    <p class="lede">The most interview-relevant jump after 8. Features that had been previewing for years all became standard here: records, sealed types, pattern matching for <code class="inl">instanceof</code>, switch expressions, and text blocks.</p>
+
+    <div class="bucket"><span class="bk-label">Memory bucket</span><div class="bk-items">
+      <span>records</span><span>sealed</span><span>pattern instanceof</span><span>switch expressions</span><span>text blocks</span>
+    </div></div>
+
+    <h3>What landed (final in 17, after previews)</h3>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th class="m">Feature</th><th>What it does</th><th>Why it matters</th></tr></thead>
+      <tbody>
+        <tr><td class="m">Records</td><td><code class="inl">record Point(int x, int y){}</code> — immutable data carrier; auto <code class="inl">constructor</code>, accessors, <code class="inl">equals</code>/<code class="inl">hashCode</code>/<code class="inl">toString</code>.</td><td>Kills DTO/value-object boilerplate. The single most-used new feature.</td></tr>
+        <tr><td class="m">Sealed classes</td><td><code class="inl">sealed interface Shape permits Circle, Square</code> — restricts who can extend/implement.</td><td>Closed hierarchies the compiler can reason about → exhaustive switches.</td></tr>
+        <tr><td class="m">Pattern matching <code class="inl">instanceof</code></td><td><code class="inl">if (o instanceof String s)</code> — test and bind in one step.</td><td>Removes the redundant cast after every <code class="inl">instanceof</code> check.</td></tr>
+        <tr><td class="m">Switch expressions</td><td><code class="inl">var r = switch(day){ case MON -&gt; 1; … };</code> — arrow labels, returns a value, <code class="inl">yield</code> for blocks.</td><td>No fall-through bugs, no missing <code class="inl">break</code>, exhaustive on enums.</td></tr>
+        <tr><td class="m">Text blocks</td><td>Triple-quoted multi-line strings: <code class="inl">"""…"""</code>.</td><td>Readable JSON/SQL/HTML literals without <code class="inl">\n</code> and <code class="inl">+</code> soup.</td></tr>
+        <tr><td class="m">Helpful NPEs</td><td>NullPointerException names <i>which</i> variable was null.</td><td>"Cannot invoke … because <code class="inl">order.customer</code> is null" — instant debugging.</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>POJO → record</h3>
+    <div class="ba">
+      <div class="code"><div class="cap"><span class="dot"><i></i><span class="ba-tag old">before</span> hand-written value class</span><button class="copy">copy</button></div>
+        <pre><code class="language-java" data-snippet="j17_record_old"></code></pre></div>
+      <div class="code"><div class="cap"><span class="dot"><i></i><span class="ba-tag new">after</span> record</span><button class="copy">copy</button></div>
+        <pre><code class="language-java" data-snippet="j17_record_new"></code></pre></div>
+    </div>
+
+    <h3>instanceof + cast → pattern matching, and switch expressions</h3>
+    <div class="ba">
+      <div class="code"><div class="cap"><span class="dot"><i></i><span class="ba-tag old">before</span> check, then cast</span><button class="copy">copy</button></div>
+        <pre><code class="language-java" data-snippet="j17_pattern_old"></code></pre></div>
+      <div class="code"><div class="cap"><span class="dot"><i></i><span class="ba-tag new">after</span> bind in the check</span><button class="copy">copy</button></div>
+        <pre><code class="language-java" data-snippet="j17_pattern_new"></code></pre></div>
+    </div>
+
+    <h3>Sealed types + text blocks</h3>
+    <div class="code solo"><div class="cap"><span>a closed hierarchy and a readable literal</span><button class="copy">copy</button></div>
+      <pre><code class="language-java" data-snippet="j17_sealed"></code></pre></div>
+
+    <div class="mic"><p class="mic-label">🎤 Say it out loud</p><p>"Java 17 is where the language modernized — records for immutable data, sealed types for closed hierarchies, pattern matching for <code>instanceof</code>, switch <i>expressions</i>, and text blocks. These had all been previewing since 14–16; 17 made them standard. Together they cut a ton of boilerplate and set up exhaustive pattern matching in 21."</p></div>
+  </section>
+
+  <!-- ============================ JAVA 21 ============================ -->
+  <section class="panel" id="tab-j21" data-tab="j21" role="tabpanel">
+    <p class="eyebrow">2023 · LTS · the current target</p>
+    <h2 class="ph">Java 21 — virtual threads &amp; complete pattern matching</h2>
+    <p class="lede">The newest LTS and today's "modern Java." Two themes: <b>virtual threads</b> make ordinary blocking code scale to millions of tasks, and <b>pattern matching</b> finishes the job started in 17.</p>
+
+    <div class="bucket"><span class="bk-label">Memory bucket</span><div class="bk-items">
+      <span>virtual threads</span><span>pattern matching switch</span><span>record patterns</span><span>sequenced collections</span>
+    </div></div>
+
+    <h3>What landed</h3>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th class="m">Feature</th><th>What it does</th><th>Why it matters</th></tr></thead>
+      <tbody>
+        <tr><td class="m">Virtual threads</td><td>Lightweight threads (Project Loom): <code class="inl">Thread.ofVirtual()</code>, <code class="inl">newVirtualThreadPerTaskExecutor()</code>. Millions are cheap.</td><td>Write simple blocking code; the JVM unmounts a virtual thread from its carrier while it waits. Scales like async without the callback model.</td></tr>
+        <tr><td class="m">Pattern matching <code class="inl">switch</code></td><td><code class="inl">switch(shape){ case Circle c -&gt; …; case Square s -&gt; … }</code> — type patterns + guards (<code class="inl">when</code>).</td><td>With sealed types the switch is <b>exhaustive</b> — the compiler enforces every case. Replaces the visitor pattern.</td></tr>
+        <tr><td class="m">Record patterns</td><td>Destructure in place: <code class="inl">case Point(int x, int y) -&gt; …</code>, nestable.</td><td>Pull fields straight out of records inside a switch/instanceof — no accessor calls.</td></tr>
+        <tr><td class="m">Sequenced collections</td><td><code class="inl">SequencedCollection</code> with <code class="inl">getFirst()</code>, <code class="inl">getLast()</code>, <code class="inl">reversed()</code>.</td><td>A uniform first/last API across <code class="inl">List</code>, <code class="inl">Deque</code>, <code class="inl">LinkedHashSet</code>.</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>Platform threads → virtual threads</h3>
+    <div class="ba">
+      <div class="code"><div class="cap"><span class="dot"><i></i><span class="ba-tag old">before</span> bounded pool</span><button class="copy">copy</button></div>
+        <pre><code class="language-java" data-snippet="j21_vt_old"></code></pre></div>
+      <div class="code"><div class="cap"><span class="dot"><i></i><span class="ba-tag new">after</span> a virtual thread per task</span><button class="copy">copy</button></div>
+        <pre><code class="language-java" data-snippet="j21_vt_new"></code></pre></div>
+    </div>
+    <div class="call"><span class="ic">→</span><div><b>The payoff:</b> a virtual thread costs ~KBs, not ~MBs. While it blocks on I/O the JVM parks it and reuses the OS carrier thread, so a few OS threads run millions of tasks. You keep the simple thread-per-request model and still scale.</div></div>
+
+    <h3>Sealed + record patterns → exhaustive switch</h3>
+    <div class="code solo"><div class="cap"><span>17's sealed records, destructured exhaustively in 21</span><button class="copy">copy</button></div>
+      <pre><code class="language-java" data-snippet="j21_switch"></code></pre></div>
+
+    <div class="mic"><p class="mic-label">🎤 Say it out loud</p><p>"Java 21's headline is virtual threads — you write plain blocking code and it scales to millions of concurrent tasks because the JVM unmounts a virtual thread while it waits on I/O. It also completes pattern matching: pattern matching for <code>switch</code> plus record patterns, which combined with 17's sealed types give you compiler-checked exhaustive matching. Sequenced collections round it out with a uniform <code>getFirst</code>/<code>getLast</code>."</p></div>
+
+    <div class="call"><span class="ic">i</span><div><b>Still preview in 21 (don't claim as final):</b> string templates, structured concurrency, and scoped values were <i>preview</i> features in 21 — name them as "coming," not done.</div></div>
+  </section>
+
+</div></main>
+
+<footer class="app-foot">
+  <div class="wrap">
+    Java 8 / 11 / 17 / 21 (LTS line) · features mapped to the release where they became standard, with preview lineage noted — verify exact version behavior against your target JDK before quoting it as fact.
+  </div>
+</footer>
+
+<script>
+const CODE = {
+j8_lambda_old:
+`// pass behavior with an anonymous class
+Collections.sort(names, new Comparator<String>() {
+    @Override public int compare(String a, String b) {
+        return a.compareTo(b);
+    }
+});
+
+Runnable r = new Runnable() {
+    @Override public void run() { System.out.println("hi"); }
+};`,
+j8_lambda_new:
+`// the lambda is the behavior
+Collections.sort(names, (a, b) -> a.compareTo(b));
+// or a method reference
+names.sort(Comparator.naturalOrder());
+
+Runnable r = () -> System.out.println("hi");`,
+j8_stream_old:
+`List<String> result = new ArrayList<>();
+for (User u : users) {
+    if (u.isActive()) {
+        result.add(u.getName().toUpperCase());
+    }
+}
+Collections.sort(result);`,
+j8_stream_new:
+`List<String> result = users.stream()
+    .filter(User::isActive)
+    .map(u -> u.getName().toUpperCase())
+    .sorted()
+    .collect(Collectors.toList());
+
+// group objects like SQL GROUP BY
+Map<Dept, List<User>> byDept = users.stream()
+    .collect(Collectors.groupingBy(User::getDept));`,
+j11_http_old:
+`URL url = new URL("https://api.example.com/users/1");
+HttpURLConnection con = (HttpURLConnection) url.openConnection();
+con.setRequestMethod("GET");
+try (BufferedReader in = new BufferedReader(
+         new InputStreamReader(con.getInputStream()))) {
+    StringBuilder sb = new StringBuilder();
+    String line;
+    while ((line = in.readLine()) != null) sb.append(line);
+    System.out.println(sb);
+}`,
+j11_http_new:
+`HttpClient client = HttpClient.newHttpClient();
+HttpRequest req = HttpRequest.newBuilder()
+    .uri(URI.create("https://api.example.com/users/1"))
+    .GET()
+    .build();
+
+HttpResponse<String> res =
+    client.send(req, HttpResponse.BodyHandlers.ofString());
+System.out.println(res.statusCode() + " " + res.body());`,
+j11_strings:
+`"  hi  ".strip();          // "hi"  (Unicode-aware, unlike trim())
+"   ".isBlank();           // true
+"=".repeat(20);            // "===================="
+"a\\nb\\nc".lines().count(); // 3  (stream of lines)
+
+// whole-file text I/O in one call each
+String cfg = Files.readString(Path.of("app.conf"));
+Files.writeString(Path.of("out.txt"), "done");
+
+users.stream().filter(Predicate.not(User::isActive)); // reads better`,
+j17_record_old:
+`public final class Point {
+    private final int x;
+    private final int y;
+    public Point(int x, int y) { this.x = x; this.y = y; }
+    public int x() { return x; }
+    public int y() { return y; }
+    @Override public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Point p)) return false;
+        return x == p.x && y == p.y;
+    }
+    @Override public int hashCode() { return Objects.hash(x, y); }
+    @Override public String toString() {
+        return "Point[x=" + x + ", y=" + y + "]";
+    }
+}`,
+j17_record_new:
+`public record Point(int x, int y) {}
+
+// constructor, x()/y() accessors, equals, hashCode,
+// toString — all generated. Add a compact constructor
+// only when you need validation:
+public record Point(int x, int y) {
+    public Point {
+        if (x < 0 || y < 0)
+            throw new IllegalArgumentException("negative");
+    }
+}`,
+j17_pattern_old:
+`Object o = fetch();
+if (o instanceof String) {
+    String s = (String) o;        // redundant cast
+    System.out.println(s.length());
+}
+
+// old switch statement: break-prone, no value
+String label;
+switch (day) {
+    case MONDAY:
+    case TUESDAY:
+        label = "early"; break;
+    default:
+        label = "later";
+}`,
+j17_pattern_new:
+`Object o = fetch();
+if (o instanceof String s) {       // test + bind
+    System.out.println(s.length());
+}
+
+// switch expression: returns a value, no fall-through
+String label = switch (day) {
+    case MONDAY, TUESDAY -> "early";
+    default              -> "later";
+};`,
+j17_sealed:
+`// only these types may implement Shape
+public sealed interface Shape permits Circle, Square {}
+public record Circle(double r) implements Shape {}
+public record Square(double side) implements Shape {}
+
+// text block: no \\n, no + concatenation
+String json = """
+    {
+      "id": 1,
+      "name": "Ada"
+    }
+    """;`,
+j21_vt_old:
+`// bounded OS-thread pool — blocking tasks queue up
+ExecutorService pool = Executors.newFixedThreadPool(200);
+for (int i = 0; i < 10_000; i++) {
+    pool.submit(() -> {
+        var body = callSlowService();   // blocks an OS thread
+        save(body);
+    });
+}`,
+j21_vt_new:
+`// one virtual thread per task — millions are fine
+try (var exec = Executors.newVirtualThreadPerTaskExecutor()) {
+    for (int i = 0; i < 1_000_000; i++) {
+        exec.submit(() -> {
+            var body = callSlowService(); // parks, frees carrier
+            save(body);
+        });
+    }
+} // close() waits for all tasks`,
+j21_switch:
+`sealed interface Shape permits Circle, Rectangle {}
+record Circle(double r) implements Shape {}
+record Rectangle(double w, double h) implements Shape {}
+
+double area(Shape s) {
+    return switch (s) {                 // exhaustive: no default needed
+        case Circle(double r)        -> Math.PI * r * r;
+        case Rectangle(double w, double h) -> w * h;   // record pattern
+    };
+}
+
+// sequenced collections: uniform first/last
+List<Integer> nums = new ArrayList<>(List.of(1, 2, 3));
+nums.getFirst();   // 1
+nums.getLast();    // 3
+nums.reversed();   // [3, 2, 1]`
+};
+</script>
+<script src="assets/app.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script>
+(function(){
+  // inject raw snippets before highlight (shared boot highlights on DOMContentLoaded)
+  PrepUI.injectCode(CODE);
+
+  // legacy caption-bar copy buttons
+  document.querySelectorAll('.code .copy').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var code = btn.closest('.code').querySelector('code');
+      navigator.clipboard.writeText(code.textContent).then(function(){
+        var o=btn.textContent; btn.textContent='copied'; btn.classList.add('ok');
+        setTimeout(function(){ btn.textContent=o; btn.classList.remove('ok'); },1400);
+      }).catch(function(){});
+    });
+  });
+})();
+</script>
+</body>
+</html>

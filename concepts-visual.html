@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="en" data-track="concepts">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Core Concepts — Infographic · Interview Prep Suite</title>
+<script>(function(){try{var t=localStorage.getItem('prep:theme');if(t!=='dark'&&t!=='light')t=matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/app.css">
+<style>
+  .page-head-inner{padding:26px 0 22px}
+
+  /* jump nav */
+  .jump{position:sticky; top:49px; z-index:30; background:var(--nav-bg); backdrop-filter:blur(8px); border-bottom:1px solid var(--line)}
+  .jump-inner{display:flex; gap:6px; overflow-x:auto; padding:9px 20px; max-width:1180px; margin:0 auto}
+  .jump a{font-family:var(--mono); font-size:12px; font-weight:600; color:var(--ink-soft); text-decoration:none;
+    padding:6px 12px; border-radius:100px; white-space:nowrap; border:1px solid transparent; transition:.15s}
+  .jump a:hover{color:var(--ink); background:var(--surface)}
+
+  /* section scaffold */
+  .viz-sec{padding:30px 0; border-bottom:1px solid var(--line); scroll-margin-top:104px}
+  .viz-sec:last-of-type{border-bottom:0}
+  .viz-h{display:flex; align-items:center; gap:12px; margin:0 0 6px}
+  .viz-num{font-family:var(--mono); font-size:.82rem; font-weight:700; color:var(--on-accent); background:var(--accent);
+    width:28px; height:28px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; flex:none}
+  .viz-h h2{font-family:var(--display); font-size:1.32rem; margin:0; font-weight:700; letter-spacing:-.01em}
+  .viz-cap{color:var(--ink-soft); font-size:.93rem; margin:0 0 20px; max-width:76ch}
+  .viz-cap b{color:var(--ink)}
+  .diagram{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:22px}
+  .takeaway{margin-top:14px; font-size:.88rem; color:var(--ink-soft); border-left:3px solid var(--accent); padding:2px 0 2px 13px}
+  .takeaway b{color:var(--ink)}
+  code.inl{font-family:var(--mono); font-size:.84em; background:var(--code-inline-bg); border:1px solid var(--line); border-radius:5px; padding:1.5px 6px; color:var(--accent-ink)}
+
+  /* shared svg styling */
+  .svgviz{width:100%; height:auto; display:block; max-width:780px; margin:0 auto}
+  .svgviz text{font-family:var(--sans); fill:var(--ink)}
+  .svgviz .mono{font-family:var(--mono)}
+  .svgviz .dim{fill:var(--ink-soft)}
+  .svgviz .faint{fill:var(--ink-faint)}
+  .svgviz .acc{fill:var(--accent)}
+
+  .legend{display:flex; gap:20px; flex-wrap:wrap; font-family:var(--mono); font-size:.74rem; color:var(--ink-soft); margin-top:16px; justify-content:center}
+  .legend span{display:inline-flex; align-items:center; gap:8px}
+  .lg-solid::before{content:""; width:28px; border-top:2.5px solid var(--ink-faint)}
+  .lg-dash::before{content:""; width:28px; border-top:2.5px dashed var(--ink-faint)}
+
+  /* SOLID pillars */
+  .pillars{display:grid; grid-template-columns:repeat(5,1fr); gap:12px}
+  @media(max-width:700px){.pillars{grid-template-columns:repeat(2,1fr)}}
+  .pillar{border:1px solid var(--line); border-top:4px solid var(--accent); border-radius:0 0 11px 11px;
+    padding:15px 12px; background:var(--surface-2); text-align:center; display:flex; flex-direction:column; gap:5px}
+  .pillar .L{font-family:var(--display); font-weight:700; font-size:2.1rem; color:var(--accent); line-height:1}
+  .pillar .ic{font-size:1.25rem; line-height:1}
+  .pillar .pn{font-weight:600; font-size:.82rem}
+  .pillar .pd{font-size:.74rem; color:var(--ink-soft); line-height:1.45}
+  .pillars-foot{text-align:center; margin-top:16px; font-family:var(--mono); font-size:.8rem; color:var(--accent)}
+
+  /* compare panels (OCP, IoC) */
+  .cmp2{display:grid; gap:14px}
+  @media(min-width:780px){.cmp2{grid-template-columns:1fr 1fr}}
+  .panelbox{border:1px solid var(--line); border-radius:var(--radius); padding:16px 17px; background:var(--surface-2)}
+  .panelbox.bad{border-color:color-mix(in srgb,var(--hard) 45%,var(--line))}
+  .panelbox.good{border-color:color-mix(in srgb,var(--easy) 48%,var(--line))}
+  .panelbox .tag{font-family:var(--mono); font-size:.64rem; letter-spacing:.09em; text-transform:uppercase; font-weight:700; display:block; margin-bottom:5px}
+  .bad .tag{color:var(--hard)} .good .tag{color:var(--easy)}
+  .panelbox h4{margin:0 0 8px; font-family:var(--display); font-size:1rem}
+  .panelbox p{margin:0; font-size:.84rem; color:var(--ink-soft)}
+  .chiprow{display:flex; flex-wrap:wrap; gap:8px; margin-top:11px; align-items:center}
+  .vchip{font-family:var(--mono); font-size:.76rem; padding:6px 10px; border-radius:8px; border:1px solid var(--line-strong); background:var(--surface)}
+  .vchip.iface{border-style:dashed; border-color:var(--accent); color:var(--accent-ink); font-weight:600; background:var(--accent-wash)}
+  .vchip.new{border-color:var(--accent); background:var(--accent-wash); color:var(--accent-ink); font-weight:600}
+  .vchip.red{border-color:color-mix(in srgb,var(--hard) 50%,var(--line)); background:var(--hard-wash); color:var(--hard)}
+  .arrow-in{font-family:var(--mono); color:var(--ink-faint); font-size:.9rem}
+
+  /* SQL clause order */
+  .sqlrow{margin:14px 0}
+  .sqlrow .rl{font-family:var(--mono); font-size:.68rem; letter-spacing:.07em; text-transform:uppercase; color:var(--ink-faint); margin-bottom:7px}
+  .clausepills{display:flex; flex-wrap:wrap; gap:8px; align-items:stretch}
+  .cl{font-family:var(--mono); font-size:.8rem; padding:7px 11px; border-radius:8px; border:1px solid var(--line-strong);
+    background:var(--surface-2); display:flex; flex-direction:column; gap:2px; min-width:84px}
+  .cl .step{color:var(--accent); font-size:.62rem; font-weight:700}
+  .cl.hot{border-color:var(--accent); background:var(--accent-wash); color:var(--accent-ink)}
+  .sql-note{font-size:.85rem; color:var(--ink-soft); margin-top:12px}
+
+  /* bean timeline */
+  .timeline{position:relative; padding-left:32px; margin:4px 0 0}
+  .timeline::before{content:""; position:absolute; left:10px; top:8px; bottom:14px; width:2px; background:var(--line-strong)}
+  .tstep{position:relative; margin:0 0 16px}
+  .tstep .dotn{position:absolute; left:-32px; top:-1px; width:22px; height:22px; border-radius:50%; background:var(--accent);
+    color:var(--on-accent); font-family:var(--mono); font-size:.66rem; font-weight:700; display:flex; align-items:center; justify-content:center}
+  .tstep.destroy .dotn{background:var(--hard)}
+  .tstep .th{font-family:var(--display); font-weight:600; font-size:.95rem}
+  .tstep .td{font-size:.82rem; color:var(--ink-soft)}
+  .hooks{display:flex; flex-wrap:wrap; gap:6px; margin-top:7px}
+  .hk{font-family:var(--mono); font-size:.72rem; padding:3px 9px; border-radius:6px; background:var(--accent-wash); color:var(--accent-ink); border:1px solid var(--accent-line)}
+  .hk .o{color:var(--ink-faint); font-weight:700}
+  .hk.red{background:var(--hard-wash); color:var(--hard); border-color:color-mix(in srgb,var(--hard) 40%,var(--line))}
+  .ready{font-family:var(--mono); font-size:.72rem; letter-spacing:.1em; text-transform:uppercase; color:var(--easy);
+    border-top:1px dashed color-mix(in srgb,var(--easy) 55%,var(--line)); border-bottom:1px dashed color-mix(in srgb,var(--easy) 55%,var(--line));
+    padding:7px 0; margin:2px 0 16px; text-align:center}
+</style>
+</head>
+<body>
+
+<div class="app-topbar">
+  <div class="app-topbar-inner">
+    <a class="app-brand" href="index.html"><span class="dot"></span>Interview Prep Suite</a>
+    <span class="app-crumb">Core concepts · infographic</span>
+    <span class="app-spacer"></span>
+    <a class="app-back" href="concepts.html">📖 Study page</a>
+    <a class="app-back" href="index.html">← Hub</a>
+    <button class="theme-toggle" type="button" aria-label="Toggle dark mode"><span class="tt-ic"></span><span class="tt-label">Dark</span></button>
+  </div>
+</div>
+
+<header class="page-head">
+  <div class="wrap page-head-inner">
+    <p class="eyebrow">Concepts track · visualize</p>
+    <h1 class="title">See it, then say it.</h1>
+    <p class="subtitle">One picture per concept — the visual anchor that makes the answer stick. Read the full explanations on the <a class="link" href="concepts.html">study page</a>, then come here to lock in the mental image.</p>
+  </div>
+</header>
+
+<nav class="jump" aria-label="Jump to diagram">
+  <div class="jump-inner">
+    <a href="#solid">1 · SOLID</a>
+    <a href="#ocp">2 · Open/Closed</a>
+    <a href="#micro">3 · Microservices</a>
+    <a href="#hash">4 · HashMap</a>
+    <a href="#sql">5 · SQL order</a>
+    <a href="#bean">6 · Bean lifecycle</a>
+    <a href="#ioc">7 · IoC</a>
+  </div>
+</nav>
+
+<main><div class="wrap">
+
+  <!-- ===================== 1 · SOLID ===================== -->
+  <section class="viz-sec" id="solid">
+    <div class="viz-h"><span class="viz-num">1</span><h2>The five SOLID principles</h2></div>
+    <p class="viz-cap">Five pillars holding up changeable OO code. Read the column letters top-to-bottom: <b>S-O-L-I-D</b>.</p>
+    <div class="diagram">
+      <div class="pillars">
+        <div class="pillar"><span class="L">S</span><span class="ic">🎯</span><span class="pn">Single Responsibility</span><span class="pd">One class, one reason to change.</span></div>
+        <div class="pillar"><span class="L">O</span><span class="ic">🔌</span><span class="pn">Open / Closed</span><span class="pd">Extend by adding, not editing.</span></div>
+        <div class="pillar"><span class="L">L</span><span class="ic">🔄</span><span class="pn">Liskov Substitution</span><span class="pd">Subtypes swap in safely.</span></div>
+        <div class="pillar"><span class="L">I</span><span class="ic">✂️</span><span class="pn">Interface Segregation</span><span class="pd">Small interfaces, no dead methods.</span></div>
+        <div class="pillar"><span class="L">D</span><span class="ic">🔻</span><span class="pn">Dependency Inversion</span><span class="pd">Depend on abstractions.</span></div>
+      </div>
+      <div class="pillars-foot">↓ &nbsp; all five serve one goal: &nbsp; <b>loose coupling — change one thing without breaking five</b></div>
+    </div>
+    <p class="takeaway"><b>Hook:</b> the word <i>SOLID</i> is the mnemonic. Each pillar removes a different reason that a change would ripple outward.</p>
+  </section>
+
+  <!-- ===================== 2 · OCP ===================== -->
+  <section class="viz-sec" id="ocp">
+    <div class="viz-h"><span class="viz-num">2</span><h2>Open/Closed — modify vs extend</h2></div>
+    <p class="viz-cap">The same feature, two ways. On the left you <b>reopen</b> tested code for every new case; on the right you <b>plug in</b> a new class and never touch the old code.</p>
+    <div class="diagram">
+      <div class="cmp2">
+        <div class="panelbox bad">
+          <span class="tag">✗ closed mindset — modify</span>
+          <h4>One method, edited forever</h4>
+          <p>A growing <code class="inl">switch</code> on shape type. Each new shape <b>reopens</b> this method and risks the cases that already passed.</p>
+          <div class="chiprow">
+            <span class="vchip red">switch(shape)</span>
+            <span class="vchip">case Circle</span>
+            <span class="vchip">case Square</span>
+            <span class="vchip red">+ case Triangle ✎ edit!</span>
+          </div>
+        </div>
+        <div class="panelbox good">
+          <span class="tag">✓ open for extension</span>
+          <h4>One interface, many plug-ins</h4>
+          <p>Each shape owns its <code class="inl">area()</code>. A new shape is a <b>new file</b>; the calculator stays closed.</p>
+          <div class="chiprow">
+            <span class="vchip iface">interface Shape</span>
+          </div>
+          <div class="chiprow">
+            <span class="arrow-in">↳ implements</span>
+            <span class="vchip">Circle</span>
+            <span class="vchip">Square</span>
+            <span class="vchip new">Triangle ✨ just added</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="takeaway"><b>Picture a power strip:</b> you extend it by plugging in new devices — you never rewire the strip itself.</p>
+  </section>
+
+  <!-- ===================== 3 · MICROSERVICES ===================== -->
+  <section class="viz-sec" id="micro">
+    <div class="viz-h"><span class="viz-num">3</span><h2>How microservices communicate</h2></div>
+    <p class="viz-cap"><b>Solid arrows = synchronous</b> (request → wait → response, over REST/gRPC). <b>Dashed arrows = asynchronous</b> (publish an event to a broker; subscribers react on their own time).</p>
+    <div class="diagram">
+      <svg class="svgviz" viewBox="0 0 760 430" role="img" aria-label="Microservices communication diagram: a client calls an API gateway which routes to the Order Service; the Order Service calls the Inventory Service synchronously and publishes events to a Kafka topic that the Email and Payment services subscribe to.">
+        <defs>
+          <marker id="ah" markerWidth="9" markerHeight="9" refX="7.5" refY="3.2" orient="auto">
+            <path d="M0,0 L8,3.2 L0,6.4 Z" fill="var(--ink-faint)"/>
+          </marker>
+        </defs>
+        <!-- nodes -->
+        <g>
+          <rect x="30"  y="30"  width="130" height="46" rx="9" fill="var(--surface-2)" stroke="var(--line-strong)"/>
+          <text x="95"  y="58"  text-anchor="middle" font-size="14">Client</text>
+
+          <rect x="290" y="30"  width="160" height="46" rx="9" fill="var(--accent-wash)" stroke="var(--accent)"/>
+          <text x="370" y="58"  text-anchor="middle" font-size="14" font-weight="600">API Gateway</text>
+
+          <rect x="290" y="150" width="170" height="56" rx="9" fill="var(--surface-2)" stroke="var(--line-strong)"/>
+          <text x="375" y="174" text-anchor="middle" font-size="14" font-weight="600">Order Service</text>
+          <text x="375" y="192" text-anchor="middle" font-size="11" class="dim">producer</text>
+
+          <rect x="520" y="150" width="160" height="56" rx="9" fill="var(--surface-2)" stroke="var(--line-strong)"/>
+          <text x="600" y="174" text-anchor="middle" font-size="14" font-weight="600">Inventory</text>
+          <text x="600" y="192" text-anchor="middle" font-size="11" class="dim">Service</text>
+
+          <rect x="120" y="282" width="560" height="46" rx="9" fill="var(--accent-wash)" stroke="var(--accent)" stroke-dasharray="2 3"/>
+          <text x="400" y="305" text-anchor="middle" font-size="13" font-weight="600" class="mono">message broker — Kafka topic: "orders"</text>
+          <text x="400" y="320" text-anchor="middle" font-size="10.5" class="dim">decouples producer from consumers in time</text>
+
+          <rect x="140" y="366" width="170" height="46" rx="9" fill="var(--surface-2)" stroke="var(--line-strong)"/>
+          <text x="225" y="394" text-anchor="middle" font-size="13.5">Email Service</text>
+
+          <rect x="470" y="366" width="170" height="46" rx="9" fill="var(--surface-2)" stroke="var(--line-strong)"/>
+          <text x="555" y="394" text-anchor="middle" font-size="13.5">Payment Service</text>
+        </g>
+        <!-- SYNC edges (solid) -->
+        <g stroke="var(--ink-faint)" stroke-width="2" fill="none" marker-end="url(#ah)">
+          <line x1="160" y1="53"  x2="284" y2="53"/>
+          <line x1="370" y1="76"  x2="375" y2="144"/>
+          <line x1="460" y1="178" x2="514" y2="178"/>
+        </g>
+        <text x="222" y="44"  text-anchor="middle" font-size="11" class="mono dim">HTTP</text>
+        <text x="404" y="116" text-anchor="middle" font-size="11" class="mono dim">route</text>
+        <text x="487" y="168" text-anchor="middle" font-size="11" class="mono dim">REST / gRPC</text>
+        <text x="487" y="208" text-anchor="middle" font-size="10.5" class="acc mono">⚡ circuit breaker</text>
+        <!-- ASYNC edges (dashed) -->
+        <g stroke="var(--accent)" stroke-width="2" fill="none" stroke-dasharray="5 4" marker-end="url(#ah)">
+          <line x1="340" y1="206" x2="340" y2="278"/>
+          <line x1="225" y1="328" x2="225" y2="362"/>
+          <line x1="555" y1="328" x2="555" y2="362"/>
+        </g>
+        <text x="305" y="248" text-anchor="end" font-size="11" class="acc mono">publish</text>
+        <text x="240" y="348" text-anchor="start" font-size="11" class="acc mono">subscribe</text>
+        <text x="570" y="348" text-anchor="start" font-size="11" class="acc mono">subscribe</text>
+      </svg>
+      <div class="legend">
+        <span class="lg-solid">synchronous — REST / gRPC (caller waits)</span>
+        <span class="lg-dash">asynchronous — event via broker (fire &amp; forget)</span>
+      </div>
+    </div>
+    <p class="takeaway"><b>Phone call vs text message:</b> sync = both on the line now; async = send it and move on. Wrap both with a gateway, service discovery, and a circuit breaker.</p>
+  </section>
+
+  <!-- ===================== 4 · HASHMAP ===================== -->
+  <section class="viz-sec" id="hash">
+    <div class="viz-h"><span class="viz-num">4</span><h2>A HashMap collision</h2></div>
+    <p class="viz-cap">Two distinct keys compute the <b>same bucket index</b>. Java keeps both: it <b>chains</b> them in a list, and once a bucket grows past 8 it upgrades that bucket to a <b>red-black tree</b>.</p>
+    <div class="diagram">
+      <svg class="svgviz" viewBox="0 0 760 430" role="img" aria-label="HashMap bucket array: keys FB and Ea both hash to 2236 and share one bucket, stored as a linked list; another bucket with many entries is shown converted to a red-black tree.">
+        <defs>
+          <marker id="ah2" markerWidth="9" markerHeight="9" refX="7.5" refY="3.2" orient="auto">
+            <path d="M0,0 L8,3.2 L0,6.4 Z" fill="var(--ink-faint)"/>
+          </marker>
+        </defs>
+        <!-- formula -->
+        <rect x="30" y="18" width="700" height="44" rx="8" fill="var(--accent-wash)" stroke="var(--accent)"/>
+        <text x="380" y="45" text-anchor="middle" font-size="13.5" class="mono" fill="var(--accent-ink)">index = (capacity − 1) &amp; hash(key)&#160;&#160;&#160;·&#160;&#160;&#160;same index ⇒ collision</text>
+
+        <text x="40" y="90" font-size="11.5" class="mono dim">buckets[]</text>
+
+        <!-- bucket cells -->
+        <g font-size="12" class="mono">
+          <!-- b0 empty -->
+          <text x="32" y="124" class="faint">0</text>
+          <rect x="44" y="102" width="66" height="40" rx="6" fill="var(--surface-2)" stroke="var(--line-strong)"/>
+          <text x="77" y="127" text-anchor="middle" class="faint">∅</text>
+          <!-- b1 single -->
+          <text x="32" y="174" class="faint">1</text>
+          <rect x="44" y="152" width="66" height="40" rx="6" fill="var(--surface-2)" stroke="var(--line-strong)"/>
+          <text x="77" y="177" text-anchor="middle" class="dim">"x"→9</text>
+          <!-- b2 COLLISION -->
+          <text x="32" y="224" class="acc">2</text>
+          <rect x="44" y="202" width="66" height="40" rx="6" fill="var(--accent-wash)" stroke="var(--accent)" stroke-width="2"/>
+          <text x="77" y="227" text-anchor="middle" fill="var(--accent-ink)">●─►</text>
+          <!-- b3 empty -->
+          <text x="32" y="274" class="faint">3</text>
+          <rect x="44" y="252" width="66" height="40" rx="6" fill="var(--surface-2)" stroke="var(--line-strong)"/>
+          <text x="77" y="277" text-anchor="middle" class="faint">∅</text>
+          <!-- b4 TREE -->
+          <text x="32" y="334" class="acc">4</text>
+          <rect x="44" y="312" width="66" height="40" rx="6" fill="var(--accent-wash)" stroke="var(--accent)" stroke-width="2"/>
+          <text x="77" y="337" text-anchor="middle" fill="var(--accent-ink)">●</text>
+        </g>
+
+        <!-- collision chain (b2) -->
+        <text x="300" y="194" text-anchor="middle" font-size="11.5" class="dim">collision → linked list (chaining)</text>
+        <g stroke="var(--ink-faint)" stroke-width="2" fill="none" marker-end="url(#ah2)">
+          <line x1="110" y1="222" x2="166" y2="222"/>
+          <line x1="262" y1="222" x2="288" y2="222"/>
+        </g>
+        <rect x="168" y="202" width="94" height="40" rx="7" fill="var(--surface)" stroke="var(--line-strong)"/>
+        <text x="215" y="220" text-anchor="middle" font-size="12.5" class="mono" font-weight="600">"FB" → 1</text>
+        <text x="215" y="234" text-anchor="middle" font-size="9.5" class="faint mono">hash 2236</text>
+        <rect x="290" y="202" width="94" height="40" rx="7" fill="var(--surface)" stroke="var(--line-strong)"/>
+        <text x="337" y="220" text-anchor="middle" font-size="12.5" class="mono" font-weight="600">"Ea" → 2</text>
+        <text x="337" y="234" text-anchor="middle" font-size="9.5" class="faint mono">hash 2236</text>
+        <text x="470" y="220" text-anchor="start" font-size="11" class="dim">get() finds bucket, then</text>
+        <text x="470" y="235" text-anchor="start" font-size="11" class="dim">equals() walks the chain.</text>
+
+        <!-- treeified (b4) -->
+        <text x="320" y="300" text-anchor="middle" font-size="11.5" class="dim">bucket grows past 8 → red-black tree, O(log n)</text>
+        <g stroke="var(--accent)" stroke-width="1.8" fill="none">
+          <line x1="110" y1="332" x2="196" y2="332"/>
+          <line x1="232" y1="345" x2="205" y2="372"/>
+          <line x1="232" y1="345" x2="285" y2="372"/>
+        </g>
+        <circle cx="232" cy="332" r="16" fill="var(--accent-wash)" stroke="var(--accent)"/>
+        <text x="232" y="336" text-anchor="middle" font-size="10.5" class="mono" fill="var(--accent-ink)">node</text>
+        <circle cx="195" cy="384" r="15" fill="var(--surface)" stroke="var(--line-strong)"/>
+        <text x="195" y="388" text-anchor="middle" font-size="9.5" class="mono dim">&lt;</text>
+        <circle cx="289" cy="384" r="15" fill="var(--surface)" stroke="var(--line-strong)"/>
+        <text x="289" y="388" text-anchor="middle" font-size="9.5" class="mono dim">&gt;</text>
+
+        <text x="470" y="332" text-anchor="start" font-size="11" class="dim">≥ 8 nodes &amp; table ≥ 64</text>
+        <text x="470" y="347" text-anchor="start" font-size="11" class="dim">treeify · &lt; 6 reverts to list</text>
+
+        <text x="380" y="416" text-anchor="middle" font-size="10.5" class="faint mono">load factor 0.75 → table doubles &amp; rehashes, keeping chains short</text>
+      </svg>
+    </div>
+    <p class="takeaway"><b>Hook:</b> "8 turns a list into a tree." Collisions are normal; a good <code class="inl">hashCode()</code> + the 0.75 resize keep them rare, so lookups stay ~O(1).</p>
+  </section>
+
+  <!-- ===================== 5 · SQL ===================== -->
+  <section class="viz-sec" id="sql">
+    <div class="viz-h"><span class="viz-num">5</span><h2>SQL — written order vs execution order</h2></div>
+    <p class="viz-cap">You <b>write</b> <code class="inl">SELECT</code> first, but the engine <b>runs</b> it almost last. This single mismatch explains every "why can't I use that alias / aggregate here" gotcha.</p>
+    <div class="diagram">
+      <div class="sqlrow">
+        <div class="rl">How you write it</div>
+        <div class="clausepills">
+          <span class="cl hot">SELECT</span>
+          <span class="cl">FROM</span>
+          <span class="cl">WHERE</span>
+          <span class="cl">GROUP BY</span>
+          <span class="cl">HAVING</span>
+          <span class="cl">ORDER BY</span>
+        </div>
+      </div>
+      <div class="sqlrow">
+        <div class="rl">How the engine runs it</div>
+        <div class="clausepills">
+          <span class="cl"><span class="step">1</span>FROM / JOIN</span>
+          <span class="cl"><span class="step">2</span>WHERE</span>
+          <span class="cl"><span class="step">3</span>GROUP BY</span>
+          <span class="cl"><span class="step">4</span>HAVING</span>
+          <span class="cl hot"><span class="step">5</span>SELECT</span>
+          <span class="cl"><span class="step">6</span>ORDER BY</span>
+        </div>
+      </div>
+      <p class="sql-note"><b>Consequences:</b> <code class="inl">WHERE</code> runs <em>before</em> grouping → it can't see aggregates (use <code class="inl">HAVING</code>). <code class="inl">SELECT</code> runs at step 5 → a column alias isn't visible to <code class="inl">WHERE</code>/<code class="inl">GROUP BY</code>, but <b>is</b> visible to <code class="inl">ORDER BY</code> (step 6).</p>
+    </div>
+    <p class="takeaway"><b>Mnemonic:</b> "<b>F</b>rom <b>W</b>here <b>G</b>roups <b>H</b>ave <b>S</b>elected <b>O</b>rder." The query on tab 5 of the study page rides exactly this pipeline.</p>
+  </section>
+
+  <!-- ===================== 6 · BEAN LIFECYCLE ===================== -->
+  <section class="viz-sec" id="bean">
+    <div class="viz-h"><span class="viz-num">6</span><h2>Spring bean lifecycle</h2></div>
+    <p class="viz-cap">From <code class="inl">new</code> to garbage. The container drives every step; you only plug into the <b>init</b> and <b>destroy</b> hooks (shown as pills).</p>
+    <div class="diagram">
+      <div class="timeline">
+        <div class="tstep"><span class="dotn">1</span><div class="th">Instantiate</div><div class="td">Constructor runs — constructor injection supplies dependencies here.</div></div>
+        <div class="tstep"><span class="dotn">2</span><div class="th">Populate properties</div><div class="td">Remaining dependencies injected (setter / field <code class="inl">@Autowired</code>).</div></div>
+        <div class="tstep"><span class="dotn">3</span><div class="th">Aware callbacks</div><div class="td">Bean learns its context: <code class="inl">setBeanName</code>, <code class="inl">setBeanFactory</code>, <code class="inl">setApplicationContext</code>.</div></div>
+        <div class="tstep"><span class="dotn">4</span><div class="th">BeanPostProcessor — before init</div><div class="td"><code class="inl">postProcessBeforeInitialization()</code> runs for every bean.</div></div>
+        <div class="tstep"><span class="dotn">5</span><div class="th">Initialize</div><div class="td">Your startup work, in this order:</div>
+          <div class="hooks"><span class="hk">@PostConstruct</span><span class="hk"><span class="o">→</span> afterPropertiesSet()</span><span class="hk"><span class="o">→</span> initMethod</span></div></div>
+        <div class="tstep"><span class="dotn">6</span><div class="th">BeanPostProcessor — after init</div><div class="td"><code class="inl">postProcessAfterInitialization()</code> — <b>Spring wraps the bean in an AOP proxy here</b> (e.g. <code class="inl">@Transactional</code>).</div></div>
+        <div class="ready">● bean is ready &amp; in use ●</div>
+        <div class="tstep destroy"><span class="dotn">7</span><div class="th">Destroy (on context shutdown)</div><div class="td">Release resources, in this order:</div>
+          <div class="hooks"><span class="hk red">@PreDestroy</span><span class="hk red"><span class="o">→</span> destroy()</span><span class="hk red"><span class="o">→</span> destroyMethod</span></div></div>
+      </div>
+    </div>
+    <p class="takeaway"><b>Born → Fed → Aware → Working → Retired.</b> Note: <code class="inl">@Scope("prototype")</code> beans skip step 7 — the container never destroys them.</p>
+  </section>
+
+  <!-- ===================== 7 · IoC ===================== -->
+  <section class="viz-sec" id="ioc">
+    <div class="viz-h"><span class="viz-num">7</span><h2>Inversion of Control</h2></div>
+    <p class="viz-cap">Who creates the dependency? Without IoC, the class does (<code class="inl">new</code>). With IoC, the <b>container</b> does, and injects it — so control is <b>inverted</b> from your code to the framework.</p>
+    <div class="diagram">
+      <div class="cmp2">
+        <div class="panelbox bad">
+          <span class="tag">✗ without IoC — tight coupling</span>
+          <h4>The class wires itself</h4>
+          <div class="chiprow"><span class="vchip">OrderService</span></div>
+          <div class="chiprow"><span class="arrow-in">contains →</span><span class="vchip red">new StripeGateway()</span></div>
+          <p style="margin-top:11px">Hard-wired to one implementation. Can't swap it, can't inject a mock to test.</p>
+        </div>
+        <div class="panelbox good">
+          <span class="tag">✓ with IoC — loose coupling</span>
+          <h4>The container wires it</h4>
+          <div style="border:2px dashed var(--accent); border-radius:11px; padding:11px; background:var(--accent-wash)">
+            <div style="font-family:var(--mono); font-size:.66rem; color:var(--accent); font-weight:700; text-transform:uppercase; letter-spacing:.06em; margin-bottom:8px">Spring IoC container</div>
+            <div class="chiprow"><span class="vchip">StripeGateway</span><span class="vchip">PayPalGateway</span><span class="vchip">OrderService</span></div>
+            <div class="inject" style="text-align:center; font-family:var(--mono); font-size:.74rem; color:var(--accent); margin:9px 0 3px">⬇ injects PaymentGateway</div>
+            <div class="chiprow" style="justify-content:center"><span class="vchip iface">OrderService(PaymentGateway)</span></div>
+          </div>
+          <p style="margin-top:11px">Depends on the <code class="inl">PaymentGateway</code> interface; the container chooses the bean. Swap or mock freely.</p>
+        </div>
+      </div>
+    </div>
+    <p class="takeaway"><b>The Hollywood Principle:</b> "Don't call us, we'll call you." DI is the mechanism; IoC is the inversion. This <em>is</em> SOLID's "D" delivered as a framework feature.</p>
+  </section>
+
+  <p style="text-align:center; margin:30px 0 10px; font-family:var(--mono); font-size:.85rem; color:var(--ink-soft)">
+    Read the full answers &amp; follow-ups → <a class="link" href="concepts.html">study page</a> &nbsp;·&nbsp; turn them into <a class="link" href="drills.html">flashcards</a>
+  </p>
+
+</div></main>
+
+<footer class="app-foot">
+  <div class="wrap">
+    Visual companion to the Core Concepts study page · diagrams are simplified for recall — see the study page for exact semantics and version notes.
+  </div>
+</footer>
+
+<script src="assets/app.js"></script>
+</body>
+</html>

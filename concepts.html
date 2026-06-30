@@ -1,0 +1,715 @@
+<!doctype html>
+<html lang="en" data-track="concepts">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Core Concepts — SOLID, Microservices, Spring &amp; more · Interview Prep Suite</title>
+<script>(function(){try{var t=localStorage.getItem('prep:theme');if(t!=='dark'&&t!=='light')t=matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+<link rel="stylesheet" href="assets/app.css">
+<style>
+  /* legacy color aliases used by inline content styles, mapped to shared tokens */
+  body{--gold:var(--accent); --cyan:var(--accent); --red:var(--hard); --green:var(--easy);
+       --teal:#5fc6cf; --violet:#b3a7ff; --blue:#7fb0f2; --dim:var(--ink-soft); --faint:var(--ink-faint)}
+
+  .page-head-inner{padding:26px 0 0}
+
+  /* section intros */
+  .panel .eyebrow{color:var(--ink-faint); margin-bottom:6px}
+  h2.ph{font-family:var(--display); font-weight:700; font-size:1.5rem; margin:0 0 4px; letter-spacing:-.01em}
+  .lede{color:var(--ink-soft); margin:0 0 24px; max-width:74ch; font-size:.96rem}
+  .panel h3{font-family:var(--display); font-weight:600; font-size:1.04rem; color:var(--ink);
+     margin:34px 0 12px; padding-left:11px; border-left:3px solid var(--accent);
+     display:flex; align-items:center; gap:10px; flex-wrap:wrap}
+  .panel h3:first-of-type{margin-top:6px}
+  .panel p{margin:0 0 14px; max-width:80ch}
+  .mut{color:var(--ink-soft)}
+  code.inl{font-family:var(--mono); font-size:.84em; background:var(--code-inline-bg);
+    border:1px solid var(--line); border-radius:5px; padding:1.5px 6px; color:var(--accent-ink)}
+
+  /* code blocks (caption + copy bar) */
+  .code{position:relative; margin:0 0 20px; border:1px solid var(--line-strong);
+    border-radius:var(--radius-sm); background:var(--code-bg); overflow:hidden}
+  .code.solo{margin-bottom:20px}
+  .code .cap{font-family:var(--mono); font-size:.7rem; letter-spacing:.04em; color:var(--code-dim);
+    padding:8px 14px; border-bottom:1px solid color-mix(in srgb,var(--code-bg) 78%,#fff);
+    display:flex; align-items:center; justify-content:space-between; gap:10px}
+  .code .cap .dot{display:inline-flex; gap:6px; align-items:center}
+  .code .cap .dot i{width:9px; height:9px; border-radius:50%;
+    background:color-mix(in srgb,var(--code-bg) 60%,#fff); display:block}
+  .copy{appearance:none; background:none; border:1px solid color-mix(in srgb,var(--code-bg) 65%,#fff);
+    color:var(--code-dim); font-family:var(--mono); font-size:.68rem; padding:3px 9px; border-radius:6px;
+    cursor:pointer; transition:.15s}
+  .copy:hover{color:var(--accent); border-color:var(--accent)}
+  .copy.ok{color:#84d99a; border-color:#84d99a}
+  .code pre{margin:0; padding:15px 16px; overflow-x:auto; background:transparent; border:0; border-radius:0}
+  .code pre code{font-family:var(--mono); font-size:.82rem; line-height:1.6; color:var(--code-ink)}
+  pre code.hljs{background:transparent; padding:0}
+  .hljs-keyword,.hljs-built_in{color:var(--code-key)!important}
+  .hljs-string{color:var(--code-str)!important}
+  .hljs-number{color:var(--code-num)!important}
+  .hljs-title.function_{color:#7fb0f2!important}
+  .hljs-type,.hljs-title.class_{color:#5fc6cf!important}
+  .hljs-meta{color:var(--accent)!important}
+  .hljs-comment{color:var(--code-com)!important; font-style:italic}
+  .hljs-attr,.hljs-title{color:#5fc6cf!important}
+
+  /* reference tables */
+  .tbl-wrap{overflow-x:auto; margin:0 0 22px; border:1px solid var(--line); border-radius:var(--radius)}
+  .tbl-wrap table{min-width:560px}
+  .tbl-wrap thead th{color:var(--accent-ink); text-transform:uppercase; letter-spacing:.05em}
+  td.m,th.m{font-family:var(--mono); font-size:.82em; color:var(--accent-ink); white-space:nowrap}
+
+  /* callouts */
+  .call{display:flex; gap:12px; border:1px solid var(--accent-line); background:var(--accent-wash);
+    border-radius:var(--radius); padding:13px 15px; margin:6px 0 22px; font-size:.9rem; color:var(--ink)}
+  .call .ic{color:var(--accent); font-family:var(--mono); font-weight:600; flex:none}
+  .call.warn{border-color:color-mix(in srgb,var(--hard) 45%,var(--line)); background:var(--hard-wash)}
+  .call.warn .ic{color:var(--hard)}
+  .call b{color:var(--ink); font-weight:600}
+  .call code{font-family:var(--mono); font-size:.85em; color:var(--accent-ink)}
+
+  ul.tight{margin:0 0 18px; padding-left:20px}
+  ul.tight li{margin:0 0 7px; max-width:80ch}
+  ul.tight li::marker{color:var(--accent)}
+
+  /* flow grid (reused from backend) */
+  .flowgrid{display:grid; gap:10px; margin:6px 0 24px}
+  .flowrow{display:grid; grid-template-columns:150px 1fr; gap:14px; align-items:start;
+    border:1px solid var(--line); border-radius:var(--radius); padding:12px 14px; background:var(--surface)}
+  .flowrow .layer{font-family:var(--mono); font-size:.78rem; color:var(--accent); padding-top:2px}
+  .flowrow .layer small{display:block; color:var(--ink-faint); font-size:.62rem; letter-spacing:.1em; margin-bottom:3px}
+  .flowrow .what b{color:var(--ink)}
+  .arrow{font-family:var(--mono); color:var(--ink-faint); text-align:center; font-size:.8rem; margin:-4px 0}
+  @media (max-width:560px){.flowrow{grid-template-columns:1fr; gap:6px}}
+
+  /* ===== concepts-specific ===== */
+  /* SOLID acronym strip */
+  .letters{display:grid; grid-template-columns:repeat(5,1fr); gap:10px; margin:8px 0 26px}
+  @media(max-width:680px){.letters{grid-template-columns:repeat(2,1fr)}}
+  .lcard{border:1px solid var(--line); border-radius:var(--radius); padding:13px 13px 14px; background:var(--surface); display:flex; flex-direction:column; gap:5px}
+  .lcard .big{font-family:var(--display); font-weight:700; font-size:1.7rem; color:var(--accent); line-height:1}
+  .lcard .nm{font-weight:600; font-size:.86rem; color:var(--ink); line-height:1.25}
+  .lcard .ds{font-size:.8rem; color:var(--ink-soft); line-height:1.5}
+
+  /* interview soundbite */
+  .sound{border:1px solid var(--accent-line); background:var(--accent-wash); border-radius:var(--radius); padding:13px 16px; margin:10px 0 22px; font-size:.93rem}
+  .sound .lbl{font-family:var(--mono); font-size:.62rem; letter-spacing:.12em; text-transform:uppercase; color:var(--accent); font-weight:700; display:block; margin-bottom:5px}
+  .sound q{font-style:italic; color:var(--ink); quotes:"\201C" "\201D"}
+
+  /* follow-up Q&A (collapsible) */
+  .followups{margin:8px 0 20px; border:1px solid var(--line); border-radius:var(--radius); overflow:hidden}
+  .followups details{border-top:1px solid var(--line); background:var(--surface)}
+  .followups details:first-child{border-top:0}
+  .followups summary{cursor:pointer; padding:11px 15px; font-weight:600; font-size:.9rem; color:var(--ink); list-style:none; display:flex; gap:9px; align-items:flex-start}
+  .followups summary::before{content:"Q"; font-family:var(--mono); color:var(--accent); font-weight:700; flex:none}
+  .followups summary::-webkit-details-marker{display:none}
+  .followups details[open] summary{color:var(--accent)}
+  .followups .ans{padding:0 15px 13px 32px; font-size:.88rem; color:var(--ink-soft)}
+  .followups .ans code{font-family:var(--mono); font-size:.85em; color:var(--accent-ink)}
+
+  /* two-column compare */
+  .cmp{display:grid; gap:0 16px; margin:0}
+  @media(min-width:820px){.cmp.two{grid-template-columns:1fr 1fr}}
+
+  /* references */
+  .reflist{list-style:none; padding:0; margin:0 0 18px; display:grid; gap:9px}
+  .reflist li{display:flex; gap:11px; align-items:baseline; font-size:.9rem; flex-wrap:wrap}
+  .reflist a{font-weight:600}
+  .reflist .src{font-family:var(--mono); font-size:.62rem; color:var(--ink-faint); text-transform:uppercase; letter-spacing:.06em; flex:none; min-width:84px}
+  .reflist .nt{color:var(--ink-soft); font-size:.84rem}
+
+  main{padding-top:14px}
+</style>
+</head>
+<body>
+
+<div class="app-topbar">
+  <div class="app-topbar-inner">
+    <a class="app-brand" href="index.html"><span class="dot"></span>Interview Prep Suite</a>
+    <span class="app-crumb">Core concepts</span>
+    <span class="app-spacer"></span>
+    <a class="app-back" href="concepts-visual.html">◧ Infographic</a>
+    <a class="app-back" href="index.html">← Hub</a>
+    <button class="theme-toggle" type="button" aria-label="Toggle dark mode"><span class="tt-ic"></span><span class="tt-label">Dark</span></button>
+  </div>
+</div>
+
+<header class="page-head">
+  <div class="wrap page-head-inner">
+    <p class="eyebrow">Concepts track</p>
+    <h1 class="title">Core Concepts Round</h1>
+    <p class="subtitle">The seven rapid-fire questions that recur in senior full-stack / TCS-tier rounds — design principles, microservices, data structures, SQL, and Spring internals. Each tab gives you the <b>definition</b>, <b>how it's used</b>, the <b>one-liner to say out loud</b>, and the <b>follow-ups</b> they'll throw next. Pair it with the <a class="link" href="concepts-visual.html">infographic</a>.</p>
+    <div class="meta-row">
+      <span class="chip"><b>7</b> questions</span>
+      <span class="chip">~18 min read</span>
+      <span class="chip">say the <b>soundbites</b> aloud</span>
+    </div>
+  </div>
+</header>
+
+<nav class="tabs" aria-label="Concept sections">
+  <div class="tabs-inner" role="tablist">
+    <button class="tab-btn" role="tab" data-tab="solid"  aria-selected="true">1 · SOLID</button>
+    <button class="tab-btn" role="tab" data-tab="ocp"    aria-selected="false">2 · Open/Closed</button>
+    <button class="tab-btn" role="tab" data-tab="micro"  aria-selected="false">3 · Microservices</button>
+    <button class="tab-btn" role="tab" data-tab="hash"   aria-selected="false">4 · HashMap collision</button>
+    <button class="tab-btn" role="tab" data-tab="sql"    aria-selected="false">5 · SQL query</button>
+    <button class="tab-btn" role="tab" data-tab="bean"   aria-selected="false">6 · Bean lifecycle</button>
+    <button class="tab-btn" role="tab" data-tab="ioc"    aria-selected="false">7 · IoC</button>
+    <button class="tab-btn" role="tab" data-tab="cheat"  aria-selected="false">★ Cheat sheet</button>
+  </div>
+</nav>
+
+<main><div class="wrap">
+
+  <!-- ============================ 1 · SOLID ============================ -->
+  <section class="panel active" id="tab-solid" data-tab="solid" role="tabpanel">
+    <p class="eyebrow">Object-oriented design</p>
+    <h2 class="ph">What are the SOLID principles?</h2>
+    <p class="lede">Five class-design principles (acronym by Michael Feathers, principles popularised by Robert C. "Uncle Bob" Martin) that keep object-oriented code <b>loosely coupled, easy to extend, and safe to change</b>. They're guidelines, not laws — the goal each one serves is "change one thing without breaking five others."</p>
+
+    <div class="letters">
+      <div class="lcard"><span class="big">S</span><span class="nm">Single Responsibility</span><span class="ds">A class has <b>one reason to change</b> — one job, one actor it answers to.</span></div>
+      <div class="lcard"><span class="big">O</span><span class="nm">Open / Closed</span><span class="ds">Open for <b>extension</b>, closed for <b>modification</b>. Add behaviour with new code.</span></div>
+      <div class="lcard"><span class="big">L</span><span class="nm">Liskov Substitution</span><span class="ds">A subtype must be usable <b>anywhere its base type</b> is, without surprises.</span></div>
+      <div class="lcard"><span class="big">I</span><span class="nm">Interface Segregation</span><span class="ds">Many small, focused interfaces beat one fat one. No unused methods.</span></div>
+      <div class="lcard"><span class="big">D</span><span class="nm">Dependency Inversion</span><span class="ds">Depend on <b>abstractions</b>, not concretions. High-level owns the interface.</span></div>
+    </div>
+
+    <h3>One line each — what they actually mean</h3>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th class="m">Letter</th><th>Principle</th><th>Smell it fixes</th></tr></thead>
+      <tbody>
+        <tr><td class="m">S</td><td><b>Single Responsibility</b> — split a class that mixes, say, persistence + formatting + business rules.</td><td>"God class" that changes for many unrelated reasons.</td></tr>
+        <tr><td class="m">O</td><td><b>Open/Closed</b> — extend via new classes / strategies instead of editing tested code.</td><td>A growing <code class="inl">switch</code> / <code class="inl">if-else</code> edited for every new case.</td></tr>
+        <tr><td class="m">L</td><td><b>Liskov Substitution</b> — subclasses honour the base contract (no weaker outputs, no stronger inputs, no thrown "unsupported").</td><td><code class="inl">Square extends Rectangle</code> breaking <code class="inl">setWidth</code>; <code class="inl">throw UnsupportedOperationException</code> in an override.</td></tr>
+        <tr><td class="m">I</td><td><b>Interface Segregation</b> — clients depend only on methods they use.</td><td>Implementing a huge interface with half the methods left empty.</td></tr>
+        <tr><td class="m">D</td><td><b>Dependency Inversion</b> — both layers depend on an abstraction; the container wires the concrete one in.</td><td><code class="inl">new ConcreteThing()</code> hard-wired inside business logic.</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>How they connect (this is the senior answer)</h3>
+    <p>They aren't five unrelated rules — they reinforce each other. <b>Dependency Inversion</b> tells you to depend on an interface; <b>Open/Closed</b> is what that buys you (swap implementations without editing callers); <b>Liskov</b> guarantees the swap is safe; <b>Interface Segregation</b> keeps those abstractions small enough to honour; <b>Single Responsibility</b> is the reason you had separate classes to wire together in the first place. In Spring, the framework's <a class="link" href="concepts.html#" onclick="document.querySelector('[data-tab=ioc]').click();return false;">IoC container</a> is literally Dependency Inversion as a product feature.</p>
+
+    <div class="sound"><span class="lbl">🎤 Say this</span><q>SOLID is five principles for keeping OO code changeable: Single Responsibility — one reason to change; Open/Closed — extend without modifying; Liskov — subtypes are safely substitutable; Interface Segregation — small focused interfaces; Dependency Inversion — depend on abstractions. The thread through all of them is <em>loose coupling</em>, so a change stays local.</q></div>
+
+    <div class="followups">
+      <details><summary>Which one does Spring help you follow automatically?</summary><div class="ans"><b>Dependency Inversion</b> (and Open/Closed). Spring's IoC container injects an abstraction (<code>PaymentGateway</code>) and decides the concrete bean, so your high-level code never says <code>new StripeGateway()</code>.</div></details>
+      <details><summary>Give the classic Liskov violation.</summary><div class="ans"><code>Square extends Rectangle</code>: calling <code>setWidth(5)</code> on a square silently changes its height too, so code written for a Rectangle breaks. The fix is to not model it as inheritance. Another tell-tale: an override that throws <code>UnsupportedOperationException</code>.</div></details>
+      <details><summary>Isn't SRP just "small classes"?</summary><div class="ans">No — it's "one <em>reason</em> to change," i.e. one stakeholder/axis of change. A class can be large and still have a single responsibility, or tiny and still serve two masters (e.g. mixing report formatting with the calculation rules).</div></details>
+    </div>
+
+    <p class="mut">Drill the five in the <a class="link" href="concepts-visual.html#solid">infographic</a>, and see Dependency Inversion in practice on tab <b>7 · IoC</b>.</p>
+  </section>
+
+  <!-- ============================ 2 · OCP ============================ -->
+  <section class="panel" id="tab-ocp" data-tab="ocp" role="tabpanel">
+    <p class="eyebrow">SOLID, up close — the "O"</p>
+    <h2 class="ph">The Open/Closed Principle &amp; how it's used</h2>
+    <p class="lede">Bertrand Meyer's rule: <q>software entities should be open for extension, but closed for modification.</q> You should be able to add new behaviour by <b>adding new code</b>, not by reopening and editing code that already works and is already tested. The mechanism that makes it possible is <b>abstraction + polymorphism</b>.</p>
+
+    <h3>The smell: a switch you keep reopening</h3>
+    <p>Every new shape forces you back into the same method — re-testing and risking the cases that already worked.</p>
+    <div class="code"><div class="cap"><span class="dot"><i></i>AreaCalculator.java — violates OCP</span><button class="copy">copy</button></div>
+      <pre><code class="language-java" data-snippet="ocpBad"></code></pre></div>
+
+    <h3>The fix: push behaviour behind an abstraction</h3>
+    <p>Let each type own its own implementation. Adding <code class="inl">Triangle</code> is a brand-new file; the calculator and every caller stay untouched (closed).</p>
+    <div class="code"><div class="cap"><span class="dot"><i></i>Shape.java + implementations — open for extension</span><button class="copy">copy</button></div>
+      <pre><code class="language-java" data-snippet="ocpGood"></code></pre></div>
+
+    <div class="call"><span class="ic">→</span><div><b>How it shows up day to day:</b> the Strategy pattern, plug-in architectures, Spring injecting a <code>List&lt;Validator&gt;</code> you loop over, payment providers behind a <code>PaymentGateway</code> interface, a <code>@Bean</code> you add without touching existing config. All "add a class, don't edit one."</div></div>
+
+    <h3>When NOT to apply it</h3>
+    <ul class="tight">
+      <li><b>Don't pre-abstract on speculation.</b> Adding interfaces "in case it changes" is over-engineering. Apply OCP at the axis where change has actually proven likely (the "shape type" really does keep growing).</li>
+      <li>Rule of thumb: write it concrete the first time, abstract on the <b>second</b> variation, mandatory by the third.</li>
+    </ul>
+
+    <div class="sound"><span class="lbl">🎤 Say this</span><q>Open for extension, closed for modification. I add new behaviour by adding a new class behind an interface — like a new <code>Shape</code> implementation — instead of editing a switch in tested code. Polymorphism is what makes the existing code closed while the system stays extensible.</q></div>
+
+    <div class="followups">
+      <details><summary>Which design patterns embody OCP?</summary><div class="ans">Strategy, Template Method, Decorator, Observer, and Factory all let you add variants without editing existing code. Strategy is the cleanest one-liner example.</div></details>
+      <details><summary>How does Spring make OCP easy?</summary><div class="ans">Inject the abstraction and let new implementations register themselves. e.g. <code>@Autowired List&lt;Notifier&gt;</code> picks up every <code>Notifier</code> bean — drop in <code>SmsNotifier</code> as a new <code>@Component</code> and the dispatching code never changes.</div></details>
+      <details><summary>Can you ever truly never modify code?</summary><div class="ans">No — it's a direction, not an absolute. Bug fixes modify code. OCP targets <em>foreseeable extension points</em> (new payment type, new export format), not every line.</div></details>
+    </div>
+  </section>
+
+  <!-- ============================ 3 · MICROSERVICES ============================ -->
+  <section class="panel" id="tab-micro" data-tab="micro" role="tabpanel">
+    <p class="eyebrow">Distributed systems</p>
+    <h2 class="ph">How do microservices communicate?</h2>
+    <p class="lede">Two families: <b>synchronous</b> (caller waits for a response) and <b>asynchronous</b> (caller fires a message and moves on). Picking the right one per interaction — and naming the supporting infrastructure — is the whole answer.</p>
+
+    <h3>The two styles</h3>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th class="m">Style</th><th>How</th><th>Use when</th></tr></thead>
+      <tbody>
+        <tr><td class="m">Synchronous</td><td><b>REST/HTTP</b> (JSON, ubiquitous) · <b>gRPC</b> (HTTP/2 + Protobuf, fast, typed, streaming) · <b>GraphQL</b> (client picks fields).</td><td>You need the answer <i>now</i> to continue — a read, a query, a request/response.</td></tr>
+        <tr><td class="m">Asynchronous</td><td><b>Messaging / events</b> via a broker — <b>Kafka</b> (log/stream), <b>RabbitMQ</b>/<b>ActiveMQ</b> (queues), <b>SQS/SNS</b>. Pub/sub or point-to-point queues.</td><td>Fire-and-forget, fan-out, decoupling, buffering spikes, event-driven workflows.</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>Synchronous — a declarative REST call</h3>
+    <div class="code"><div class="cap"><span class="dot"><i></i>Spring Cloud OpenFeign — call another service like a local method</span><button class="copy">copy</button></div>
+      <pre><code class="language-java" data-snippet="microSync"></code></pre></div>
+    <p class="mut">Spring options: <code class="inl">RestTemplate</code> (legacy, blocking), <code class="inl">WebClient</code> (reactive, the modern default), and <code class="inl">@FeignClient</code> (declarative — least boilerplate).</p>
+
+    <h3>Asynchronous — publish an event, don't wait</h3>
+    <div class="code"><div class="cap"><span class="dot"><i></i>Kafka — producer fires, a different service reacts on its own time</span><button class="copy">copy</button></div>
+      <pre><code class="language-java" data-snippet="microAsync"></code></pre></div>
+
+    <h3>Sync vs async — the trade-off they're really asking about</h3>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th></th><th>Synchronous</th><th>Asynchronous</th></tr></thead>
+      <tbody>
+        <tr><td class="m">Coupling</td><td>Tight — caller needs callee up <i>now</i></td><td>Loose — broker decouples them in time</td></tr>
+        <tr><td class="m">Failure</td><td>Cascades; one slow service stalls the chain</td><td>Isolated; messages buffer until consumed</td></tr>
+        <tr><td class="m">Consistency</td><td>Immediate / strong</td><td>Eventual</td></tr>
+        <tr><td class="m">Complexity</td><td>Simple to reason about &amp; debug</td><td>Harder — ordering, idempotency, dead letters</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>The supporting cast (drop these names)</h3>
+    <ul class="tight">
+      <li><b>API Gateway</b> — single entry point; routing, auth, rate-limiting (Spring Cloud Gateway).</li>
+      <li><b>Service Discovery</b> — services find each other by name, not hard-coded host (Eureka, Consul).</li>
+      <li><b>Load balancing</b> — spread calls across instances (client-side: Spring Cloud LoadBalancer).</li>
+      <li><b>Circuit Breaker</b> — stop hammering a failing service; fail fast + fallback (Resilience4j).</li>
+      <li><b>Saga</b> — distributed transaction as a chain of local transactions + compensations (no 2-phase commit).</li>
+      <li><b>Service Mesh</b> — push retries/mTLS/observability into a sidecar (Istio, Linkerd).</li>
+    </ul>
+
+    <div class="sound"><span class="lbl">🎤 Say this</span><q>Two ways: synchronous request/response over REST or gRPC when I need the answer immediately, and asynchronous messaging over a broker like Kafka or RabbitMQ when I want to decouple and fan out. I default to async for cross-service workflows because it isolates failures and absorbs load; I keep sync for reads. Around both I'd put an API gateway, service discovery, and a circuit breaker.</q></div>
+
+    <div class="followups">
+      <details><summary>REST vs gRPC — when gRPC?</summary><div class="ans">gRPC for high-throughput internal service-to-service calls: binary Protobuf is smaller/faster, it's strongly typed via a shared <code>.proto</code>, and it supports streaming over HTTP/2. REST for public/browser-facing APIs and human debuggability.</div></details>
+      <details><summary>How do you handle a transaction across services?</summary><div class="ans">You don't use one DB transaction. Use the <b>Saga</b> pattern: a sequence of local transactions, each publishing an event that triggers the next; on failure you run <em>compensating</em> transactions to undo. Orchestration (a coordinator) or choreography (services react to events).</div></details>
+      <details><summary>What stops a failure in one service taking down the rest?</summary><div class="ans">A <b>circuit breaker</b> (Resilience4j): after N failures it "opens" and fails fast with a fallback instead of blocking threads, then half-opens to test recovery. Plus timeouts, bulkheads, and retries with backoff.</div></details>
+      <details><summary>Async means a message might arrive twice — now what?</summary><div class="ans">Make consumers <b>idempotent</b>: dedupe on a message/event id, or design the operation so re-applying it is a no-op. Pair with a dead-letter queue for messages that keep failing.</div></details>
+    </div>
+  </section>
+
+  <!-- ============================ 4 · HASHMAP ============================ -->
+  <section class="panel" id="tab-hash" data-tab="hash" role="tabpanel">
+    <p class="eyebrow">Data structures · Java internals</p>
+    <h2 class="ph">What is a HashMap collision?</h2>
+    <p class="lede">A <b>collision</b> is when two distinct keys map to the <b>same bucket</b> in the underlying array — either because they share a <code class="inl">hashCode()</code>, or because two different hashes reduce to the same index. Collisions are normal and unavoidable; what matters is how the map <i>resolves</i> them.</p>
+
+    <h3>Why it happens</h3>
+    <p>A <code class="inl">HashMap</code> is an array of buckets. To place a key it computes <code class="inl">index = (n - 1) &amp; hash(key)</code>, where <code class="inl">n</code> is the table size. Since there are far more possible keys than buckets, different keys can land on the same index — a collision.</p>
+    <div class="code"><div class="cap"><span class="dot"><i></i>a real Java String collision — both hash to 2236</span><button class="copy">copy</button></div>
+      <pre><code class="language-java" data-snippet="hashDemo"></code></pre></div>
+
+    <h3>How Java resolves it — chaining, then a tree</h3>
+    <div class="flowgrid">
+      <div class="flowrow"><div class="layer"><small>STEP 01</small>Linked list</div>
+        <div class="what">Colliding entries are <b>chained</b> in the same bucket (a singly linked list of <code class="inl">Node</code>s). Lookup finds the bucket by hash, then walks the chain calling <code class="inl">equals()</code> to pick the right key.</div></div>
+      <div class="arrow">↓ chain grows past 8 (and table ≥ 64)</div>
+      <div class="flowrow"><div class="layer"><small>STEP 02</small>Red-black tree</div>
+        <div class="what">Since <b>Java 8</b>, a bucket with &gt; <code class="inl">TREEIFY_THRESHOLD (8)</code> nodes <b>treeifies</b> into a balanced red-black tree — lookups in that bucket go from O(n) to <b>O(log n)</b>. It reverts to a list below <code class="inl">UNTREEIFY_THRESHOLD (6)</code>.</div></div>
+    </div>
+    <p class="mut">Treeification only happens once the whole table is at least 64 entries; below that, Java resizes the table instead.</p>
+
+    <h3>Performance &amp; the contract that prevents pile-ups</h3>
+    <ul class="tight">
+      <li><b>Average lookup O(1)</b>; worst case O(n) with a list, O(log n) once treeified. A terrible <code class="inl">hashCode()</code> that returns a constant degrades the map to a linked list.</li>
+      <li><b>Load factor 0.75</b> (default): when size &gt; capacity × 0.75 the table <b>doubles and rehashes</b>, spreading entries out and lowering collision density.</li>
+      <li><b>equals/hashCode contract:</b> equal objects <i>must</i> have equal hash codes; override both together. Otherwise you store a key you can never retrieve.</li>
+    </ul>
+
+    <div class="call"><span class="ic">i</span><div><b>Other resolution strategies (general CS):</b> Java uses <b>separate chaining</b>. The alternative is <b>open addressing</b> — on collision, probe for another empty slot: <i>linear probing</i> (next slot), <i>quadratic probing</i>, or <i>double hashing</i>. (<code>ThreadLocalMap</code> uses linear probing.)</div></div>
+
+    <div class="sound"><span class="lbl">🎤 Say this</span><q>A collision is two keys landing in the same bucket — same hash, or different hashes that reduce to the same index. Java handles it by chaining the entries in a linked list and using <code>equals()</code> to tell them apart; since Java 8, a bucket that grows past 8 entries converts to a red-black tree, so the worst case is O(log n) instead of O(n). A good <code>hashCode()</code> and the 0.75 load-factor resize keep collisions rare.</q></div>
+
+    <div class="followups">
+      <details><summary>What changed in Java 8?</summary><div class="ans">Buckets that get too long (&gt; 8 nodes, table ≥ 64) convert from a linked list to a <b>red-black tree</b>, capping worst-case bucket lookup at O(log n). Pre-8 it was always a list → O(n).</div></details>
+      <details><summary>What if hashCode() always returns the same value?</summary><div class="ans">Every key collides into one bucket. The map still works (equals disambiguates) but degrades to O(n) — effectively a linked list. It's a classic "why is my map slow" answer.</div></details>
+      <details><summary>Why must you override equals() and hashCode() together?</summary><div class="ans">Lookup first finds the bucket by <code>hashCode()</code>, then matches the key by <code>equals()</code>. If two "equal" objects have different hashes they land in different buckets and you'll never find the one you stored.</div></details>
+      <details><summary>Chaining vs open addressing?</summary><div class="ans">Chaining stores collisions in a per-bucket list/tree (Java's HashMap). Open addressing keeps everything in the array and probes for the next free slot (linear/quadratic/double hashing) — better cache locality, but sensitive to load factor and clustering.</div></details>
+    </div>
+  </section>
+
+  <!-- ============================ 5 · SQL ============================ -->
+  <section class="panel" id="tab-sql" data-tab="sql" role="tabpanel">
+    <p class="eyebrow">Data · write one query</p>
+    <h2 class="ph">Write one SQL query</h2>
+    <p class="lede">A single query that exercises the clauses interviewers actually probe: a <b>JOIN</b>, an <b>aggregate</b>, group-level filtering with <b>HAVING</b>, and ordering. The prompt: <i>"For each department, show its headcount and average salary — but only departments with at least two employees, highest average first."</i></p>
+
+    <h3>The schema</h3>
+    <div class="code"><div class="cap"><span>employees · departments</span><button class="copy">copy</button></div>
+      <pre><code class="language-sql" data-snippet="sqlSchema"></code></pre></div>
+
+    <h3>The query</h3>
+    <div class="code"><div class="cap"><span>JOIN · GROUP BY · HAVING · ORDER BY</span><button class="copy">copy</button></div>
+      <pre><code class="language-sql" data-snippet="sqlMain"></code></pre></div>
+
+    <h3>Why each clause is there</h3>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th class="m">Clause</th><th>Does</th></tr></thead>
+      <tbody>
+        <tr><td class="m">LEFT JOIN</td><td>Keeps departments with <b>zero</b> employees too (they'd be dropped by an INNER JOIN). Filtered out later here by HAVING, but it makes the headcount honest.</td></tr>
+        <tr><td class="m">COUNT(e.id)</td><td>Counts non-NULL employee rows. <b>Not <code class="inl">COUNT(*)</code></b> — with a LEFT JOIN an empty dept yields one all-NULL row, which <code class="inl">COUNT(*)</code> miscounts as 1.</td></tr>
+        <tr><td class="m">GROUP BY</td><td>Collapses rows into one per department so the aggregates compute per group.</td></tr>
+        <tr><td class="m">HAVING</td><td>Filters <b>groups</b> after aggregation (<code class="inl">COUNT(e.id) &gt;= 2</code>). <code class="inl">WHERE</code> can't — it runs before grouping.</td></tr>
+        <tr><td class="m">ORDER BY</td><td>Sorts the final rows; it runs last, so it <b>can</b> use the <code class="inl">avg_salary</code> alias.</td></tr>
+      </tbody>
+    </table></div>
+
+    <div class="call"><span class="ic">→</span><div><b>The clause-order insight they're testing:</b> SQL is written <code>SELECT…FROM…WHERE…GROUP BY…HAVING…ORDER BY</code> but <b>evaluated</b> FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY. That's why <code>WHERE</code> can't see an aggregate (it runs before grouping) and <code>ORDER BY</code> can use a SELECT alias (it runs after).</div></div>
+
+    <div class="sound"><span class="lbl">🎤 Say this</span><q>I LEFT JOIN departments to employees so empty departments still appear, group by department, aggregate with COUNT and AVG, filter the groups with HAVING — not WHERE, because the filter is on an aggregate — and order by the average descending. I use <code>COUNT(e.id)</code>, not <code>COUNT(*)</code>, so a department with no employees counts as zero.</q></div>
+
+    <div class="followups">
+      <details><summary>WHERE vs HAVING?</summary><div class="ans"><code>WHERE</code> filters individual rows <em>before</em> grouping and can't use aggregates. <code>HAVING</code> filters <em>groups</em> after aggregation and can. You can use both in one query.</div></details>
+      <details><summary>Why COUNT(e.id) instead of COUNT(*)?</summary><div class="ans"><code>COUNT(*)</code> counts rows including the all-NULL row a LEFT JOIN produces for an empty department (→ 1). <code>COUNT(e.id)</code> ignores NULLs and correctly reports 0.</div></details>
+      <details><summary>Make it "second-highest average" instead.</summary><div class="ans">Wrap it in a CTE and rank: <code>DENSE_RANK() OVER (ORDER BY avg_salary DESC)</code>, then filter <code>WHERE rnk = 2</code> in the outer query.</div></details>
+    </div>
+    <p class="mut">Ten more worked SQL exercises with result grids live in <a class="link" href="backend.html#sql">Backend → SQL</a>.</p>
+  </section>
+
+  <!-- ============================ 6 · BEAN LIFECYCLE ============================ -->
+  <section class="panel" id="tab-bean" data-tab="bean" role="tabpanel">
+    <p class="eyebrow">Spring internals</p>
+    <h2 class="ph">What is the lifecycle of a bean?</h2>
+    <p class="lede">A <b>bean</b> is an object the Spring IoC container creates, configures, and manages. Its lifecycle is the ordered set of steps from <b>instantiation</b> to <b>destruction</b>, with hooks you can plug into at the start (init) and end (destroy).</p>
+
+    <h3>The phases, in order</h3>
+    <div class="flowgrid">
+      <div class="flowrow"><div class="layer"><small>PHASE 01</small>Instantiate</div>
+        <div class="what"><b>Constructor runs.</b> The container creates the raw object (this is where <b>constructor injection</b> supplies dependencies).</div></div>
+      <div class="arrow">↓</div>
+      <div class="flowrow"><div class="layer"><small>PHASE 02</small>Populate</div>
+        <div class="what"><b>Dependency injection</b> of remaining properties — setter/field <code class="inl">@Autowired</code> values are set.</div></div>
+      <div class="arrow">↓</div>
+      <div class="flowrow"><div class="layer"><small>PHASE 03</small>Aware callbacks</div>
+        <div class="what">If implemented: <code class="inl">setBeanName()</code>, <code class="inl">setBeanFactory()</code>, <code class="inl">setApplicationContext()</code> — the bean learns about its container.</div></div>
+      <div class="arrow">↓</div>
+      <div class="flowrow"><div class="layer"><small>PHASE 04</small>BPP before-init</div>
+        <div class="what"><code class="inl">BeanPostProcessor.postProcessBeforeInitialization()</code> runs for every bean — the hook framework features use.</div></div>
+      <div class="arrow">↓</div>
+      <div class="flowrow"><div class="layer"><small>PHASE 05</small>Initialize</div>
+        <div class="what">In order: <code class="inl">@PostConstruct</code> → <code class="inl">InitializingBean.afterPropertiesSet()</code> → custom <code class="inl">initMethod</code>. Do startup work once dependencies are wired.</div></div>
+      <div class="arrow">↓</div>
+      <div class="flowrow"><div class="layer"><small>PHASE 06</small>BPP after-init</div>
+        <div class="what"><code class="inl">postProcessAfterInitialization()</code> runs — <b>where Spring wraps the bean in a proxy</b> for AOP / <code class="inl">@Transactional</code>.</div></div>
+      <div class="arrow">↓  bean is ready &amp; in use  ↓</div>
+      <div class="flowrow"><div class="layer"><small>PHASE 07</small>Destroy</div>
+        <div class="what">On context shutdown: <code class="inl">@PreDestroy</code> → <code class="inl">DisposableBean.destroy()</code> → custom <code class="inl">destroyMethod</code>. Release resources here.</div></div>
+    </div>
+
+    <h3>The three ways to hook init &amp; destroy</h3>
+    <div class="code"><div class="cap"><span class="dot"><i></i>annotations, interfaces, and @Bean methods — pick one style</span><button class="copy">copy</button></div>
+      <pre><code class="language-java" data-snippet="beanHooks"></code></pre></div>
+    <p class="mut">Recommended order of preference: <code class="inl">@PostConstruct</code>/<code class="inl">@PreDestroy</code> (JSR-250, framework-neutral) &gt; <code class="inl">@Bean(initMethod, destroyMethod)</code> (no Spring import in your class) &gt; the <code class="inl">InitializingBean</code>/<code class="inl">DisposableBean</code> interfaces (couples you to Spring).</p>
+
+    <div class="call warn"><span class="ic">!</span><div><b>Prototype gotcha:</b> Spring does <b>not</b> call destroy callbacks on <code>@Scope("prototype")</code> beans — it hands the bean over and forgets it. You're responsible for cleanup. Singletons get the full lifecycle.</div></div>
+
+    <div class="sound"><span class="lbl">🎤 Say this</span><q>The container instantiates the bean (constructor injection here), injects the rest of its dependencies, calls any Aware interfaces, then runs BeanPostProcessors around the init phase — <code>@PostConstruct</code>, then <code>afterPropertiesSet()</code>, then a custom init method. The post-processor's after-init step is where Spring wraps it in a proxy for things like <code>@Transactional</code>. On shutdown it runs <code>@PreDestroy</code>, <code>destroy()</code>, then the custom destroy method — though prototype beans don't get destroy callbacks.</q></div>
+
+    <div class="followups">
+      <details><summary>@PostConstruct vs afterPropertiesSet vs init-method — order?</summary><div class="ans">All three run, in that order: <code>@PostConstruct</code> first, then <code>InitializingBean.afterPropertiesSet()</code>, then the custom <code>initMethod</code>. Same trio mirrored for destroy.</div></details>
+      <details><summary>Where do AOP proxies / @Transactional get applied?</summary><div class="ans">In <code>BeanPostProcessor.postProcessAfterInitialization()</code> — Spring returns a proxy that wraps your bean. That's also why self-invocation bypasses <code>@Transactional</code>: the call doesn't go through the proxy.</div></details>
+      <details><summary>Are prototype beans fully managed?</summary><div class="ans">No. Spring creates and wires them and runs init callbacks, but never calls destroy callbacks — the container doesn't keep a reference. Clean them up yourself.</div></details>
+      <details><summary>What's a BeanPostProcessor good for?</summary><div class="ans">It's the extension point that runs for <em>every</em> bean around initialization — used internally for <code>@Autowired</code> resolution, AOP proxying, and you can write your own to modify/wrap beans.</div></details>
+    </div>
+  </section>
+
+  <!-- ============================ 7 · IoC ============================ -->
+  <section class="panel" id="tab-ioc" data-tab="ioc" role="tabpanel">
+    <p class="eyebrow">Spring core · the "D" in SOLID, productised</p>
+    <h2 class="ph">What is the purpose of IoC in Spring?</h2>
+    <p class="lede"><b>Inversion of Control</b> is a principle: an object no longer creates or looks up its own dependencies — that <b>control is inverted</b> to a container. In Spring, the IoC container (the <code class="inl">ApplicationContext</code>) instantiates, configures, wires, and manages your objects ("beans"). <b>Dependency Injection</b> is how it does it.</p>
+
+    <h3>Without IoC vs with IoC</h3>
+    <div class="code"><div class="cap"><span class="dot"><i></i>the class controls creation — tight coupling</span><button class="copy">copy</button></div>
+      <pre><code class="language-java" data-snippet="iocBad"></code></pre></div>
+    <div class="code"><div class="cap"><span class="dot"><i></i>the container injects the dependency — loose coupling</span><button class="copy">copy</button></div>
+      <pre><code class="language-java" data-snippet="iocGood"></code></pre></div>
+
+    <h3>The purpose — what it actually buys you</h3>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th class="m">Benefit</th><th>Because…</th></tr></thead>
+      <tbody>
+        <tr><td class="m">Loose coupling</td><td>Code depends on an <b>interface</b>, not a concrete class — swap implementations without editing callers (hello, Open/Closed).</td></tr>
+        <tr><td class="m">Testability</td><td>Inject a <b>mock/stub</b> in a unit test; no Spring context needed with constructor injection.</td></tr>
+        <tr><td class="m">Lifecycle mgmt</td><td>The container owns creation, <b>singleton caching</b>, and the init/destroy callbacks from tab 6.</td></tr>
+        <tr><td class="m">Central config</td><td>Wiring lives in one place (component scan + <code class="inl">@Configuration</code>), not scattered <code class="inl">new</code> calls.</td></tr>
+        <tr><td class="m">Cross-cutting</td><td>Because beans are proxied, you get <code class="inl">@Transactional</code>, security, caching "for free."</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>How Spring injects — three flavours</h3>
+    <ul class="tight">
+      <li><b>Constructor injection</b> (preferred) — dependencies are <code class="inl">final</code>, the object is always valid, trivially unit-testable. A single constructor needs no <code class="inl">@Autowired</code>.</li>
+      <li><b>Setter injection</b> — for optional / reconfigurable dependencies.</li>
+      <li><b>Field injection</b> (<code class="inl">@Autowired</code> on a field) — concise but can't be <code class="inl">final</code> and hides dependencies; avoid in new code.</li>
+    </ul>
+
+    <div class="call"><span class="ic">→</span><div><b>IoC vs DI:</b> IoC is the <i>principle</i> (the framework controls flow — "don't call us, we'll call you," the Hollywood Principle). <b>DI is the concrete technique</b> Spring uses to implement it. The container <i>is</i> Dependency Inversion (SOLID's "D") delivered as a feature.</div></div>
+
+    <div class="sound"><span class="lbl">🎤 Say this</span><q>IoC means I don't <code>new</code> my dependencies — the Spring container creates and injects them, usually through the constructor. The purpose is loose coupling and testability: my class depends on an interface and the container decides the implementation, so I can swap it or inject a mock without touching the class. It also lets Spring manage bean lifecycle and apply cross-cutting concerns like transactions via proxies. DI is just the mechanism that implements IoC.</q></div>
+
+    <div class="followups">
+      <details><summary>IoC vs Dependency Injection — are they the same?</summary><div class="ans">No. IoC is the broad principle (control of object creation/flow is handed to the framework). DI is one way to achieve it — supplying dependencies from outside. Spring's container does IoC <em>via</em> DI.</div></details>
+      <details><summary>Why prefer constructor injection?</summary><div class="ans">Fields can be <code>final</code> (immutable, thread-safe), the object can't exist half-wired, required dependencies are explicit, and you can instantiate it in a plain unit test with <code>new</code> + mocks — no container.</div></details>
+      <details><summary>BeanFactory vs ApplicationContext?</summary><div class="ans">Both are IoC containers. <code>BeanFactory</code> is the basic lazy one; <code>ApplicationContext</code> extends it with eager singleton instantiation, event publishing, i18n, and annotation/AOP support — it's what you actually use.</div></details>
+      <details><summary>How does the container know what to inject?</summary><div class="ans">Component scanning finds <code>@Component</code>/<code>@Service</code>/<code>@Repository</code> classes (and <code>@Bean</code> methods), registers them as bean definitions, then autowires by type (falling back to name; disambiguate with <code>@Qualifier</code>/<code>@Primary</code>).</div></details>
+    </div>
+  </section>
+
+  <!-- ============================ ★ CHEAT SHEET ============================ -->
+  <section class="panel" id="tab-cheat" data-tab="cheat" role="tabpanel">
+    <p class="eyebrow">Make it stick</p>
+    <h2 class="ph">Cheat sheet, memory hooks &amp; resources</h2>
+    <p class="lede">The whole round on one screen — the one-liner per question, a hook to remember each, how to actually rehearse, and where to go deeper.</p>
+
+    <h3>One-line recap — cover the right column, recite it</h3>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th class="m">Question</th><th>The 10-second answer</th></tr></thead>
+      <tbody>
+        <tr><td class="m">SOLID</td><td>Single-responsibility, Open/closed, Liskov substitution, Interface segregation, Dependency inversion — five rules for loosely-coupled, changeable OO code.</td></tr>
+        <tr><td class="m">Open/Closed</td><td>Open for extension, closed for modification — add a new class behind an interface instead of editing tested code (polymorphism).</td></tr>
+        <tr><td class="m">Microservices comms</td><td>Sync (REST/gRPC) when you need the answer now; async (Kafka/RabbitMQ) to decouple &amp; fan out. Gateway + discovery + circuit breaker around them.</td></tr>
+        <tr><td class="m">HashMap collision</td><td>Two keys in one bucket. Chained in a list, then a red-black tree past 8 (Java 8+) → worst case O(log n). Good hashCode + 0.75 load factor keep it rare.</td></tr>
+        <tr><td class="m">SQL query</td><td>LEFT JOIN + GROUP BY + AVG/COUNT + HAVING to filter groups + ORDER BY. Evaluated FROM→WHERE→GROUP BY→HAVING→SELECT→ORDER BY.</td></tr>
+        <tr><td class="m">Bean lifecycle</td><td>Instantiate → inject → Aware → BPP-before → init (@PostConstruct→afterPropertiesSet→initMethod) → BPP-after (proxy) → use → destroy (@PreDestroy→destroy→destroyMethod).</td></tr>
+        <tr><td class="m">IoC</td><td>Container creates &amp; injects dependencies instead of you calling <code class="inl">new</code> → loose coupling + testability. DI is the mechanism.</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>Memory hooks</h3>
+    <ul class="tight">
+      <li><b>SOLID</b> — the word is the mnemonic. Order it as a sentence: "<b>S</b>ome <b>O</b>ne <b>L</b>ikes <b>I</b>nverting <b>D</b>ependencies."</li>
+      <li><b>Open/Closed</b> — picture a power strip: you <i>extend</i> by plugging in new devices, you never <i>rewire</i> the strip.</li>
+      <li><b>Sync vs async</b> — phone call (sync: both on the line now) vs text message (async: send and move on).</li>
+      <li><b>HashMap collision</b> — "<b>8 turns a list into a tree</b>" (treeify ≥ 8, untreeify ≤ 6).</li>
+      <li><b>SQL order</b> — "<b>F</b>rom <b>W</b>here <b>G</b>roups <b>H</b>ave <b>S</b>elected <b>O</b>rder" → FROM, WHERE, GROUP BY, HAVING, SELECT, ORDER BY.</li>
+      <li><b>Bean lifecycle</b> — "<b>Born → Fed → Aware → Working → Retired</b>" (instantiate → inject → aware → init/use → destroy).</li>
+      <li><b>IoC</b> — the <b>Hollywood Principle</b>: "Don't call us, we'll call you."</li>
+    </ul>
+
+    <h3>How to make it stick (not just re-read it)</h3>
+    <ul class="tight">
+      <li><b>Active recall:</b> cover the recap table's right column and say each answer out loud before peeking. Reading ≠ remembering.</li>
+      <li><b>Teach-back:</b> explain each soundbite to an imaginary interviewer in your own words — if you stall, that's the gap to restudy.</li>
+      <li><b>Spaced repetition:</b> revisit at increasing intervals (1 day, 3 days, a week). Turn these into <a class="link" href="drills.html">flashcards</a>.</li>
+      <li><b>Visual anchor:</b> the <a class="link" href="concepts-visual.html">infographic</a> gives each concept a picture — recall is far stronger with a diagram attached.</li>
+      <li><b>Drill the follow-ups:</b> the expandable Q's on each tab are the second questions you'll actually get — rehearse those, not just the headline.</li>
+    </ul>
+
+    <h3>Go deeper — curated references</h3>
+    <ul class="reflist">
+      <li><span class="src">SOLID</span><a href="https://www.baeldung.com/solid-principles" target="_blank" rel="noopener">Baeldung — SOLID principles in Java</a><span class="nt">all five with code.</span></li>
+      <li><span class="src">SOLID</span><a href="https://en.wikipedia.org/wiki/SOLID" target="_blank" rel="noopener">Wikipedia — SOLID</a><span class="nt">origin &amp; Uncle Bob references.</span></li>
+      <li><span class="src">Open/Closed</span><a href="https://www.baeldung.com/java-open-closed-principle" target="_blank" rel="noopener">Baeldung — The Open/Closed Principle</a></li>
+      <li><span class="src">Microservices</span><a href="https://martinfowler.com/articles/microservices.html" target="_blank" rel="noopener">Martin Fowler — Microservices</a><span class="nt">the canonical definition.</span></li>
+      <li><span class="src">Microservices</span><a href="https://microservices.io/patterns/index.html" target="_blank" rel="noopener">microservices.io — pattern catalog</a><span class="nt">Saga, API gateway, circuit breaker.</span></li>
+      <li><span class="src">Microservices</span><a href="https://spring.io/projects/spring-cloud" target="_blank" rel="noopener">Spring Cloud</a><span class="nt">Feign, Gateway, LoadBalancer.</span></li>
+      <li><span class="src">HashMap</span><a href="https://www.baeldung.com/java-hashmap" target="_blank" rel="noopener">Baeldung — A Guide to Java HashMap</a></li>
+      <li><span class="src">HashMap</span><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/HashMap.html" target="_blank" rel="noopener">JDK 21 Javadoc — HashMap</a><span class="nt">load factor &amp; treeify notes.</span></li>
+      <li><span class="src">SQL</span><a href="backend.html#sql">Suite → Backend / SQL</a><span class="nt">10 worked exercises + result grids.</span></li>
+      <li><span class="src">Bean</span><a href="https://docs.spring.io/spring-framework/reference/core/beans/factory-nature.html" target="_blank" rel="noopener">Spring docs — Lifecycle callbacks</a></li>
+      <li><span class="src">Bean</span><a href="https://www.baeldung.com/spring-bean-life-cycle" target="_blank" rel="noopener">Baeldung — Spring bean life cycle</a></li>
+      <li><span class="src">IoC / DI</span><a href="https://docs.spring.io/spring-framework/reference/core/beans.html" target="_blank" rel="noopener">Spring docs — The IoC container</a></li>
+      <li><span class="src">IoC / DI</span><a href="https://martinfowler.com/articles/injection.html" target="_blank" rel="noopener">Martin Fowler — IoC Containers &amp; the DI pattern</a></li>
+    </ul>
+
+    <div class="call"><span class="ic">★</span><div>Keep going in the suite: <a class="link" href="java.html">Java version evolution</a> · <a class="link" href="backend.html#spring">Spring Boot &amp; JPA reference</a> · <a class="link" href="drills.html">flashcard drills</a>.</div></div>
+  </section>
+
+</div></main>
+
+<footer class="app-foot">
+  <div class="wrap">
+    Core concepts for senior full-stack rounds · OOP design · distributed systems · Java &amp; Spring internals · ANSI SQL — verify version-specific behaviour against your target stack before quoting it as fact.
+  </div>
+</footer>
+
+<script>
+const CODE = {
+ocpBad:
+`// ❌ Violates OCP — every new shape forces editing this tested method
+class AreaCalculator {
+    double area(Object shape) {
+        if (shape instanceof Circle c)   return Math.PI * c.r() * c.r();
+        if (shape instanceof Square s)   return s.side() * s.side();
+        // add Triangle? you must REOPEN and edit this method,
+        // and re-test the cases that already worked.
+        throw new IllegalArgumentException("unknown shape");
+    }
+}`,
+ocpGood:
+`// ✅ Open for extension, closed for modification
+interface Shape { double area(); }
+
+record Circle(double r)        implements Shape { public double area(){ return Math.PI * r * r; } }
+record Square(double side)     implements Shape { public double area(){ return side * side; } }
+
+// A NEW shape is a NEW file. AreaCalculator never changes again.
+record Triangle(double b, double h) implements Shape { public double area(){ return 0.5 * b * h; } }
+
+class AreaCalculator {
+    double area(Shape shape) { return shape.area(); }   // closed: never edited
+    double total(List<Shape> shapes) {
+        return shapes.stream().mapToDouble(Shape::area).sum();
+    }
+}`,
+microSync:
+`// SYNCHRONOUS — declarative REST client; call a remote service like a local bean
+@FeignClient(name = "inventory-service")          // resolved via service discovery
+interface InventoryClient {
+    @GetMapping("/stock/{sku}")
+    StockDto getStock(@PathVariable String sku);   // blocks until the response returns
+}
+
+@Service
+class OrderService {
+    private final InventoryClient inventory;        // injected (IoC)
+    OrderService(InventoryClient inventory) { this.inventory = inventory; }
+
+    boolean canFulfil(String sku) {
+        return inventory.getStock(sku).available() > 0;   // request → wait → response
+    }
+}`,
+microAsync:
+`// ASYNCHRONOUS — publish an event and move on; no waiting, no tight coupling
+@Service
+class OrderService {
+    private final KafkaTemplate<String, OrderEvent> kafka;
+    OrderService(KafkaTemplate<String, OrderEvent> kafka) { this.kafka = kafka; }
+
+    void place(Order o) {
+        // ... persist the order ...
+        kafka.send("orders", new OrderEvent(o.id(), Status.CREATED));   // fire & forget
+    }
+}
+
+// A DIFFERENT service reacts on its own schedule — decoupled in time
+@Component
+class InventoryListener {
+    @KafkaListener(topics = "orders", groupId = "inventory")
+    void on(OrderEvent e) {
+        // reserve stock, send confirmation email, etc. (make this idempotent!)
+    }
+}`,
+hashDemo:
+`// A collision = two distinct keys landing in the SAME bucket.
+// Java chooses the bucket with:  index = (table.length - 1) & hash(key)
+
+System.out.println("FB".hashCode());   // 2236
+System.out.println("Ea".hashCode());   // 2236  ← same hash, classic collision
+
+Map<String, Integer> m = new HashMap<>();
+m.put("FB", 1);     // goes to bucket X
+m.put("Ea", 2);     // SAME bucket X → appended to the chain, not overwritten
+
+m.get("Ea");        // 2  — hash finds the bucket, equals() walks the chain to the key
+m.size();           // 2  — both keys coexist; a collision is NOT a key clash`,
+sqlSchema:
+`CREATE TABLE departments (
+    id   BIGINT PRIMARY KEY,
+    name VARCHAR(80) NOT NULL
+);
+CREATE TABLE employees (
+    id            BIGINT PRIMARY KEY,
+    name          VARCHAR(80) NOT NULL,
+    salary        DECIMAL(10,2),
+    department_id BIGINT REFERENCES departments(id)
+);`,
+sqlMain:
+`SELECT  d.name                  AS department,
+        COUNT(e.id)             AS headcount,
+        ROUND(AVG(e.salary), 2) AS avg_salary
+FROM        departments d
+LEFT JOIN   employees   e ON e.department_id = d.id
+GROUP BY    d.id, d.name
+HAVING      COUNT(e.id) >= 2          -- filter GROUPS, not rows
+ORDER BY    avg_salary DESC;          -- alias is visible: ORDER BY runs last`,
+beanHooks:
+`@Component
+class AuditService implements InitializingBean, DisposableBean {
+
+    private final MeterRegistry metrics;
+    AuditService(MeterRegistry metrics) {        // 1) constructor injection
+        this.metrics = metrics;
+    }
+
+    @PostConstruct                               // 5a) first init hook
+    void warmUp() { /* open connection pool, prime caches */ }
+
+    @Override public void afterPropertiesSet() { // 5b) InitializingBean
+        /* validate required state is wired */
+    }
+
+    @PreDestroy                                  // 7a) first destroy hook
+    void flush() { /* flush buffered audit events */ }
+
+    @Override public void destroy() {            // 7b) DisposableBean
+        /* release resources */
+    }
+}
+
+// 5c / 7c) style with no Spring import in your class:
+@Configuration
+class Cfg {
+    @Bean(initMethod = "start", destroyMethod = "stop")
+    Cache cache() { return new Cache(); }
+}`,
+iocBad:
+`// ❌ Without IoC — the class creates its own dependency: tight coupling.
+class OrderService {
+    // hard-wired to ONE implementation; can't swap, can't mock in a test
+    private final PaymentGateway gateway = new StripeGateway();
+
+    void checkout(Order o) { gateway.charge(o.total()); }
+}`,
+iocGood:
+`// ✅ With IoC — the container creates & injects the dependency.
+@Service
+class OrderService {
+    private final PaymentGateway gateway;        // depend on the ABSTRACTION
+
+    OrderService(PaymentGateway gateway) {       // constructor injection
+        this.gateway = gateway;                  // Spring decides the concrete bean
+    }
+    void checkout(Order o) { gateway.charge(o.total()); }
+}
+
+// Swap implementations or inject a mock — OrderService never changes:
+@Test void refunds() {
+    var fake = mock(PaymentGateway.class);
+    var svc  = new OrderService(fake);           // no Spring context needed
+    // ...
+}`
+};
+</script>
+<script src="assets/app.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script>
+(function(){
+  // inject raw snippets before highlight (shared boot highlights on DOMContentLoaded)
+  PrepUI.injectCode(CODE);
+
+  // legacy caption-bar copy buttons (.code .copy)
+  document.querySelectorAll('.code .copy').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var code = btn.closest('.code').querySelector('code');
+      navigator.clipboard.writeText(code.textContent).then(function(){
+        var o=btn.textContent; btn.textContent='copied'; btn.classList.add('ok');
+        setTimeout(function(){ btn.textContent=o; btn.classList.remove('ok'); },1400);
+      }).catch(function(){});
+    });
+  });
+
+  // deep-link to a tab via #hash (e.g. concepts.html#bean)
+  var h = (location.hash||'').replace('#','');
+  if (h) { var b = document.querySelector('.tab-btn[data-tab="'+h+'"]'); if (b) b.click(); }
+})();
+</script>
+</body>
+</html>

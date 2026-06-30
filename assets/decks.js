@@ -245,5 +245,78 @@ window.DECKS = {
         q:"Tell me about feedback that didn't land at first.",
         a:"Have ONE real, specific example ready. The generic answer signals you haven't actually reflected on mentoring — that's the whole test of this question." }
     ]
+  },
+
+  concepts: {
+    id: "concepts",
+    label: "Core Concepts",
+    schema: "concept",
+    blurb: "SOLID & Open/Closed, microservices comms, HashMap collisions, one SQL rule, and Spring IoC/bean lifecycle — answer out loud before revealing.",
+    topics: [
+      { key: "all", label: "All" },
+      { key: "design", label: "OO Design" },
+      { key: "distributed", label: "Distributed" },
+      { key: "datastruct", label: "Data structures" },
+      { key: "sql", label: "SQL" },
+      { key: "spring", label: "Spring" },
+      { key: "missed", label: "Missed" }
+    ],
+    topicLabels: {
+      design: "OO Design",
+      distributed: "Distributed systems",
+      datastruct: "Data structures",
+      sql: "SQL",
+      spring: "Spring · IoC & beans"
+    },
+    cards: [
+      {id:"de1",topic:"design",front:"SOLID — what do the five letters stand for? (one line each)",
+       back:"<ul><li><strong>S</strong> — Single Responsibility: one class, one reason to change.</li><li><strong>O</strong> — Open/Closed: open for extension, closed for modification.</li><li><strong>L</strong> — Liskov Substitution: subtypes substitutable for their base type.</li><li><strong>I</strong> — Interface Segregation: small, focused interfaces; no unused methods.</li><li><strong>D</strong> — Dependency Inversion: depend on abstractions, not concretions.</li></ul><p>The thread through all five: <em>loose coupling</em> — change one thing without breaking five.</p>"},
+      {id:"de2",topic:"design",front:"Which SOLID principle does Spring's IoC container most directly deliver, and how?",
+       back:"<p><strong>Dependency Inversion</strong> (and it enables <strong>Open/Closed</strong>). Your class depends on an interface (<code>PaymentGateway</code>); the container creates and injects the concrete bean, so high-level code never writes <code>new StripeGateway()</code>.</p>"},
+      {id:"de3",topic:"design",front:"Give the classic Liskov Substitution Principle violation.",
+       back:"<p><code>Square extends Rectangle</code>: calling <code>setWidth(5)</code> on a square silently changes its height too, so code written against <code>Rectangle</code> breaks. Another tell-tale: an override that throws <code>UnsupportedOperationException</code>. Fix: don't model it with inheritance.</p>"},
+      {id:"de4",topic:"design",front:"What does the Open/Closed Principle state, and what makes it achievable?",
+       back:"<p>\"Software entities should be open for <strong>extension</strong> but closed for <strong>modification</strong>\" — add behaviour by adding new code, not editing tested code. Achieved through <strong>abstraction + polymorphism</strong>: interfaces, the strategy pattern, dependency injection.</p>"},
+      {id:"de5",topic:"design",front:"OCP in practice: how do you replace a growing switch-on-type?",
+       back:"<p>Put the varying behaviour behind an interface and let each type implement it. <code>switch(shape){ case Circle… }</code> becomes <code>shape.area()</code>, where each <code>Shape</code> owns its <code>area()</code>. A new shape is a <strong>new class</strong>; the calculator and its callers stay closed.</p><p class='alt'>Patterns that embody OCP: Strategy, Template Method, Decorator, Factory.</p>"},
+      {id:"de6",topic:"design",front:"Single Responsibility — what does \"one reason to change\" actually mean?",
+       back:"<p>One <em>axis</em> / stakeholder of change — not merely \"a small class\". A class mixing report formatting with business rules answers to two actors, so split it. A class can be large and still single-responsibility.</p>"},
+
+      {id:"di1",topic:"distributed",front:"How do microservices communicate? Name the two families with examples.",
+       back:"<ul><li><strong>Synchronous</strong> — request/response: REST/HTTP, gRPC (HTTP/2 + Protobuf), GraphQL.</li><li><strong>Asynchronous</strong> — messaging/events via a broker: Kafka, RabbitMQ/ActiveMQ, SQS/SNS (pub-sub or queues).</li></ul><p>Sync when you need the answer now; async to decouple and fan out.</p>"},
+      {id:"di2",topic:"distributed",front:"Synchronous vs asynchronous communication — the core trade-off.",
+       back:"<ul><li><strong>Coupling:</strong> sync is tight (callee must be up now) vs async loose.</li><li><strong>Failure:</strong> sync cascades vs async isolates (messages buffer).</li><li><strong>Consistency:</strong> sync immediate vs async eventual.</li><li><strong>Complexity:</strong> sync simpler to debug vs async needs ordering / idempotency / dead-letter queues.</li></ul>"},
+      {id:"di3",topic:"distributed",front:"How do you handle a transaction that spans multiple services?",
+       back:"<p>Not one DB transaction — use the <strong>Saga</strong> pattern: a sequence of local transactions, each emitting an event that triggers the next; on failure run <em>compensating</em> transactions to undo. Coordinated by <strong>orchestration</strong> (a coordinator) or <strong>choreography</strong> (services react to events). Avoids blocking two-phase commit.</p>"},
+      {id:"di4",topic:"distributed",front:"What stops a failure in one service cascading to the rest? Name the pattern and its states.",
+       back:"<p>A <strong>circuit breaker</strong> (e.g. Resilience4j). States: <strong>closed</strong> (normal) → <strong>open</strong> (after N failures, fail fast with a fallback) → <strong>half-open</strong> (probe; success closes it). Pair with timeouts, bulkheads, and retries with backoff.</p>"},
+      {id:"di5",topic:"distributed",front:"Async means a message can arrive twice. How do you cope?",
+       back:"<p>Make consumers <strong>idempotent</strong>: dedupe on a message/event id, or design the operation so re-applying it is a no-op. Add a <strong>dead-letter queue</strong> for messages that keep failing.</p>"},
+
+      {id:"ds1",topic:"datastruct",front:"What is a HashMap collision?",
+       back:"<p>Two distinct keys map to the <strong>same bucket</strong> — either they share a <code>hashCode()</code>, or different hashes reduce to the same index via <code>index = (n-1) &amp; hash</code>. Collisions are normal and unavoidable; what matters is how they're resolved.</p>"},
+      {id:"ds2",topic:"datastruct",front:"How does Java's HashMap resolve collisions (Java 8+)?",
+       back:"<p><strong>Separate chaining</strong>: colliding entries form a linked list in the bucket; lookup walks it calling <code>equals()</code>. Since Java 8, a bucket with more than <strong>8</strong> nodes (and table ≥ 64) <strong>treeifies</strong> into a red-black tree → O(log n) instead of O(n); it reverts to a list below 6.</p>"},
+      {id:"ds3",topic:"datastruct",front:"Why must you override equals() and hashCode() together?",
+       back:"<p>Lookup first finds the bucket via <code>hashCode()</code>, then matches the key via <code>equals()</code>. If two \"equal\" objects have different hashes they land in different buckets and you can never retrieve what you stored. The contract: equal objects must have equal hash codes.</p>"},
+
+      {id:"sq1",topic:"sql",front:"SQL: WHERE vs HAVING?",
+       back:"<p><code>WHERE</code> filters individual <strong>rows before</strong> grouping and can't use aggregates. <code>HAVING</code> filters <strong>groups after</strong> aggregation and can (<code>HAVING COUNT(*) &gt; 1</code>). You can use both together.</p>"},
+      {id:"sq2",topic:"sql",front:"SQL logical execution order — and one consequence.",
+       back:"<p><code>FROM/JOIN → WHERE → GROUP BY → HAVING → SELECT → ORDER BY</code>. Consequences: <code>WHERE</code> runs before grouping so it can't see aggregates (use <code>HAVING</code>); a <code>SELECT</code> alias isn't visible to <code>WHERE</code>/<code>GROUP BY</code> but <strong>is</strong> to <code>ORDER BY</code>.</p><p class='alt'>Mnemonic: From Where Groups Have Selected Order.</p>"},
+
+      {id:"sp1",topic:"spring",front:"Outline the Spring bean lifecycle, start to finish.",
+       back:"<p><strong>1</strong> Instantiate (constructor injection) → <strong>2</strong> populate properties (DI) → <strong>3</strong> Aware callbacks → <strong>4</strong> BeanPostProcessor before-init → <strong>5</strong> initialize (<code>@PostConstruct</code> → <code>afterPropertiesSet()</code> → custom <code>initMethod</code>) → <strong>6</strong> BeanPostProcessor after-init (AOP proxy applied) → <em>in use</em> → <strong>7</strong> destroy (<code>@PreDestroy</code> → <code>destroy()</code> → custom <code>destroyMethod</code>).</p>"},
+      {id:"sp2",topic:"spring",front:"Where in the bean lifecycle are AOP proxies (@Transactional) applied — and what trap does that explain?",
+       back:"<p>In <code>BeanPostProcessor.postProcessAfterInitialization()</code> — Spring returns a proxy wrapping your bean. That's why <strong>self-invocation</strong> (calling one <code>@Transactional</code> method from another in the same class) bypasses it: the call goes through <code>this</code>, not the proxy.</p>"},
+      {id:"sp3",topic:"spring",front:"Order of the three bean initialization callbacks? (and the prototype gotcha)",
+       back:"<p><code>@PostConstruct</code> → <code>InitializingBean.afterPropertiesSet()</code> → custom <code>initMethod</code>. The mirror trio runs for destroy. <strong>Gotcha:</strong> <code>@Scope(\"prototype\")</code> beans get init callbacks but <strong>never</strong> destroy callbacks — the container doesn't retain them.</p>"},
+      {id:"sp4",topic:"spring",front:"What is IoC, and what is its purpose in Spring?",
+       back:"<p><strong>Inversion of Control</strong>: an object no longer creates or looks up its dependencies — that control is inverted to the container (<code>ApplicationContext</code>), which creates, wires, and manages beans. Purpose: <strong>loose coupling</strong> (depend on interfaces), <strong>testability</strong> (inject mocks), centralized config, and lifecycle / cross-cutting management.</p>"},
+      {id:"sp5",topic:"spring",front:"IoC vs Dependency Injection — distinguish them.",
+       back:"<p><strong>IoC</strong> is the principle — the framework controls object creation and flow (the \"Hollywood Principle\": don't call us, we'll call you). <strong>DI</strong> is the concrete technique that implements it — supplying dependencies from outside. Spring's container does IoC <em>via</em> DI.</p>"},
+      {id:"sp6",topic:"spring",front:"Why prefer constructor injection over field injection?",
+       back:"<p>Fields can be <code>final</code> (immutable, thread-safe), the object can't exist half-wired, required dependencies are explicit, and you can unit-test with <code>new</code> + mocks — no Spring context. A single constructor needs no <code>@Autowired</code>.</p>"}
+    ]
   }
 };
